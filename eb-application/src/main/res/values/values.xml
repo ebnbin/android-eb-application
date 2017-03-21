@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme. -->
+    <style name="EBTheme" parent="Theme.Design.Light">
+        <item name="colorPrimary">#00bcd4</item>
+        <item name="colorPrimaryDark">#0097a7</item>
+        <item name="colorAccent">#ff4081</item>
+    </style>
+</resources>
