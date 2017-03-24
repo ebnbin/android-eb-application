@@ -1,5 +1,7 @@
 package com.ebnbin.ebapplication.base;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -17,6 +19,13 @@ import okhttp3.Call;
  * Base {@link Fragment}.
  */
 public abstract class EBFragment extends Fragment {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        initArguments();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -62,6 +71,30 @@ public abstract class EBFragment extends Fragment {
      * Handler with main {@link Looper}.
      */
     protected final Handler handler = new Handler(Looper.getMainLooper());
+
+    //*****************************************************************************************************************
+    // Arguments.
+
+    /**
+     * Initializes fields with arguments.
+     */
+    private void initArguments() {
+        Bundle args = getArguments();
+        if (args == null) {
+            args = new Bundle();
+        }
+
+        onInitArguments(args);
+    }
+
+    /**
+     * Called when initializing fields with arguments.
+     *
+     * @param args
+     *         If {@link #getArguments()} returns {@code null}, an empty {@link Bundle} will be used.
+     */
+    protected void onInitArguments(@NonNull Bundle args) {
+    }
 
     //*****************************************************************************************************************
     // Net.
