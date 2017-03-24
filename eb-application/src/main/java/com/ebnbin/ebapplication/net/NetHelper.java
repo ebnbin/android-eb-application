@@ -9,6 +9,7 @@ import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.base.EBApplication;
 import com.ebnbin.ebapplication.base.EBModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -130,8 +131,22 @@ public final class NetHelper {
                 Type type = ((ParameterizedType) (callback.getClass().getGenericSuperclass()))
                         .getActualTypeArguments()[0];
 
-                Gson gson = new Gson();
-                final Model model = gson.fromJson(responseString, type);
+                final Model model;
+                try {
+                    Gson gson = new Gson();
+                    model = gson.fromJson(responseString, type);
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure();
+                        }
+                    });
+
+                    return;
+                }
 
                 if (model == null || !model.isValid()) {
                     mHandler.post(new Runnable() {

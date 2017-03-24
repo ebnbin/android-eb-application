@@ -30,7 +30,7 @@ public abstract class EBFragment extends Fragment {
     /**
      * Fragment tag.
      */
-    public static final String TAG = EBFragment.class.getName();
+    public static final String TAG = EBFragment.class.getClass().getName();
 
     //*****************************************************************************************************************
     // Contexts.
