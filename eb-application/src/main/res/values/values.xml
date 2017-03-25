@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base theme. -->
-    <style name="EBTheme" parent="Theme.Design.Light">
-        <item name="colorPrimary">#00bcd4</item>
-        <item name="colorPrimaryDark">#0097a7</item>
-        <item name="colorAccent">#ff4081</item>
+    <!-- Base light theme. -->
+    <style name="EBLightTheme" parent="Theme.Design.Light">
+        <item name="android:windowBackground">@color/eb_light_window_background</item>
+        <item name="colorPrimary">@color/eb_light_primary</item>
+        <item name="colorPrimaryDark">@color/eb_light_primary_dark</item>
+        <item name="colorAccent">@color/eb_light_accent</item>
+    </style>
+    <!-- Base dark theme. -->
+    <style name="EBDarkTheme" parent="Theme.Design">
+        <item name="android:windowBackground">@color/eb_dark_window_background</item>
+        <item name="colorPrimary">@color/eb_dark_primary</item>
+        <item name="colorPrimaryDark">@color/eb_dark_primary_dark</item>
+        <item name="colorAccent">@color/eb_dark_accent</item>
     </style>
 </resources>

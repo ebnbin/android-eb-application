@@ -81,7 +81,7 @@ public abstract class EBActivity extends AppCompatActivity {
      * Default theme id.
      */
     @StyleRes
-    private static final int DEFAULT_THEME_ID = R.style.EBTheme;
+    private static final int DEFAULT_THEME_ID = R.style.EBLightTheme;
 
     /**
      * Initializes custom theme.
