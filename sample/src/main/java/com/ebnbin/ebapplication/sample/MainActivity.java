@@ -10,14 +10,12 @@ import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
 
 public final class MainActivity extends EBActivity {
-    private static final String TAG = MainActivity.class.getName();
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         String url = "http://gank.io/api/data/all/10/1";
-        NetHelper.getInstance().get(TAG, url, new NetCallback<SampleModel>() {
+        NetHelper.getInstance().get(hashCode(), url, new NetCallback<SampleModel>() {
             @Override
             public void onSuccess(@NonNull SampleModel model) {
                 super.onSuccess(model);
@@ -38,6 +36,6 @@ public final class MainActivity extends EBActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        NetHelper.getInstance().cancelCalls(TAG);
+        NetHelper.getInstance().cancelCalls(hashCode());
     }
 }
