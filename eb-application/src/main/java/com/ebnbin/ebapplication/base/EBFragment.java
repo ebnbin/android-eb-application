@@ -109,11 +109,15 @@ public abstract class EBFragment extends Fragment {
      *
      * @param <Model>
      *         Subclass of {@link EBModel}.
-     *
-     * @return Current {@link Call}.
      */
-    protected final <Model extends EBModel> Call netGet(@NonNull String url, @NonNull NetCallback<Model> callback) {
-        return NetHelper.getInstance().get(TAG, url, callback);
+    protected final <Model extends EBModel> void netGet(@NonNull final String url,
+            @NonNull final NetCallback<Model> callback) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                NetHelper.getInstance().get(TAG, url, callback);
+            }
+        });
     }
 
     /**
