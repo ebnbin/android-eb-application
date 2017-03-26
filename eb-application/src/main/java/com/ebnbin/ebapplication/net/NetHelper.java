@@ -92,77 +92,82 @@ public final class NetHelper {
             @NonNull final NetCallback<Model> callback) {
         Request request = new Request.Builder().tag(tag).url(url).build();
 
-        Call call = mOkHttpClient.newCall(request);
+        final Call call = mOkHttpClient.newCall(request);
         addCall(call);
 
-        call.enqueue(new Callback() {
+        mHandler.post(new Runnable() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                if (call.isCanceled()) {
-                    return;
-                }
-
-                removeCall(call);
-
-                mHandler.post(new Runnable() {
+            public void run() {
+                call.enqueue(new Callback() {
                     @Override
-                    public void run() {
-                        callback.onFailure();
+                    public void onFailure(Call call, IOException e) {
+                        if (call.isCanceled()) {
+                            return;
+                        }
+
+                        removeCall(call);
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onFailure();
+                            }
+                        });
                     }
-                });
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                removeCall(call);
-
-                if (!response.isSuccessful()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onFailure();
-                        }
-                    });
-
-                    return;
-                }
-
-                String responseString = response.body().string();
-                Type type = ((ParameterizedType) (callback.getClass().getGenericSuperclass()))
-                        .getActualTypeArguments()[0];
-
-                final Model model;
-                try {
-                    Gson gson = new Gson();
-                    model = gson.fromJson(responseString, type);
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onFailure();
-                        }
-                    });
-
-                    return;
-                }
-
-                if (model == null || !model.isValid()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onFailure();
-                        }
-                    });
-
-                    return;
-                }
-
-                mHandler.post(new Runnable() {
                     @Override
-                    public void run() {
-                        callback.onSuccess(model);
+                    public void onResponse(Call call, Response response) throws IOException {
+                        removeCall(call);
+
+                        if (!response.isSuccessful()) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFailure();
+                                }
+                            });
+
+                            return;
+                        }
+
+                        String responseString = response.body().string();
+                        Type type = ((ParameterizedType) (callback.getClass().getGenericSuperclass()))
+                                .getActualTypeArguments()[0];
+
+                        final Model model;
+                        try {
+                            Gson gson = new Gson();
+                            model = gson.fromJson(responseString, type);
+                        } catch (JsonSyntaxException e) {
+                            e.printStackTrace();
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFailure();
+                                }
+                            });
+
+                            return;
+                        }
+
+                        if (model == null || !model.isValid()) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFailure();
+                                }
+                            });
+
+                            return;
+                        }
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(model);
+                            }
+                        });
                     }
                 });
             }
