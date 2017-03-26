@@ -1,7 +1,10 @@
 package com.ebnbin.ebapplication.base;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +21,7 @@ import com.ebnbin.ebapplication.R;
 public abstract class EBActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        initTaskDescription();
         initTheme();
 
         super.onCreate(savedInstanceState);
@@ -73,6 +77,20 @@ public abstract class EBActivity extends AppCompatActivity {
      * Handler with main {@link Looper}.
      */
     protected final Handler handler = new Handler(Looper.getMainLooper());
+
+    //*****************************************************************************************************************
+    // TaskDescription.
+
+    /**
+     * Initializes {@link ActivityManager.TaskDescription}.
+     */
+    private void initTaskDescription() {
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.eb_logo);
+        int colorPrimary = getColor(R.color.eb_light_primary);
+        ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, icon,
+                colorPrimary);
+        setTaskDescription(taskDescription);
+    }
 
     //*****************************************************************************************************************
     // Custom theme.
