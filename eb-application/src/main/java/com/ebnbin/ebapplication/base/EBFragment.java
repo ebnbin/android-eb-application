@@ -235,7 +235,7 @@ public abstract class EBFragment extends Fragment {
     // Net.
 
     /**
-     * Gets a url async with tag of current fragment.
+     * Gets a url async with tag of current fragment. With a default load callback.
      *
      * @param url
      *         Url.
@@ -247,7 +247,56 @@ public abstract class EBFragment extends Fragment {
      *
      * @return Current {@link Call}.
      */
-    protected final <Model extends EBModel> Call netGet(@NonNull String url, @NonNull NetCallback<Model> callback) {
+    protected final <Model extends EBModel> Call netGet(@NonNull final String url,
+            @NonNull final NetCallback<Model> callback) {
+        final NetCallback<Model> loadCallback = new NetCallback<Model>() {
+            @Override
+            public void onLoading() {
+                super.onLoading();
+
+                setLoadLoading();
+            }
+
+            @Override
+            public void onSuccess(@NonNull Model model) {
+                super.onSuccess(model);
+
+                callback.netCallbacks.remove(this);
+
+                setLoadNone();
+            }
+
+            @Override
+            public void onFailure() {
+                super.onFailure();
+
+                callback.netCallbacks.remove(this);
+
+                setLoadFailure(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        netGet(url, callback);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+
+                callback.netCallbacks.remove(this);
+
+                setLoadFailure(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        netGet(url, callback);
+                    }
+                });
+            }
+        };
+        callback.netCallbacks.add(loadCallback);
+
         return NetHelper.getInstance().get(hashCode(), url, callback);
     }
 

@@ -90,6 +90,8 @@ public final class NetHelper {
      */
     public <Model extends EBModel> Call get(@NonNull Object tag, @NonNull String url,
             @NonNull final NetCallback<Model> callback) {
+        callback.onLoading();
+
         Request request = new Request.Builder().tag(tag).url(url).build();
 
         Call call = mOkHttpClient.newCall(request);
@@ -99,6 +101,13 @@ public final class NetHelper {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (call.isCanceled()) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onCancel();
+                        }
+                    });
+
                     return;
                 }
 

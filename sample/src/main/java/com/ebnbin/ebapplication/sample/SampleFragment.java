@@ -19,15 +19,11 @@ public final class SampleFragment extends EBFragment {
     }
 
     private void netGetUrl() {
-        setLoadLoading();
-
         String url = "http://gank.io/api/data/all/100/1";
         netGet(url, new NetCallback<SampleModel>() {
             @Override
             public void onSuccess(@NonNull SampleModel model) {
                 super.onSuccess(model);
-
-                setLoadNone();
 
                 Toast.makeText(getContext(), model.toJson(), Toast.LENGTH_SHORT).show();
             }
@@ -35,8 +31,6 @@ public final class SampleFragment extends EBFragment {
             @Override
             public void onFailure() {
                 super.onFailure();
-
-                setLoadFailure(v -> netGetUrl());
 
                 Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
             }
