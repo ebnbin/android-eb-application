@@ -12,18 +12,22 @@ import com.ebnbin.ebapplication.net.NetCallback;
 
 public final class SampleFragment extends EBFragment {
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         netGetUrl();
     }
 
     private void netGetUrl() {
-        String url = "http://gank.io/api/data/all/10/1";
+        setLoadLoading();
+
+        String url = "http://gank.io/api/data/all/100/1";
         netGet(url, new NetCallback<SampleModel>() {
             @Override
             public void onSuccess(@NonNull SampleModel model) {
                 super.onSuccess(model);
+
+                setLoadNone();
 
                 Toast.makeText(getContext(), model.toJson(), Toast.LENGTH_SHORT).show();
             }
@@ -31,6 +35,8 @@ public final class SampleFragment extends EBFragment {
             @Override
             public void onFailure() {
                 super.onFailure();
+
+                setLoadFailure(v -> netGetUrl());
 
                 Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
             }
@@ -41,21 +47,5 @@ public final class SampleFragment extends EBFragment {
     @Override
     protected View overrideContentView() {
         return new Button(getContext());
-    }
-
-    @Override
-    protected void onInitContentView(@NonNull View contentView) {
-        super.onInitContentView(contentView);
-
-        SampleLoadingFragment sampleLoadingFragment = (SampleLoadingFragment) getChildFragmentManager()
-                .findFragmentByTag(SampleLoadingFragment.class.getName());
-        if (sampleLoadingFragment == null) {
-            sampleLoadingFragment = new SampleLoadingFragment();
-            getChildFragmentManager()
-                    .beginTransaction()
-                    .add(getChildFragmentContainerViewId(), sampleLoadingFragment,
-                            SampleLoadingFragment.class.getName())
-                    .commit();
-        }
     }
 }

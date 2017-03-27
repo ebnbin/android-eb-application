@@ -9,6 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <FrameLayout
+        android:id="@+id/eb_failure_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:src="@drawable/eb_fragment_refresh"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/eb_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+    <FrameLayout
         android:id="@+id/eb_child_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

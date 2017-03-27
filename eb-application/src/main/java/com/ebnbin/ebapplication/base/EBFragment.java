@@ -96,7 +96,9 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // OnCreateView.
+    // Content view.
+
+    private FrameLayout mContentViewContainerFrameLayout;
 
     /**
      * This method is overrode, a new way to initialize content view is to override {@link #overrideContentView()} and
@@ -105,41 +107,43 @@ public abstract class EBFragment extends Fragment {
      * will be used, and the return of {@link #overrideContentViewLayout()} will be ignored. After that, override
      * {@link #onInitContentView(View)} to initialize views with the given content view. If content view if
      * {@code null}, method {@link #onInitContentView(View)} will not be called. <br>
-     * If this method is overrode in subclasses, this way of initializing content view will be ignored, and methods
-     * {@link #overrideContentView()},{@link #overrideContentViewLayout()} and {@link #onInitContentView(View)} will
-     * not be called. And {@link #getChildFragmentContainerViewId()} will return {@code 0}.
+     * Root view also contains {@link #mFailureContainerFrameLayout}, {@link #mLoadingContainerFrameLayout} and
+     * {@code childFragmentContainerFrameLayout}.
      *
      * @see #overrideContentView()
      * @see #overrideContentViewLayout()
      * @see #onInitContentView(View)
-     * @see #getChildFragmentContainerViewId()
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.eb_fragment, container, false);
+        FrameLayout rootView = (FrameLayout) inflater.inflate(R.layout.eb_fragment, container, false);
 
-        FrameLayout contentViewContainerFrameLayout = (FrameLayout) rootView
-                .findViewById(R.id.eb_content_view_container);
+        initContentView(rootView, inflater, container, savedInstanceState);
+        initLoadViews(rootView, inflater, container, savedInstanceState);
+        initChildFragment(rootView, inflater, container, savedInstanceState);
 
-        mChildFragmentContainerViewId = R.id.eb_child_fragment_container;
+        return rootView;
+    }
+
+    private void initContentView(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        mContentViewContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_content_view_container);
 
         View contentView = overrideContentView();
         if (contentView == null) {
             int contentViewRes = overrideContentViewLayout();
             if (contentViewRes == 0) {
-                return null;
+                return;
             }
 
-            contentView = inflater.inflate(contentViewRes, container, false);
+            contentView = inflater.inflate(contentViewRes, rootView, false);
         }
 
-        contentViewContainerFrameLayout.addView(contentView);
+        mContentViewContainerFrameLayout.addView(contentView);
 
         onInitContentView(contentView);
-
-        return rootView;
     }
 
     /**
@@ -165,10 +169,59 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
+    // Load.
+
+    private FrameLayout mFailureContainerFrameLayout;
+    private FrameLayout mLoadingContainerFrameLayout;
+
+    private void initLoadViews(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        mFailureContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_failure_container);
+        mLoadingContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_loading_container);
+    }
+
+    /**
+     * Shows content view, hides failure view and loading view.
+     */
+    public void setLoadNone() {
+        mContentViewContainerFrameLayout.setVisibility(View.VISIBLE);
+        mFailureContainerFrameLayout.setVisibility(View.GONE);
+        mLoadingContainerFrameLayout.setVisibility(View.GONE);
+    }
+
+    /**
+     * Shows loading view, hides content view and failure view.
+     */
+    public void setLoadLoading() {
+        mContentViewContainerFrameLayout.setVisibility(View.GONE);
+        mFailureContainerFrameLayout.setVisibility(View.GONE);
+        mLoadingContainerFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Shows failure view, hides content view and loading view.
+     *
+     * @param listener
+     *         {@link View.OnClickListener} of failure view.
+     */
+    public void setLoadFailure(@Nullable View.OnClickListener listener) {
+        mContentViewContainerFrameLayout.setVisibility(View.GONE);
+        mFailureContainerFrameLayout.setVisibility(View.VISIBLE);
+        mLoadingContainerFrameLayout.setVisibility(View.GONE);
+
+        mFailureContainerFrameLayout.setOnClickListener(listener);
+    }
+
+    //*****************************************************************************************************************
     // Child fragment.
 
     @IdRes
     private int mChildFragmentContainerViewId;
+
+    private void initChildFragment(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        mChildFragmentContainerViewId = R.id.eb_child_fragment_container;
+    }
 
     /**
      * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
