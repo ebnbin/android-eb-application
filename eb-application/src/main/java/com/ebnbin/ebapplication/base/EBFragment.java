@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
+import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
 
@@ -97,26 +100,34 @@ public abstract class EBFragment extends Fragment {
 
     /**
      * This method is overrode, a new way to initialize content view is to override {@link #overrideContentView()} and
-     * returns the content view, or to override {@link #overrideContentViewRes()} and returns the resource id of
+     * returns the content view, or to override {@link #overrideContentViewLayout()} and returns the resource id of
      * content view. If both of these two methods returns valid value, the return of {@link #overrideContentView()}
-     * will be used, and the return of {@link #overrideContentViewRes()} will be ignored. After that, override
+     * will be used, and the return of {@link #overrideContentViewLayout()} will be ignored. After that, override
      * {@link #onInitContentView(View)} to initialize views with the given content view. If content view if
      * {@code null}, method {@link #onInitContentView(View)} will not be called. <br>
      * If this method is overrode in subclasses, this way of initializing content view will be ignored, and methods
-     * {@link #overrideContentView()},{@link #overrideContentViewRes()} and {@link #onInitContentView(View)} will not
-     * be called.
+     * {@link #overrideContentView()},{@link #overrideContentViewLayout()} and {@link #onInitContentView(View)} will
+     * not be called. And {@link #getChildFragmentContainerViewId()} will return {@code 0}.
      *
      * @see #overrideContentView()
-     * @see #overrideContentViewRes()
+     * @see #overrideContentViewLayout()
      * @see #onInitContentView(View)
+     * @see #getChildFragmentContainerViewId()
      */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.eb_fragment, container, false);
+
+        FrameLayout contentViewContainerFrameLayout = (FrameLayout) rootView
+                .findViewById(R.id.eb_content_view_container);
+
+        mChildFragmentContainerViewId = R.id.eb_child_fragment_container;
+
         View contentView = overrideContentView();
         if (contentView == null) {
-            int contentViewRes = overrideContentViewRes();
+            int contentViewRes = overrideContentViewLayout();
             if (contentViewRes == 0) {
                 return null;
             }
@@ -124,9 +135,11 @@ public abstract class EBFragment extends Fragment {
             contentView = inflater.inflate(contentViewRes, container, false);
         }
 
+        contentViewContainerFrameLayout.addView(contentView);
+
         onInitContentView(contentView);
 
-        return contentView;
+        return rootView;
     }
 
     /**
@@ -141,7 +154,7 @@ public abstract class EBFragment extends Fragment {
      * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
      */
     @LayoutRes
-    protected int overrideContentViewRes() {
+    protected int overrideContentViewLayout() {
         return 0;
     }
 
@@ -149,6 +162,20 @@ public abstract class EBFragment extends Fragment {
      * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
      */
     protected void onInitContentView(@NonNull View contentView) {
+    }
+
+    //*****************************************************************************************************************
+    // Child fragment.
+
+    @IdRes
+    private int mChildFragmentContainerViewId;
+
+    /**
+     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     */
+    @IdRes
+    public int getChildFragmentContainerViewId() {
+        return mChildFragmentContainerViewId;
     }
 
     //*****************************************************************************************************************
