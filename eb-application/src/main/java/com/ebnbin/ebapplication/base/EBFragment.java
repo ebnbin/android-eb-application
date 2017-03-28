@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.fragment.WebViewFragment;
 import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
 
@@ -305,5 +306,25 @@ public abstract class EBFragment extends Fragment {
      */
     private void netCancelCalls() {
         NetHelper.getInstance().cancelCalls(hashCode());
+    }
+
+    //*****************************************************************************************************************
+    // WebViewFragment.
+
+    /**
+     * Uses {@link WebViewFragment} to load a url.
+     */
+    public void webViewLoadUrl(@NonNull String url) {
+        WebViewFragment webViewFragment = (WebViewFragment) getFragmentManager()
+                .findFragmentByTag(WebViewFragment.TAG);
+        if (webViewFragment == null) {
+            webViewFragment = WebViewFragment.newInstance(url);
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, webViewFragment, WebViewFragment.TAG)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

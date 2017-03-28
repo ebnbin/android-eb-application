@@ -52,9 +52,16 @@ public class WebViewFragment extends EBFragment implements EBWebView.Listener {
     protected View overrideContentView() {
         mWebView = new EBWebView(getContext());
 
-        onInitWebView(mWebView);
-
         return mWebView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mWebView.setListener(this, this);
+
+        onInitWebView(mWebView);
     }
 
     /**
