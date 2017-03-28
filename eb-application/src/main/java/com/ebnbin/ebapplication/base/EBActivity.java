@@ -14,6 +14,7 @@ import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.fragment.WebViewFragment;
 
 /**
  * Base {@link Activity} with custom theme.
@@ -127,5 +128,19 @@ public abstract class EBActivity extends AppCompatActivity {
     @StyleRes
     protected int overrideTheme() {
         return 0;
+    }
+
+    //*****************************************************************************************************************
+    // OnBackPressed.
+
+    @Override
+    public void onBackPressed() {
+        WebViewFragment webViewFragment = (WebViewFragment) getSupportFragmentManager()
+                .findFragmentByTag(WebViewFragment.TAG);
+        if (webViewFragment != null && !webViewFragment.onBackPressed()) {
+            return;
+        }
+
+        super.onBackPressed();
     }
 }
