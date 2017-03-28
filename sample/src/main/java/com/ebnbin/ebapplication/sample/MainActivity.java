@@ -10,13 +10,13 @@ public final class MainActivity extends EBActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SampleFragment sampleFragment = (SampleFragment) getSupportFragmentManager()
-                .findFragmentByTag(SampleFragment.class.getName());
-        if (sampleFragment == null) {
-            sampleFragment = new SampleFragment();
+        SampleWebViewFragment sampleWebViewFragment = (SampleWebViewFragment) getSupportFragmentManager()
+                .findFragmentByTag(SampleWebViewFragment.class.getName());
+        if (sampleWebViewFragment == null) {
+            sampleWebViewFragment = new SampleWebViewFragment();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(android.R.id.content, sampleFragment, SampleFragment.class.getName())
+                    .replace(android.R.id.content, sampleWebViewFragment, SampleWebViewFragment.class.getName())
                     .commit();
         }
     }
