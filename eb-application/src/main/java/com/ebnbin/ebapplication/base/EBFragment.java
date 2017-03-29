@@ -320,11 +320,14 @@ public abstract class EBFragment extends Fragment {
         if (webViewFragment == null) {
             webViewFragment = WebViewFragment.newInstance(url);
 
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(android.R.id.content, webViewFragment, WebViewFragment.TAG)
-                    .addToBackStack(null)
-                    .commit();
+            EBActivity ebActivity = getEBActivity();
+            if (ebActivity != null) {
+                ebActivity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, webViewFragment, WebViewFragment.TAG)
+                        .addToBackStack(null)
+                        .commit();
+            }
         }
     }
 }

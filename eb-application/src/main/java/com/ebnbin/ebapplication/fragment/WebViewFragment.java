@@ -2,6 +2,7 @@ package com.ebnbin.ebapplication.fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -149,14 +150,23 @@ public class WebViewFragment extends EBFragment implements EBWebView.Listener {
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
+        setLoadLoading();
     }
 
     @Override
     public void onPageFinished(String url) {
+        setLoadNone();
     }
 
     @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {
+    public void onPageError(int errorCode, String description, final String failingUrl) {
+        setLoadFailure(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(failingUrl));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
