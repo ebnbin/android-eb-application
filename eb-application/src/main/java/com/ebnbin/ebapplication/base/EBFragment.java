@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -123,7 +122,6 @@ public abstract class EBFragment extends Fragment {
 
         initContentView(rootView, inflater, container, savedInstanceState);
         initLoadViews(rootView, inflater, container, savedInstanceState);
-        initChildFragment(rootView, inflater, container, savedInstanceState);
 
         return rootView;
     }
@@ -211,25 +209,6 @@ public abstract class EBFragment extends Fragment {
         mLoadingContainerFrameLayout.setVisibility(View.GONE);
 
         mFailureContainerFrameLayout.setOnClickListener(listener);
-    }
-
-    //*****************************************************************************************************************
-    // Child fragment.
-
-    @IdRes
-    private int mChildFragmentContainerViewId;
-
-    private void initChildFragment(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
-        mChildFragmentContainerViewId = R.id.eb_child_fragment_container;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    @IdRes
-    public int getChildFragmentContainerViewId() {
-        return mChildFragmentContainerViewId;
     }
 
     //*****************************************************************************************************************
