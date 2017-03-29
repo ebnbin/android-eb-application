@@ -324,7 +324,8 @@ public abstract class EBFragment extends Fragment {
             if (ebActivity != null) {
                 ebActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(android.R.id.content, webViewFragment, WebViewFragment.TAG)
+                        // TODO: Hides and reshow current fragment.
+                        .add(android.R.id.content, webViewFragment, WebViewFragment.TAG)
                         .addToBackStack(null)
                         .commit();
             }
