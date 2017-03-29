@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- actionBarSize 48dp * 2 + statusBarSize 24dp + 8dp. -->
+    <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">128dp</dimen>
+</resources>
