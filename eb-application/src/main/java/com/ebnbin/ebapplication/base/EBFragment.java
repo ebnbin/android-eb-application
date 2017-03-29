@@ -30,6 +30,8 @@ public abstract class EBFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        initLayoutInflater();
+
         initArguments();
     }
 
@@ -70,6 +72,22 @@ public abstract class EBFragment extends Fragment {
      * Handler with main {@link Looper}.
      */
     protected final Handler handler = new Handler(Looper.getMainLooper());
+
+    //*****************************************************************************************************************
+    // Layout inflater.
+
+    private LayoutInflater mLayoutInflater;
+
+    private void initLayoutInflater() {
+        mLayoutInflater = LayoutInflater.from(getContext());
+    }
+
+    /**
+     * Returns {@link LayoutInflater} of current fragment {@link Context}.
+     */
+    public LayoutInflater getLayoutInflater() {
+        return mLayoutInflater;
+    }
 
     //*****************************************************************************************************************
     // Arguments.
