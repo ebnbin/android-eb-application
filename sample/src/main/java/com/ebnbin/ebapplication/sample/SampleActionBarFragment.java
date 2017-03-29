@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ebnbin.ebapplication.base.EBActionBarFragment;
+import com.ebnbin.ebapplication.base.EBActivity;
 
 public final class SampleActionBarFragment extends EBActionBarFragment {
     @Override
@@ -21,6 +22,9 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new Adapter());
+
+        Button button = (Button) rootView.findViewById(R.id.button);
+        button.setOnClickListener(v -> webViewLoadUrl("http://ebnbin.com"));
 
         getAppbarScrollingViewContainerFrameLayout().addView(rootView);
 
@@ -36,6 +40,14 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             ((TextView) holder.itemView).setText(String.valueOf(position));
+            holder.itemView.setOnClickListener(v -> {
+                EBActivity activity = getEBActivity();
+                if (activity == null) {
+                    return;
+                }
+
+                activity.addFragment(new SampleFragment(), null);
+            });
         }
 
         @Override

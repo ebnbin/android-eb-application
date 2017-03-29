@@ -315,20 +315,12 @@ public abstract class EBFragment extends Fragment {
      * Uses {@link WebViewFragment} to load a url.
      */
     public void webViewLoadUrl(@NonNull String url) {
-        WebViewFragment webViewFragment = (WebViewFragment) getFragmentManager()
-                .findFragmentByTag(WebViewFragment.TAG);
-        if (webViewFragment == null) {
-            webViewFragment = WebViewFragment.newInstance(url);
-
-            EBActivity ebActivity = getEBActivity();
-            if (ebActivity != null) {
-                ebActivity.getSupportFragmentManager()
-                        .beginTransaction()
-                        // TODO: Hides and reshow current fragment.
-                        .add(android.R.id.content, webViewFragment, WebViewFragment.TAG)
-                        .addToBackStack(null)
-                        .commit();
-            }
+        EBActivity activity = getEBActivity();
+        if (activity == null) {
+            return;
         }
+
+        WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
+        activity.addFragment(webViewFragment, url);
     }
 }
