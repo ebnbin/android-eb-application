@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.fragment.WebViewFragment;
 
 import java.util.Arrays;
 
@@ -150,10 +149,14 @@ public abstract class EBActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        WebViewFragment webViewFragment = (WebViewFragment) getSupportFragmentManager()
-                .findFragmentByTag(WebViewFragment.TAG);
-        if (webViewFragment != null && !webViewFragment.onBackPressed()) {
-            return;
+        int size = mContentFragmentTagArraySet.size();
+        if (size > 0) {
+            String tag = mContentFragmentTagArraySet.valueAt(size - 1);
+
+            EBFragment fragment = (EBFragment) getSupportFragmentManager().findFragmentByTag(tag);
+            if (fragment != null && !fragment.onBackPressed()) {
+                return;
+            }
         }
 
         super.onBackPressed();

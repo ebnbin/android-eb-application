@@ -18,8 +18,6 @@ import com.ebnbin.ebapplication.view.EBWebView;
  * A fragment that loads a url by {@link WebView}.
  */
 public class WebViewFragment extends EBFragment implements EBWebView.Listener {
-    public static final String TAG = WebViewFragment.class.getName();
-
     //*****************************************************************************************************************
     // Arguments.
 
@@ -113,8 +111,9 @@ public class WebViewFragment extends EBFragment implements EBWebView.Listener {
     /**
      * Handles back pressed.
      */
+    @Override
     public boolean onBackPressed() {
-        return mWebView.onBackPressed();
+        return mWebView.onBackPressed() && super.onBackPressed();
     }
 
     //*****************************************************************************************************************
