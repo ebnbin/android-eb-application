@@ -40,13 +40,16 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             ((TextView) holder.itemView).setText(String.valueOf(position));
-            holder.itemView.setOnClickListener(v -> {
-                EBActivity activity = getEBActivity();
-                if (activity == null) {
-                    return;
-                }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EBActivity activity = getEBActivity();
+                    if (activity == null) {
+                        return;
+                    }
 
-                activity.addFragment(new SampleFragment(), String.valueOf(position));
+                    activity.getFragmentManagerHelper().add(new SampleFragment(), String.valueOf(position), true);
+                }
             });
         }
 

@@ -11,6 +11,6 @@ public final class MainActivity extends EBActivity {
         super.onCreate(savedInstanceState);
 
         SampleActionBarFragment sampleActionBarFragment = new SampleActionBarFragment();
-        setHomeFragment(sampleActionBarFragment);
+        getFragmentManagerHelper().add(sampleActionBarFragment, null, true);
     }
 }

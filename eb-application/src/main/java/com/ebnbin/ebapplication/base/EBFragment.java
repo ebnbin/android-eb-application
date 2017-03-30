@@ -9,9 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +19,6 @@ import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.WebViewFragment;
 import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
-
-import java.util.Arrays;
 
 import okhttp3.Call;
 
@@ -37,7 +32,7 @@ public abstract class EBFragment extends Fragment {
 
         initLayoutInflater();
 
-        initSupportFragmentManager();
+        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_root);
 
         initArguments();
     }
@@ -46,8 +41,6 @@ public abstract class EBFragment extends Fragment {
     public void onDestroy() {
 
         netCancelCalls();
-
-        disposeSupportFragmentManager();
 
         super.onDestroy();
     }
@@ -333,150 +326,33 @@ public abstract class EBFragment extends Fragment {
         }
 
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-        activity.addFragment(webViewFragment, url);
+        activity.getFragmentManagerHelper().add(webViewFragment, url, true);
     }
 
     //*****************************************************************************************************************
-    // FragmentManager.
+    // FragmentManagerHelper.
 
-    /**
-     * For invalidating child fragments that added in content container.
-     */
-    private FragmentManager.OnBackStackChangedListener mOnBackStackChangedListener
-            = new FragmentManager.OnBackStackChangedListener() {
-        @Override
-        public void onBackStackChanged() {
-            if (getChildFragmentManager().getBackStackEntryCount() == mContentFragmentTagArraySet.size()) {
-                return;
-            }
+    private FragmentManagerHelper mChildFragmentManagerHelper;
 
-            for (String tag : mContentFragmentTagArraySet) {
-                EBFragment fragment = (EBFragment) getChildFragmentManager().findFragmentByTag(tag);
-                if (fragment != null) {
-                    continue;
-                }
-
-                mContentFragmentTagArraySet.remove(tag);
-            }
-
-            invalidateFragmentsShowOrHide();
-        }
-    };
-
-    private void initSupportFragmentManager() {
-        getChildFragmentManager().addOnBackStackChangedListener(mOnBackStackChangedListener);
-    }
-
-    private void disposeSupportFragmentManager() {
-        getChildFragmentManager().removeOnBackStackChangedListener(mOnBackStackChangedListener);
-    }
-
-    //*****************************************************************************************************************
-    // Content fragments.
-
-    /**
-     * All child fragment tags that added to content container of current fragment.
-     */
-    private final ArraySet<String> mContentFragmentTagArraySet = new ArraySet<>();
-
-    /**
-     * Adds an {@link EBFragment} to content container and adds it to default back stack. If {@code tag} is exist, do
-     * nothing.
-     *
-     * @param tag
-     *         If {@code null}, {@code fragment.getClass().getName()} will be used.
-     */
-    public void addFragment(@NonNull EBFragment fragment, @Nullable String tag) {
-        String validTag = tag == null ? fragment.getClass().getName() : tag;
-
-        if (mContentFragmentTagArraySet.contains(validTag)) {
-            return;
-        }
-
-        getChildFragmentManager()
-                .beginTransaction()
-                .add(R.id.eb_root, fragment, validTag)
-                .addToBackStack(null)
-                .commit();
-
-        mContentFragmentTagArraySet.add(validTag);
-
-        invalidateFragmentsShowOrHide();
-    }
-
-    //*****************************************************************************************************************
-    // Shows and hides fragments.
-
-    /**
-     * Invalidates whether to show or to hide content fragments.
-     */
-    private void invalidateFragmentsShowOrHide() {
-        mViewContainerFrameLayout.setVisibility(mContentFragmentTagArraySet.isEmpty() ? View.VISIBLE : View.GONE);
-
-        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-
-        int size = mContentFragmentTagArraySet.size();
-        String[] tags = mContentFragmentTagArraySet.toArray(new String[]{});
-        for (int i = 0; i < tags.length - 1; i++) {
-            String tag = tags[i];
-            EBFragment fragment = (EBFragment) getChildFragmentManager().findFragmentByTag(tag);
-            if (fragment != null) {
-                ft = ft.hide(fragment);
-            }
-        }
-
-        if (size > 0) {
-            String topTag = mContentFragmentTagArraySet.valueAt(size - 1);
-            EBFragment topFragment = (EBFragment) getChildFragmentManager().findFragmentByTag(topTag);
-            if (topFragment != null) {
-                ft = ft.show(topFragment);
-            }
-        }
-
-        ft.commit();
+    public FragmentManagerHelper getChildFragmentManagerHelper() {
+        return mChildFragmentManagerHelper;
     }
 
     //*****************************************************************************************************************
     // Instance state.
 
-    private static final String STATE_CONTENT_FRAGMENT_TAGS = "content_fragment_tags";
-
-    private boolean restoreContentFragmentTags(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return false;
-        }
-
-        String[] contentFragmentTags = savedInstanceState.getStringArray(STATE_CONTENT_FRAGMENT_TAGS);
-        if (contentFragmentTags == null) {
-            return false;
-        }
-
-        mContentFragmentTagArraySet.addAll(Arrays.asList(contentFragmentTags));
-
-        return true;
-    }
-
-    private void saveContentFragmentTags(@Nullable Bundle outState) {
-        if (outState == null) {
-            return;
-        }
-
-        String[] contentFragmentTags = mContentFragmentTagArraySet.toArray(new String[]{});
-        outState.putStringArray(STATE_CONTENT_FRAGMENT_TAGS, contentFragmentTags);
-    }
-
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        restoreContentFragmentTags(savedInstanceState);
+        mChildFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        saveContentFragmentTags(outState);
+        mChildFragmentManagerHelper.onSaveInstanceState(outState);
     }
 
     //*****************************************************************************************************************
@@ -485,16 +361,26 @@ public abstract class EBFragment extends Fragment {
      * Handles back pressed.
      */
     public boolean onBackPressed() {
-        int size = mContentFragmentTagArraySet.size();
-        if (size > 0) {
-            String tag = mContentFragmentTagArraySet.valueAt(size - 1);
+        boolean childShouldPop;
+        boolean childHasPopped;
+        boolean pop;
 
-            EBFragment fragment = (EBFragment) getChildFragmentManager().findFragmentByTag(tag);
-            if (fragment != null && !fragment.onBackPressed()) {
-                return false;
+        EBFragment topFragment = mChildFragmentManagerHelper.get(-1);
+        if (topFragment != null) {
+            childShouldPop = topFragment.onBackPressed();
+            if (childShouldPop) {
+                childHasPopped = getChildFragmentManager().popBackStackImmediate();
+                pop = !childHasPopped;
+                if (childHasPopped) {
+                    mChildFragmentManagerHelper.onPop();
+                }
+            } else {
+                pop = false;
             }
+        } else {
+            pop = true;
         }
 
-        return !getChildFragmentManager().popBackStackImmediate();
+        return pop;
     }
 }

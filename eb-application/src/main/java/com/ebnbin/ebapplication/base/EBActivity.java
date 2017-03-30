@@ -11,15 +11,9 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 
-import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
-
-import java.util.Arrays;
 
 /**
  * Base {@link Activity} with custom theme.
@@ -32,13 +26,11 @@ public abstract class EBActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        initSupportFragmentManager();
+        mFragmentManagerHelper = new FragmentManagerHelper(getSupportFragmentManager(), android.R.id.content);
     }
 
     @Override
     protected void onDestroy() {
-        disposeSupportFragmentManager();
-
         super.onDestroy();
     }
 
@@ -149,219 +141,45 @@ public abstract class EBActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        int size = mContentFragmentTagArraySet.size();
-        if (size > 0) {
-            String tag = mContentFragmentTagArraySet.valueAt(size - 1);
+        boolean childShouldPop;
 
-            EBFragment fragment = (EBFragment) getSupportFragmentManager().findFragmentByTag(tag);
-            if (fragment != null && !fragment.onBackPressed()) {
+        EBFragment topFragment = mFragmentManagerHelper.get(-1);
+        if (topFragment != null) {
+            childShouldPop = topFragment.onBackPressed();
+            if (childShouldPop) {
+                mFragmentManagerHelper.onPop();
+            } else {
                 return;
             }
         }
 
+        // Pops.
         super.onBackPressed();
     }
 
     //*****************************************************************************************************************
-    // FragmentManager.
+    // FragmentManagerHelper.
 
-    /**
-     * For invalidating fragments that added in container {@link android.R.id#content}.
-     */
-    private FragmentManager.OnBackStackChangedListener mOnBackStackChangedListener
-            = new FragmentManager.OnBackStackChangedListener() {
-        @Override
-        public void onBackStackChanged() {
-            if (getSupportFragmentManager().getBackStackEntryCount() == mContentFragmentTagArraySet.size()) {
-                return;
-            }
+    private FragmentManagerHelper mFragmentManagerHelper;
 
-            for (String tag : mContentFragmentTagArraySet) {
-                EBFragment fragment = (EBFragment) getSupportFragmentManager().findFragmentByTag(tag);
-                if (fragment != null) {
-                    continue;
-                }
-
-                mContentFragmentTagArraySet.remove(tag);
-            }
-
-            invalidateFragmentsShowOrHide();
-        }
-    };
-
-    private void initSupportFragmentManager() {
-        getSupportFragmentManager().addOnBackStackChangedListener(mOnBackStackChangedListener);
-    }
-
-    private void disposeSupportFragmentManager() {
-        getSupportFragmentManager().removeOnBackStackChangedListener(mOnBackStackChangedListener);
-    }
-
-    //*****************************************************************************************************************
-    // Home fragment.
-
-    /**
-     * Tag for home fragment.
-     */
-    private static final String FRAGMENT_TAG_HOME = "home";
-
-    /**
-     * Root fragment added in container {@link android.R.id#content}.
-     */
-    @Nullable
-    public EBFragment getHomeFragment() {
-        return (EBFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_HOME);
-    }
-
-    /**
-     * Sets the home {@link EBFragment} to container {@link android.R.id#content}. If exists, do nothing.
-     */
-    public void setHomeFragment(@NonNull EBFragment fragment) {
-        EBFragment homeFragment = getHomeFragment();
-        if (homeFragment != null) {
-            return;
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, fragment, FRAGMENT_TAG_HOME)
-                .commit();
-
-        invalidateFragmentsShowOrHide();
-    }
-
-    /**
-     * Removes the home {@link EBFragment} in container {@link android.R.id#content}.
-     */
-    public void removeHomeFragment() {
-        EBFragment homeFragment = getHomeFragment();
-        if (homeFragment == null) {
-            return;
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .remove(homeFragment)
-                .commit();
-
-        invalidateFragmentsShowOrHide();
-    }
-
-    //*****************************************************************************************************************
-    // Content fragments.
-
-    /**
-     * All fragment tags that added to container {@link android.R.id#content} of current activity, except home
-     * fragment.
-     */
-    private final ArraySet<String> mContentFragmentTagArraySet = new ArraySet<>();
-
-    /**
-     * Adds an {@link EBFragment} to container {@link android.R.id#content} and adds it to default back stack. If
-     * {@code tag} is exist, do nothing.
-     *
-     * @param tag
-     *         If {@code null}, {@code fragment.getClass().getName()} will be used.
-     */
-    public void addFragment(@NonNull EBFragment fragment, @Nullable String tag) {
-        String validTag = tag == null ? fragment.getClass().getName() : tag;
-
-        if (FRAGMENT_TAG_HOME.equals(validTag)) {
-            throw new EBRuntimeException();
-        }
-
-        if (mContentFragmentTagArraySet.contains(validTag)) {
-            return;
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, fragment, validTag)
-                .addToBackStack(null)
-                .commit();
-
-        mContentFragmentTagArraySet.add(validTag);
-
-        invalidateFragmentsShowOrHide();
-    }
-
-    //*****************************************************************************************************************
-    // Shows and hides fragments.
-
-    /**
-     * Invalidates whether to show or to hide home fragment and content fragments.
-     */
-    private void invalidateFragmentsShowOrHide() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-        EBFragment homeFragment = getHomeFragment();
-        if (homeFragment != null) {
-            if (mContentFragmentTagArraySet.isEmpty()) {
-                ft = ft.show(homeFragment);
-            } else {
-                ft = ft.hide(homeFragment);
-            }
-        }
-
-        int size = mContentFragmentTagArraySet.size();
-        if (size > 0) {
-            String topTag = mContentFragmentTagArraySet.valueAt(size - 1);
-            EBFragment topFragment = (EBFragment) getSupportFragmentManager().findFragmentByTag(topTag);
-            if (topFragment != null) {
-                ft = ft.show(topFragment);
-            }
-        }
-        if (size > 1) {
-            String secondTopTag = mContentFragmentTagArraySet.valueAt(size - 2);
-            EBFragment secondTopFragment = (EBFragment) getSupportFragmentManager().findFragmentByTag(secondTopTag);
-            if (secondTopFragment != null) {
-                ft = ft.hide(secondTopFragment);
-            }
-        }
-
-        ft.commit();
+    public FragmentManagerHelper getFragmentManagerHelper() {
+        return mFragmentManagerHelper;
     }
 
     //*****************************************************************************************************************
     // Instance state.
 
-    private static final String STATE_CONTENT_FRAGMENT_TAGS = "content_fragment_tags";
-
-    private boolean restoreContentFragmentTags(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return false;
-        }
-
-        String[] contentFragmentTags = savedInstanceState.getStringArray(STATE_CONTENT_FRAGMENT_TAGS);
-        if (contentFragmentTags == null) {
-            return false;
-        }
-
-        mContentFragmentTagArraySet.addAll(Arrays.asList(contentFragmentTags));
-
-        return true;
-    }
-
-    private void saveContentFragmentTags(@Nullable Bundle outState) {
-        if (outState == null) {
-            return;
-        }
-
-        String[] contentFragmentTags = mContentFragmentTagArraySet.toArray(new String[]{});
-        outState.putStringArray(STATE_CONTENT_FRAGMENT_TAGS, contentFragmentTags);
-    }
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        restoreContentFragmentTags(savedInstanceState);
+        mFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        saveContentFragmentTags(outState);
+        mFragmentManagerHelper.onSaveInstanceState(outState);
     }
 }

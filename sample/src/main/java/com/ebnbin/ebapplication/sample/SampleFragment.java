@@ -16,6 +16,7 @@ public final class SampleFragment extends EBFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        getChildFragmentManagerHelper().add(new SampleFragment2(), String.valueOf(hashCode() - 1), true);
         netGetUrl();
     }
 
@@ -49,12 +50,19 @@ public final class SampleFragment extends EBFragment {
     protected void onInitContentView(@NonNull View contentView) {
         super.onInitContentView(contentView);
 
-        ((TextView) contentView).setText(String.valueOf(hashCode()));
+        contentView.setAlpha(0.5f);
 
-        contentView.setOnClickListener(v -> {
-            addFragment(new SampleFragment(), String.valueOf(hashCode()));
-            // TODO:
-            addFragment(new SampleFragment(), String.valueOf(hashCode() + 1));
+        int hashCode = hashCode();
+        ((TextView) contentView).setText(getTag());
+
+        contentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode), true);
+                // TODO:
+                getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode + 1), true);
+//                getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode + 2), true);
+            }
         });
     }
 }
