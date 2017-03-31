@@ -143,18 +143,18 @@ public abstract class EBActivity extends AppCompatActivity {
     public void onBackPressed() {
         boolean childShouldPop;
 
-        EBFragment topFragment = mFragmentManagerHelper.get(-1);
+        EBFragment topFragment = mFragmentManagerHelper.top();
         if (topFragment != null) {
             childShouldPop = topFragment.onBackPressed();
-            if (childShouldPop) {
-                mFragmentManagerHelper.onPop();
-            } else {
+            if (!childShouldPop) {
                 return;
             }
         }
 
         // Pops.
         super.onBackPressed();
+
+        mFragmentManagerHelper.onBackPressed();
     }
 
     //*****************************************************************************************************************

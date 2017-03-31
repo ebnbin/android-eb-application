@@ -326,7 +326,7 @@ public abstract class EBFragment extends Fragment {
         }
 
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-        activity.getFragmentManagerHelper().add(webViewFragment, url, true);
+        activity.getFragmentManagerHelper().add(webViewFragment, url, true, true);
     }
 
     //*****************************************************************************************************************
@@ -365,21 +365,20 @@ public abstract class EBFragment extends Fragment {
         boolean childHasPopped;
         boolean pop;
 
-        EBFragment topFragment = mChildFragmentManagerHelper.get(-1);
+        EBFragment topFragment = mChildFragmentManagerHelper.top();
         if (topFragment != null) {
             childShouldPop = topFragment.onBackPressed();
             if (childShouldPop) {
                 childHasPopped = getChildFragmentManager().popBackStackImmediate();
                 pop = !childHasPopped;
-                if (childHasPopped) {
-                    mChildFragmentManagerHelper.onPop();
-                }
             } else {
                 pop = false;
             }
         } else {
             pop = true;
         }
+
+        mChildFragmentManagerHelper.onBackPressed();
 
         return pop;
     }

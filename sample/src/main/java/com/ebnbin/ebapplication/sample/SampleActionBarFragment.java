@@ -48,7 +48,8 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
                         return;
                     }
 
-                    activity.getFragmentManagerHelper().add(new SampleFragment(), String.valueOf(position), true);
+                    activity.getFragmentManagerHelper().add(new SampleFragment(), String.valueOf(position), true,
+                            true);
                 }
             });
         }
