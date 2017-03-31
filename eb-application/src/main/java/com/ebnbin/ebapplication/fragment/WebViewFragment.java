@@ -12,12 +12,13 @@ import android.webkit.WebView;
 import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.eb.util.Util;
 import com.ebnbin.ebapplication.base.EBFragment;
-import com.ebnbin.ebapplication.view.EBWebView;
+
+import im.delight.android.webview.AdvancedWebView;
 
 /**
  * A fragment that loads a url by {@link WebView}.
  */
-public class WebViewFragment extends EBFragment implements EBWebView.Listener {
+public class WebViewFragment extends EBFragment implements AdvancedWebView.Listener {
     //*****************************************************************************************************************
     // Arguments.
 
@@ -44,12 +45,12 @@ public class WebViewFragment extends EBFragment implements EBWebView.Listener {
 
     //*****************************************************************************************************************
 
-    private EBWebView mWebView;
+    private AdvancedWebView mWebView;
 
     @Nullable
     @Override
     protected View overrideContentView() {
-        mWebView = new EBWebView(getContext());
+        mWebView = new AdvancedWebView(getContext());
 
         return mWebView;
     }
@@ -64,13 +65,13 @@ public class WebViewFragment extends EBFragment implements EBWebView.Listener {
     }
 
     /**
-     * Overrides this method to set up {@link EBWebView}.
+     * Overrides this method to set up {@link AdvancedWebView}.
      */
-    protected void onInitWebView(@NonNull EBWebView webView) {
+    protected void onInitWebView(@NonNull AdvancedWebView webView) {
     }
 
     @NonNull
-    public EBWebView getWebView() {
+    public AdvancedWebView getWebView() {
         if (mWebView == null) {
             throw new EBRuntimeException();
         }

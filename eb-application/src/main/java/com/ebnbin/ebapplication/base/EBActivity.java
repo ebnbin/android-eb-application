@@ -26,7 +26,7 @@ public abstract class EBActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        mFragmentManagerHelper = new FragmentManagerHelper(getSupportFragmentManager(), android.R.id.content);
+        mFragmentManagerHelper = new FragmentManagerHelper(getFragmentManager(), android.R.id.content);
     }
 
     @Override

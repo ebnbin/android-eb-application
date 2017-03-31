@@ -27,7 +27,6 @@ public final class SampleFragment extends EBFragment {
             public void onSuccess(@NonNull SampleModel model) {
                 super.onSuccess(model);
 
-                // TODO: Null when callback.
                 Toast.makeText(getContext(), model.toJson(), Toast.LENGTH_SHORT).show();
             }
 
