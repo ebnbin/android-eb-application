@@ -5,7 +5,7 @@ import android.graphics.Rect;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Px;
-import android.support.v4.util.ArrayMap;
+import android.util.ArrayMap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

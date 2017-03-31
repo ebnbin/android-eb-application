@@ -59,8 +59,13 @@ public final class SampleFragment extends EBFragment {
             public void onClick(View v) {
                 getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode), true, true);
                 // TODO:
-                getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode + 1), true, true);
-//                getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode + 2), true, true);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode + 1), true,
+                                true);
+                    }
+                });
             }
         });
     }

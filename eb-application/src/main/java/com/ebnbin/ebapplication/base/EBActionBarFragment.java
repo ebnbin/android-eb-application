@@ -1,5 +1,6 @@
 package com.ebnbin.ebapplication.base;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,9 +9,8 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.app.ActionBar;
+import android.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -21,6 +21,7 @@ import com.ebnbin.ebapplication.R;
  * This fragment uses {@link CoordinatorLayout}, {@link AppBarLayout}, {@link CollapsingToolbarLayout} and
  * {@link Toolbar} to custom {@link ActionBar}.
  */
+@Deprecated
 public abstract class EBActionBarFragment extends EBFragment {
     @Override
     protected int overrideContentViewLayout() {
@@ -82,9 +83,9 @@ public abstract class EBActionBarFragment extends EBFragment {
 
         setAppBarLayoutCanDrag(false);
 
-        AppCompatActivity appCompatActivity = getAppCompatActivity();
-        if (appCompatActivity != null) {
-            appCompatActivity.setSupportActionBar(mToolbar);
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.setActionBar(mToolbar);
         }
     }
 

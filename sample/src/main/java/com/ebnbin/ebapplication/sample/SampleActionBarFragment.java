@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.ebnbin.ebapplication.base.EBActionBarFragment;
 import com.ebnbin.ebapplication.base.EBActivity;
 
+@Deprecated
 public final class SampleActionBarFragment extends EBActionBarFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

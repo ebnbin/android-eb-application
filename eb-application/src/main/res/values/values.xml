@@ -4,19 +4,19 @@
     <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">144dp</dimen>
 
     <!-- Base light theme. -->
-    <style name="EBLightTheme" parent="Theme.Design.Light.NoActionBar">
+    <style name="EBLightTheme" parent="android:Theme.Material.Light">
         <item name="android:windowBackground">@color/eb_light_window_background</item>
-        <item name="colorPrimary">@color/eb_light_primary</item>
-        <item name="colorPrimaryDark">@color/eb_light_primary_dark</item>
-        <item name="colorAccent">@color/eb_light_accent</item>
+        <item name="android:colorPrimary">@color/eb_light_primary</item>
+        <item name="android:colorPrimaryDark">@color/eb_light_primary_dark</item>
+        <item name="android:colorAccent">@color/eb_light_accent</item>
         <item name="ebColorHint">@color/eb_light_hint</item>
     </style>
     <!-- Base dark theme. -->
-    <style name="EBDarkTheme" parent="Theme.Design.NoActionBar">
+    <style name="EBDarkTheme" parent="android:Theme.Material">
         <item name="android:windowBackground">@color/eb_dark_window_background</item>
-        <item name="colorPrimary">@color/eb_dark_primary</item>
-        <item name="colorPrimaryDark">@color/eb_dark_primary_dark</item>
-        <item name="colorAccent">@color/eb_dark_accent</item>
+        <item name="android:colorPrimary">@color/eb_dark_primary</item>
+        <item name="android:colorPrimaryDark">@color/eb_dark_primary_dark</item>
+        <item name="android:colorAccent">@color/eb_dark_accent</item>
         <item name="ebColorHint">@color/eb_dark_hint</item>
     </style>
 </resources>

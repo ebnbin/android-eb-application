@@ -11,14 +11,13 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
-import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
 
 /**
  * Base {@link Activity} with custom theme.
  */
-public abstract class EBActivity extends AppCompatActivity {
+public abstract class EBActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initTaskDescription();
@@ -54,16 +53,6 @@ public abstract class EBActivity extends AppCompatActivity {
      */
     @NonNull
     public final Activity getActivity() {
-        return this;
-    }
-
-    /**
-     * Returns current instance as an {@link AppCompatActivity}.
-     *
-     * @return Current instance.
-     */
-    @NonNull
-    public final AppCompatActivity getAppCompatActivity() {
         return this;
     }
 
