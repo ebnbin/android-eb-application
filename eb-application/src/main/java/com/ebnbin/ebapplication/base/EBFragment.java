@@ -38,11 +38,10 @@ public abstract class EBFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-
+    public void onDestroyView() {
         netCancelCalls();
 
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     //*****************************************************************************************************************

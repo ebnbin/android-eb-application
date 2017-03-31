@@ -88,48 +88,56 @@ public final class NetHelper {
      *
      * @return Current {@link Call}.
      */
-    public <Model extends EBModel> Call get(@NonNull Object tag, @NonNull String url,
+    public <Model extends EBModel> Call get(@NonNull final Object tag, @NonNull String url,
             @NonNull final NetCallback<Model> callback) {
         callback.onLoading();
 
         Request request = new Request.Builder().tag(tag).url(url).build();
 
-        Call call = mOkHttpClient.newCall(request);
+        final Call call = mOkHttpClient.newCall(request);
         addCall(call);
 
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(final Call call, IOException e) {
                 if (call.isCanceled()) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onCancel();
+                            if (canPost()) {
+                                callback.onCancel();
+                            }
+
+                            removeCall(call);
                         }
                     });
 
                     return;
                 }
 
-                removeCall(call);
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onFailure();
+                        if (canPost()) {
+                            callback.onFailure();
+                        }
+
+                        removeCall(call);
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                removeCall(call);
-
+            public void onResponse(final Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onFailure();
+                            if (canPost()) {
+                                callback.onFailure();
+                            }
+
+                            removeCall(call);
                         }
                     });
 
@@ -150,7 +158,11 @@ public final class NetHelper {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onFailure();
+                            if (canPost()) {
+                                callback.onFailure();
+                            }
+
+                            removeCall(call);
                         }
                     });
 
@@ -161,7 +173,11 @@ public final class NetHelper {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onFailure();
+                            if (canPost()) {
+                                callback.onFailure();
+                            }
+
+                            removeCall(call);
                         }
                     });
 
@@ -171,9 +187,18 @@ public final class NetHelper {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onSuccess(model);
+                        if (canPost()) {
+                            callback.onSuccess(model);
+                        }
+
+                        removeCall(call);
                     }
                 });
+            }
+
+            private boolean canPost() {
+                List<Call> calls = mCallsMap.get(tag);
+                return calls != null && calls.contains(call);
             }
         });
 
