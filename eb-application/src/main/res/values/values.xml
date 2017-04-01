@@ -1,22 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
+    <!-- ActionBar icons. -->
+    <attr name="ebColorIcon" format="color"/>
+    <!-- Placeholders. -->
+    <attr name="ebColorPlaceholder" format="color"/>
+
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
     <!-- actionBarSize 56dp * 2 + statusBarSize 24dp + 8dp. -->
     <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">144dp</dimen>
 
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
+    <!-- Base colors. -->
+    <eat-comment/>
+    <color name="transparent">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+
+    <!-- Material palettes. -->
+    <eat-comment/>
+    <color name="material_pink_a100">#ff80ab</color>
+    <color name="material_pink_a200">#ff4081</color>
+    <color name="material_cyan_500">#00bcd4</color>
+    <color name="material_cyan_700">#0097a7</color>
+    <color name="material_cyan_900">#006064</color>
+    <color name="material_blue_gray_50">#eceff1</color>
+    <color name="material_blue_gray_900">#263238</color>
+
+    <!-- Colors with alpha. -->
+    <eat-comment/>
+    <color name="black_38">#61000000</color>
+    <color name="black_54">#8a000000</color>
+    <color name="white_50">#80ffffff</color>
+    <color name="material_blue_gray_50_20">#33eceff1</color>
+    <color name="material_blue_gray_900_20">#33263238</color>
+
+    <!-- Window background. -->
+    <eat-comment/>
+    <color name="eb_window_background_light">@color/material_blue_gray_50</color>
+    <color name="eb_window_background_dark">@color/material_blue_gray_900</color>
+
+    <!-- Primary. -->
+    <eat-comment/>
+    <color name="eb_primary_light">@color/material_cyan_500</color>
+    <color name="eb_primary_dark">@color/material_cyan_700</color>
+
+    <!-- Darker secondary. -->
+    <eat-comment/>
+    <color name="eb_primary_dark_light">@color/material_cyan_700</color>
+    <color name="eb_primary_dark_dark">@color/material_cyan_900</color>
+
+    <!-- Accent. -->
+    <eat-comment/>
+    <color name="eb_accent_light">@color/material_pink_a200</color>
+    <color name="eb_accent_dark">@color/material_pink_a100</color>
+
+    <!-- ActionBar icons in normal state. -->
+    <eat-comment/>
+    <color name="eb_icon_normal_light">@color/black_54</color>
+    <color name="eb_icon_normal_dark">@color/white</color>
+
+    <!-- ActionBar icons in disabled state. -->
+    <eat-comment/>
+    <color name="eb_icon_disabled_light">@color/black_38</color>
+    <color name="eb_icon_disabled_dark">@color/white_50</color>
+
+    <!-- Placeholders. -->
+    <eat-comment/>
+    <color name="eb_placeholder_light">@color/material_blue_gray_900_20</color>
+    <color name="eb_placeholder_dark">@color/material_blue_gray_50_20</color>
+
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
+    <!-- Base application theme. -->
+    <style name="EBAppTheme" parent="android:Theme.Material.NoActionBar.TranslucentDecor">
+        <item name="android:windowBackground">@drawable/eb_app_window_background</item>
+        <item name="android:colorPrimary">@color/eb_primary_light</item>
+        <item name="android:colorPrimaryDark">@color/eb_primary_dark_light</item>
+        <item name="android:colorAccent">@color/eb_accent_light</item>
+        <item name="ebColorIcon">@color/eb_icon_dark</item>
+        <item name="ebColorPlaceholder">@color/eb_placeholder_dark</item>
+    </style>
+
     <!-- Base light theme. -->
     <style name="EBLightTheme" parent="android:Theme.Material.Light">
-        <item name="android:windowBackground">@color/eb_light_window_background</item>
-        <item name="android:colorPrimary">@color/eb_light_primary</item>
-        <item name="android:colorPrimaryDark">@color/eb_light_primary_dark</item>
-        <item name="android:colorAccent">@color/eb_light_accent</item>
-        <item name="ebColorHint">@color/eb_light_hint</item>
+        <item name="android:windowBackground">@color/eb_window_background_light</item>
+        <item name="android:colorPrimary">@color/eb_primary_light</item>
+        <item name="android:colorPrimaryDark">@color/eb_primary_dark_light</item>
+        <item name="android:colorAccent">@color/eb_accent_light</item>
+        <item name="ebColorIcon">@color/eb_icon_light</item>
+        <item name="ebColorPlaceholder">@color/eb_placeholder_light</item>
     </style>
     <!-- Base dark theme. -->
     <style name="EBDarkTheme" parent="android:Theme.Material">
-        <item name="android:windowBackground">@color/eb_dark_window_background</item>
-        <item name="android:colorPrimary">@color/eb_dark_primary</item>
-        <item name="android:colorPrimaryDark">@color/eb_dark_primary_dark</item>
-        <item name="android:colorAccent">@color/eb_dark_accent</item>
-        <item name="ebColorHint">@color/eb_dark_hint</item>
+        <item name="android:windowBackground">@color/eb_window_background_dark</item>
+        <item name="android:colorPrimary">@color/eb_primary_dark</item>
+        <item name="android:colorPrimaryDark">@color/eb_primary_dark_dark</item>
+        <item name="android:colorAccent">@color/eb_accent_dark</item>
+        <item name="ebColorIcon">@color/eb_icon_dark</item>
+        <item name="ebColorPlaceholder">@color/eb_placeholder_dark</item>
     </style>
 </resources>
