@@ -3,4 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ebnbin.ebapplication">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:icon="@mipmap/eb_icon"
+        android:theme="@style/EBAppTheme"/>
 </manifest>
