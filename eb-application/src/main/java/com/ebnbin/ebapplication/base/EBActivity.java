@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 
-import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
 
 /**
@@ -21,8 +20,8 @@ import com.ebnbin.ebapplication.R;
 public abstract class EBActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initTaskDescription();
         initTheme();
+        initTaskDescription();
 
         super.onCreate(savedInstanceState);
 
@@ -83,7 +82,7 @@ public abstract class EBActivity extends Activity {
      */
     private void initTaskDescription() {
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.eb_logo);
-        int colorPrimary = EBUtil.getColor(getContext(), R.attr.ebColorIcon);
+        int colorPrimary = getColor(R.color.eb_primary_light);
         ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, icon,
                 colorPrimary);
         setTaskDescription(taskDescription);
