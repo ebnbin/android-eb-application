@@ -36,8 +36,8 @@ ext {
     developerName = 'Ebn Zhang'
     developerEmail = 'ebnbin@gmail.com'
 
-    libraryVersion = '0.1.5'
-    libraryVersionCode = 16
+    libraryVersion = '0.1.6'
+    libraryVersionCode = 17
 
     bintrayRepo = 'maven'
     bintrayName = 'eb-application'
