@@ -4,12 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ebnbin.ebapplication.base.EBFragment;
-import com.ebnbin.ebapplication.net.NetCallback;
+import com.ebnbin.ebapplication.fragment.WebViewFragment;
 
 public final class SampleFragment extends EBFragment {
     @Override
@@ -17,32 +14,15 @@ public final class SampleFragment extends EBFragment {
         super.onViewCreated(view, savedInstanceState);
 
         getChildFragmentManagerHelper().add(new SampleFragment2(), String.valueOf(hashCode() - 1), true, false);
-        netGetUrl();
-    }
 
-    private void netGetUrl() {
-        String url = "http://gank.io/api/data/all/100/1";
-        netGet(url, new NetCallback<SampleModel>() {
-            @Override
-            public void onSuccess(@NonNull SampleModel model) {
-                super.onSuccess(model);
-
-                Toast.makeText(getContext(), model.toJson(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure() {
-                super.onFailure();
-
-                Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
-            }
-        });
+        WebViewFragment webViewFragment = WebViewFragment.newInstance("http://ebnbin.com");
+        getChildFragmentManagerHelper().add(webViewFragment, null, true, true);
     }
 
     @Nullable
     @Override
     protected View overrideContentView() {
-        return new Button(getContext());
+        return new View(getContext());
     }
 
     @Override
@@ -50,13 +30,10 @@ public final class SampleFragment extends EBFragment {
         super.onInitContentView(contentView);
 
         contentView.setAlpha(0.5f);
-
-        int hashCode = hashCode();
-        ((TextView) contentView).setText(getTag());
-
         contentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int hashCode = hashCode();
                 getChildFragmentManagerHelper().add(new SampleFragment(), String.valueOf(hashCode), true, true);
                 // TODO:
                 handler.post(new Runnable() {

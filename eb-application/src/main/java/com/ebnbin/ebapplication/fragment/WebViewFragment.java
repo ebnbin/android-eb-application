@@ -1,5 +1,6 @@
 package com.ebnbin.ebapplication.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -7,10 +8,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
 import com.ebnbin.eb.base.EBRuntimeException;
+import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.base.EBFragment;
 
 import im.delight.android.webview.AdvancedWebView;
@@ -77,6 +82,35 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         }
 
         return mWebView;
+    }
+    //*****************************************************************************************************************
+    // Options menu.
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.eb_web_view_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.eb_open_in_browser) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrl));
+            startActivity(intent);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     //*****************************************************************************************************************
@@ -159,12 +193,11 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     }
 
     @Override
-    public void onPageError(int errorCode, String description, final String failingUrl) {
+    public void onPageError(int errorCode, String description, String failingUrl) {
         setLoadFailure(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(failingUrl));
-                startActivity(intent);
+                mWebView.loadUrl(mUrl);
             }
         });
     }

@@ -79,6 +79,11 @@
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
 
+    <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
+
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
     <!-- Base application theme. -->
     <style name="EBAppTheme" parent="android:Theme.Material.NoActionBar.TranslucentDecor">
         <item name="android:windowBackground">@drawable/eb_app_window_background</item>
