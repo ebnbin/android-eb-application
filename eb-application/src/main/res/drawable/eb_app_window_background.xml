@@ -5,10 +5,10 @@
         <color android:color="@color/eb_window_background_dark"/>
     </item>
     <item
-        android:width="128dp"
-        android:height="128dp"
+        android:width="256dp"
+        android:height="256dp"
         android:gravity="center">
         <bitmap
-            android:src="@drawable/eb_icon"/>
+            android:src="@drawable/eb_icon_256dp"/>
     </item>
 </layer-list>

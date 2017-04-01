@@ -6,11 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebView;
 
 import com.ebnbin.eb.base.EBRuntimeException;
-import com.ebnbin.eb.util.Util;
 import com.ebnbin.ebapplication.base.EBFragment;
 
 import im.delight.android.webview.AdvancedWebView;
@@ -125,7 +125,7 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         super.onViewStateRestored(savedInstanceState);
 
         if (savedInstanceState == null) {
-            if (!Util.isEmpty(mUrl)) {
+            if (!TextUtils.isEmpty(mUrl)) {
                 mWebView.loadUrl(mUrl);
             }
 
