@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ebnbin.ebapplication.sample">
     <application
-        android:name=".EBApplicationSampleApplication"
+        android:name=".SampleApplication"
         android:label="EB Application Sample">
         <activity
             android:name=".MainActivity">
