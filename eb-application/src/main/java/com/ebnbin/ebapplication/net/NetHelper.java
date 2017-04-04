@@ -89,13 +89,13 @@ public final class NetHelper {
      * @return Current {@link Call}.
      */
     public <Model extends EBModel> Call get(@NonNull final Object tag, @NonNull String url,
-            @NonNull final NetCallback<Model> callback) {
-        callback.onCallLoading();
-
+            @NonNull final NetModelCallback<Model> callback) {
         Request request = new Request.Builder().tag(tag).url(url).build();
 
         final Call call = mOkHttpClient.newCall(request);
         addCall(call);
+
+        callback.onLoadingCallback(call);
 
         call.enqueue(new Callback() {
             @Override
@@ -104,7 +104,7 @@ public final class NetHelper {
                     @Override
                     public void run() {
                         if (canPost()) {
-                            callback.onCallFailure();
+                            callback.onFailureCallback(call);
                         }
 
                         removeCall(call);
@@ -119,7 +119,7 @@ public final class NetHelper {
                         @Override
                         public void run() {
                             if (canPost()) {
-                                callback.onCallFailure();
+                                callback.onFailureCallback(call);
                             }
 
                             removeCall(call);
@@ -144,7 +144,7 @@ public final class NetHelper {
                         @Override
                         public void run() {
                             if (canPost()) {
-                                callback.onCallFailure();
+                                callback.onFailureCallback(call);
                             }
 
                             removeCall(call);
@@ -159,7 +159,7 @@ public final class NetHelper {
                         @Override
                         public void run() {
                             if (canPost()) {
-                                callback.onCallFailure();
+                                callback.onFailureCallback(call);
                             }
 
                             removeCall(call);
@@ -173,7 +173,7 @@ public final class NetHelper {
                     @Override
                     public void run() {
                         if (canPost()) {
-                            callback.onCallSuccess(model);
+                            callback.onSuccessCallback(call, model);
                         }
 
                         removeCall(call);

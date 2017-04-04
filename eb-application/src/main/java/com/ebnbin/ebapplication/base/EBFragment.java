@@ -17,8 +17,8 @@ import android.widget.FrameLayout;
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.WebViewFragment;
 import com.ebnbin.ebapplication.model.EBModel;
-import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
+import com.ebnbin.ebapplication.net.NetModelCallback;
 
 import okhttp3.Call;
 
@@ -243,25 +243,25 @@ public abstract class EBFragment extends Fragment {
      * @return Current {@link Call}.
      */
     protected final <Model extends EBModel> Call netGet(@NonNull final String url,
-            @NonNull final NetCallback<Model> callback) {
-        final NetCallback<Model> loadCallback = new NetCallback<Model>() {
+            @NonNull final NetModelCallback<Model> callback) {
+        final NetModelCallback<Model> loadCallback = new NetModelCallback<Model>() {
             @Override
-            public void onLoading() {
-                super.onLoading();
+            public void onLoading(@NonNull Call call) {
+                super.onLoading(call);
 
                 setLoadLoading();
             }
 
             @Override
-            public void onSuccess(@NonNull Model model) {
-                super.onSuccess(model);
+            public void onSuccess(@NonNull Call call, @NonNull Model model) {
+                super.onSuccess(call, model);
 
                 setLoadNone();
             }
 
             @Override
-            public void onFailure() {
-                super.onFailure();
+            public void onFailure(@NonNull Call call) {
+                super.onFailure(call);
 
                 setLoadFailure(new View.OnClickListener() {
                     @Override
@@ -272,7 +272,7 @@ public abstract class EBFragment extends Fragment {
 
             }
         };
-        callback.preNetCallbacks.add(loadCallback);
+        callback.preCallbacks.add(loadCallback);
 
         return NetHelper.getInstance().get(hashCode(), url, callback);
     }
