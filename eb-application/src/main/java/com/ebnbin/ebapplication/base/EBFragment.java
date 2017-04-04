@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.WebViewFragment;
+import com.ebnbin.ebapplication.model.EBModel;
 import com.ebnbin.ebapplication.net.NetCallback;
 import com.ebnbin.ebapplication.net.NetHelper;
 

@@ -7,7 +7,7 @@ import android.support.v4.util.ArrayMap;
 
 import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.base.EBApplication;
-import com.ebnbin.ebapplication.base.EBModel;
+import com.ebnbin.ebapplication.model.EBModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 

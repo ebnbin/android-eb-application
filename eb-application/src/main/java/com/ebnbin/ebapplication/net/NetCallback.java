@@ -2,7 +2,7 @@ package com.ebnbin.ebapplication.net;
 
 import android.support.annotation.NonNull;
 
-import com.ebnbin.ebapplication.base.EBModel;
+import com.ebnbin.ebapplication.model.EBModel;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

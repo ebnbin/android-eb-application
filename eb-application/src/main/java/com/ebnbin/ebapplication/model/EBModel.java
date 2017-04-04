@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.base;
+package com.ebnbin.ebapplication.model;
 
 import android.support.annotation.NonNull;
 
@@ -11,9 +11,7 @@ import java.io.Serializable;
  */
 public abstract class EBModel implements Serializable {
     /**
-     * Returns whether data is valid.
-     *
-     * @return {@code True} if data is valid.
+     * Implements this method to check and return whether data of current model is valid.
      */
     public abstract boolean isValid();
 
