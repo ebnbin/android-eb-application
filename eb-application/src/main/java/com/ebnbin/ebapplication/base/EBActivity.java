@@ -5,9 +5,16 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -81,12 +88,37 @@ public abstract class EBActivity extends Activity {
      * Initializes {@link ActivityManager.TaskDescription}.
      */
     private void initTaskDescription() {
-        // TODO: Vector.
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.eb);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eb);
+        Bitmap icon = tintBitmap(bitmap, Color.WHITE);
         int colorPrimary = getColor(R.color.eb_primary_light);
         ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, icon,
                 colorPrimary);
         setTaskDescription(taskDescription);
+    }
+
+    // TODO: Moves to library.
+    /**
+     * Tints a {@link Bitmap} with the given color.
+     *
+     * @return Result {@link Bitmap}.
+     */
+    @NonNull
+    private static Bitmap tintBitmap(@NonNull Bitmap bitmap, @ColorInt int tintColor) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap resultBitmap = Bitmap.createBitmap(width, height, config);
+
+        Canvas canvas = new Canvas(resultBitmap);
+
+        Paint paint = new Paint();
+
+        ColorFilter filter = new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN);
+        paint.setColorFilter(filter);
+
+        canvas.drawBitmap(bitmap, 0f, 0f, paint);
+
+        return resultBitmap;
     }
 
     //*****************************************************************************************************************
