@@ -1,11 +1,11 @@
-package com.ebnbin.ebapplication.base;
+package com.ebnbin.ebapplication.context;
 
 import android.app.Application;
 
 import com.ebnbin.ebapplication.net.NetHelper;
 
 /**
- * Base {@link Application} for initializations.
+ * Base {@link Application}.
  */
 public abstract class EBApplication extends Application {
     @Override

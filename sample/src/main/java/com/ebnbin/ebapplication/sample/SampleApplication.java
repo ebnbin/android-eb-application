@@ -1,7 +1,7 @@
 package com.ebnbin.ebapplication.sample;
 
 import com.ebnbin.eb.util.EBUtil;
-import com.ebnbin.ebapplication.base.EBApplication;
+import com.ebnbin.ebapplication.context.EBApplication;
 
 public final class SampleApplication extends EBApplication {
     @Override
