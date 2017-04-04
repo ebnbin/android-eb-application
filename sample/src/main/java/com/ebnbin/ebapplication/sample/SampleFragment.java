@@ -23,6 +23,13 @@ public final class SampleFragment extends EBFragment {
 
                 Toast.makeText(getContext(), "onSuccess", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onFailure(@NonNull Call call) {
+                super.onFailure(call);
+
+                Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

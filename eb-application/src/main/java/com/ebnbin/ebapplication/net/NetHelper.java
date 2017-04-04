@@ -3,10 +3,11 @@ package com.ebnbin.ebapplication.net;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.v4.util.ArrayMap;
+import android.util.ArrayMap;
+import android.util.ArraySet;
 
 import com.ebnbin.eb.base.EBRuntimeException;
-import com.ebnbin.ebapplication.base.EBApplication;
+import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.model.EBModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -14,9 +15,6 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -30,9 +28,6 @@ import okhttp3.Response;
 public final class NetHelper {
     private static NetHelper sInstance;
 
-    /**
-     * Called in {@link EBApplication}.
-     */
     public static void init() {
         if (sInstance != null) {
             throw new EBRuntimeException();
@@ -53,150 +48,16 @@ public final class NetHelper {
     private NetHelper() {
     }
 
-    /**
-     * Called in {@link EBApplication}.
-     */
-    public void dispose() {
-        cancelCalls();
-
-        sInstance = null;
-    }
-
     //*****************************************************************************************************************
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-
-    private final OkHttpClient mOkHttpClient = new OkHttpClient();
+    // Calls.
 
     /**
-     * All {@link Call} saved.
+     * Saved {@link Call}.
      */
-    private final Map<Object, List<Call>> mCallsMap = new ArrayMap<>();
+    private final ArrayMap<Object, ArraySet<Call>> mCallMap = new ArrayMap<>();
 
     /**
-     * Gets a url async.
-     *
-     * @param tag
-     *         Activities or fragments tag.
-     * @param url
-     *         Url.
-     * @param callback
-     *         Net callbacks.
-     *
-     * @param <Model>
-     *         Subclass of {@link EBModel}.
-     *
-     * @return Current {@link Call}.
-     */
-    public <Model extends EBModel> Call get(@NonNull final Object tag, @NonNull String url,
-            @NonNull final NetModelCallback<Model> callback) {
-        Request request = new Request.Builder().tag(tag).url(url).build();
-
-        final Call call = mOkHttpClient.newCall(request);
-        addCall(call);
-
-        callback.onLoadingCallback(call);
-
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(final Call call, IOException e) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (canPost()) {
-                            callback.onFailureCallback(call);
-                        }
-
-                        removeCall(call);
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(final Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (canPost()) {
-                                callback.onFailureCallback(call);
-                            }
-
-                            removeCall(call);
-                        }
-                    });
-
-                    return;
-                }
-
-                String responseString = response.body().string();
-                Type type = ((ParameterizedType) (callback.getClass().getGenericSuperclass()))
-                        .getActualTypeArguments()[0];
-
-                final Model model;
-                try {
-                    Gson gson = new Gson();
-                    model = gson.fromJson(responseString, type);
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (canPost()) {
-                                callback.onFailureCallback(call);
-                            }
-
-                            removeCall(call);
-                        }
-                    });
-
-                    return;
-                }
-
-                if (model == null || !model.isValid()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (canPost()) {
-                                callback.onFailureCallback(call);
-                            }
-
-                            removeCall(call);
-                        }
-                    });
-
-                    return;
-                }
-
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (canPost()) {
-                            callback.onSuccessCallback(call, model);
-                        }
-
-                        removeCall(call);
-                    }
-                });
-            }
-
-            private boolean canPost() {
-                List<Call> calls = mCallsMap.get(tag);
-                return calls != null && calls.contains(call);
-            }
-        });
-
-        return call;
-    }
-
-    //*****************************************************************************************************************
-    // Add, remove.
-
-    /**
-     * Saves a {@link Call}.
-     *
-     * @param call {@link Call}.
+     * Adds a {@link Call}.
      */
     private void addCall(@NonNull Call call) {
         Object tag = call.request().tag();
@@ -204,19 +65,17 @@ public final class NetHelper {
             return;
         }
 
-        List<Call> calls = mCallsMap.get(tag);
-        if (calls == null) {
-            calls = new ArrayList<>();
-            mCallsMap.put(tag, calls);
+        ArraySet<Call> callSet = mCallMap.get(tag);
+        if (callSet == null) {
+            callSet = new ArraySet<>();
+            mCallMap.put(tag, callSet);
         }
 
-        calls.add(call);
+        callSet.add(call);
     }
 
     /**
-     * Removes a saved {@link Call}.
-     *
-     * @param call {@link Call}.
+     * Removes a {@link Call}.
      */
     private void removeCall(@NonNull Call call) {
         Object tag = call.request().tag();
@@ -224,91 +83,142 @@ public final class NetHelper {
             return;
         }
 
-        List<Call> calls = mCallsMap.get(tag);
-        if (calls == null) {
+        ArraySet<Call> callSet = mCallMap.get(tag);
+        if (callSet == null) {
             return;
         }
 
-        calls.remove(call);
+        callSet.remove(call);
     }
 
     /**
-     * Removes all saved calls by tag.
-     *
-     * @param tag
-     *         Tag.
+     * Cancels and removes calls by tag.
      */
-    public void removeCalls(@NonNull Object tag) {
-        mCallsMap.remove(tag);
-    }
+    public void cancelCalls(@NonNull Object tag) {
+        ArraySet<Call> callSet = mCallMap.remove(tag);
+        if (callSet == null) {
+            return;
+        }
 
-    /**
-     * Clears all saved calls.
-     */
-    public void clearCalls() {
-        mCallsMap.clear();
+        for (Call call : callSet) {
+            call.cancel();
+        }
     }
 
     //*****************************************************************************************************************
-    // Cancel.
+
+    private final OkHttpClient mOkHttpClient = new OkHttpClient();
+
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
-     * Cancels and removes all saved {@link Call} by tag.
+     * Gets a url async.
      *
-     * @param tag
-     *         Tag.
-     */
-    public void cancelCalls(@NonNull Object tag) {
-        cancelCalls(tag, true);
-    }
-
-    /**
-     * Cancels all saved {@link Call} by tag.
+     * @param tag An activity or fragment tag.
+     * @param callback Callback to get a model.
      *
-     * @param tag
-     *         Tag.
-     * @param remove
-     *         Whether to remove saved {@link Call} after cancels.
-     */
-    public void cancelCalls(@NonNull Object tag, boolean remove) {
-        List<Call> calls = mCallsMap.get(tag);
-        if (calls == null) {
-            return;
-        }
-
-        for (Call call : calls) {
-            call.cancel();
-        }
-
-        if (!remove) {
-            return;
-        }
-
-        removeCalls(tag);
-    }
-
-    /**
-     * Cancels and clears all saved {@link Call}.
-     */
-    public void cancelCalls() {
-        cancelCalls(true);
-    }
-
-    /**
-     * Cancels all saved {@link Call}.
+     * @param <Model> Subclass of {@link EBModel}.
      *
-     * @param remove
-     *         Whether to clear saved {@link Call} after cancels.
+     * @return Current {@link Call}.
      */
-    public void cancelCalls(boolean remove) {
-        for (Object tag : mCallsMap.keySet()) {
-            cancelCalls(tag, false);
-        }
+    public <Model extends EBModel> Call get(@NonNull final Object tag, @NonNull String url,
+            @NonNull final NetModelCallback<Model> callback) {
+        Request request = new Request
+                .Builder()
+                .tag(tag)
+                .url(url)
+                .build();
+        final Call call = mOkHttpClient.newCall(request);
 
-        if (!remove) {
-            return;
-        }
+        addCall(call);
 
-        clearCalls();
+        callback.onLoadingCallback(call);
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                postOnFailureCallback();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    postOnFailureCallback();
+
+                    return;
+                }
+
+                String responseString = response.body().string();
+                Type type = ((ParameterizedType) callback.getClass().getGenericSuperclass())
+                        .getActualTypeArguments()[0];
+
+                Model model;
+                try {
+                    Gson gson = new Gson();
+                    model = gson.fromJson(responseString, type);
+                } catch (JsonSyntaxException e) {
+                    EBUtil.log(e);
+
+                    postOnFailureCallback();
+
+                    return;
+                }
+
+                if (model == null || !model.isValid()) {
+                    postOnFailureCallback();
+
+                    return;
+                }
+
+                postOnSuccessCallback(model);
+            }
+
+            /**
+             * Checks and returns whether current {@link Call} has been canceled and removed. If that, posted
+             * {@link Runnable} should not be executed.
+             */
+            private boolean canPost() {
+                ArraySet<Call> callSet = mCallMap.get(tag);
+                return callSet != null && callSet.contains(call);
+            }
+
+            /**
+             * Posts a success callback.
+             */
+            private void postOnSuccessCallback(@NonNull final Model model) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!canPost()) {
+                            return;
+                        }
+
+                        callback.onSuccessCallback(call, model);
+
+                        removeCall(call);
+                    }
+                });
+            }
+
+            /**
+             * Posts a failure callback.
+             */
+            private void postOnFailureCallback() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!canPost()) {
+                            return;
+                        }
+
+                        callback.onFailureCallback(call);
+
+                        removeCall(call);
+                    }
+                });
+            }
+        });
+
+        return call;
     }
 }

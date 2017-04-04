@@ -12,13 +12,10 @@ public abstract class EBApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        NetHelper.init();
+        initNetHelper();
     }
 
-    @Override
-    public void onTerminate() {
-        NetHelper.getInstance().dispose();
-
-        super.onTerminate();
+    private void initNetHelper() {
+        NetHelper.init();
     }
 }
