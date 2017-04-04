@@ -81,7 +81,8 @@ public abstract class EBActivity extends Activity {
      * Initializes {@link ActivityManager.TaskDescription}.
      */
     private void initTaskDescription() {
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.eb_logo);
+        // TODO: Vector.
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.eb);
         int colorPrimary = getColor(R.color.eb_primary_light);
         ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, icon,
                 colorPrimary);

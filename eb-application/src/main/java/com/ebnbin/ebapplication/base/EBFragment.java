@@ -255,16 +255,12 @@ public abstract class EBFragment extends Fragment {
             public void onSuccess(@NonNull Model model) {
                 super.onSuccess(model);
 
-                callback.netCallbacks.remove(this);
-
                 setLoadNone();
             }
 
             @Override
             public void onFailure() {
                 super.onFailure();
-
-                callback.netCallbacks.remove(this);
 
                 setLoadFailure(new View.OnClickListener() {
                     @Override
@@ -279,8 +275,6 @@ public abstract class EBFragment extends Fragment {
             public void onCancel() {
                 super.onCancel();
 
-                callback.netCallbacks.remove(this);
-
                 setLoadFailure(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -289,7 +283,7 @@ public abstract class EBFragment extends Fragment {
                 });
             }
         };
-        callback.netCallbacks.add(loadCallback);
+        callback.preNetCallbacks.add(loadCallback);
 
         return NetHelper.getInstance().get(hashCode(), url, callback);
     }

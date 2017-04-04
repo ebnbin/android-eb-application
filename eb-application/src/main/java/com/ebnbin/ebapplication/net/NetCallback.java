@@ -16,16 +16,41 @@ import java.util.List;
  */
 public abstract class NetCallback<Model extends EBModel> {
     /**
-     * Adds extra callbacks.
+     * Adds extra pre callbacks.
      */
-    public final List<NetCallback<Model>> netCallbacks = new ArrayList<>();
+    public final List<NetCallback<Model>> preNetCallbacks = new ArrayList<>();
+    /**
+     * Adds extra post callbacks.
+     */
+    public final List<NetCallback<Model>> postNetCallbacks = new ArrayList<>();
+
+    public final void onCallLoading() {
+        for (NetCallback netCallback : preNetCallbacks) {
+            netCallback.onLoading();
+        }
+
+        onLoading();
+
+        for (NetCallback netCallback : postNetCallbacks) {
+            netCallback.onLoading();
+        }
+    }
 
     /**
      * Called on loading.
      */
     public void onLoading() {
-        for (NetCallback netCallback : netCallbacks) {
-            netCallback.onLoading();
+    }
+
+    public final void onCallSuccess(@NonNull Model model) {
+        for (NetCallback<Model> netCallback : preNetCallbacks) {
+            netCallback.onSuccess(model);
+        }
+
+        onSuccess(model);
+
+        for (NetCallback netCallback : postNetCallbacks) {
+            netCallback.onSuccess(model);
         }
     }
 
@@ -36,8 +61,17 @@ public abstract class NetCallback<Model extends EBModel> {
      *         Model parsed by {@link Gson}.
      */
     public void onSuccess(@NonNull Model model) {
-        for (NetCallback<Model> netCallback : netCallbacks) {
-            netCallback.onSuccess(model);
+    }
+
+    public final void onCallFailure() {
+        for (NetCallback netCallback : preNetCallbacks) {
+            netCallback.onFailure();
+        }
+
+        onFailure();
+
+        for (NetCallback netCallback : postNetCallbacks) {
+            netCallback.onFailure();
         }
     }
 
@@ -45,8 +79,17 @@ public abstract class NetCallback<Model extends EBModel> {
      * Called on failure.
      */
     public void onFailure() {
-        for (NetCallback netCallback : netCallbacks) {
-            netCallback.onFailure();
+    }
+
+    public final void onCallCancel() {
+        for (NetCallback netCallback : preNetCallbacks) {
+            netCallback.onCancel();
+        }
+
+        onCancel();
+
+        for (NetCallback netCallback : postNetCallbacks) {
+            netCallback.onCancel();
         }
     }
 
@@ -54,8 +97,5 @@ public abstract class NetCallback<Model extends EBModel> {
      * Called on cancel.
      */
     public void onCancel() {
-        for (NetCallback netCallback : netCallbacks) {
-            netCallback.onCancel();
-        }
     }
 }
