@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.base;
+package com.ebnbin.ebapplication.context.ui;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;

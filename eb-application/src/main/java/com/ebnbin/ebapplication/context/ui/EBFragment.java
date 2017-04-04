@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.base;
+package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
 import android.app.Fragment;

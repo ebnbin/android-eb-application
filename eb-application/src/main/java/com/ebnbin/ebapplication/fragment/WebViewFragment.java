@@ -16,7 +16,7 @@ import android.webkit.WebView;
 
 import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.base.EBFragment;
+import com.ebnbin.ebapplication.context.ui.EBFragment;
 
 import im.delight.android.webview.AdvancedWebView;
 

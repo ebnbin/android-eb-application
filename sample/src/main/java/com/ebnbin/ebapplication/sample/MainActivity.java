@@ -3,7 +3,7 @@ package com.ebnbin.ebapplication.sample;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.ebnbin.ebapplication.base.EBActivity;
+import com.ebnbin.ebapplication.context.ui.EBActivity;
 
 public final class MainActivity extends EBActivity {
     @Override

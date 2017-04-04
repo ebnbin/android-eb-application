@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.context.ui.EBFragment;
 
 /**
  * This fragment uses {@link CoordinatorLayout}, {@link AppBarLayout}, {@link CollapsingToolbarLayout} and
