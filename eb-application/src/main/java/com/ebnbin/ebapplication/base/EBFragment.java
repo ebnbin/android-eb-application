@@ -270,18 +270,6 @@ public abstract class EBFragment extends Fragment {
                 });
 
             }
-
-            @Override
-            public void onCancel() {
-                super.onCancel();
-
-                setLoadFailure(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        netGet(url, callback);
-                    }
-                });
-            }
         };
         callback.preNetCallbacks.add(loadCallback);
 

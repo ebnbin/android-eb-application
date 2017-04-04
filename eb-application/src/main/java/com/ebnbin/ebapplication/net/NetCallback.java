@@ -25,13 +25,13 @@ public abstract class NetCallback<Model extends EBModel> {
     public final List<NetCallback<Model>> postNetCallbacks = new ArrayList<>();
 
     public final void onCallLoading() {
-        for (NetCallback netCallback : preNetCallbacks) {
+        for (NetCallback<Model> netCallback : preNetCallbacks) {
             netCallback.onLoading();
         }
 
         onLoading();
 
-        for (NetCallback netCallback : postNetCallbacks) {
+        for (NetCallback<Model> netCallback : postNetCallbacks) {
             netCallback.onLoading();
         }
     }
@@ -49,7 +49,7 @@ public abstract class NetCallback<Model extends EBModel> {
 
         onSuccess(model);
 
-        for (NetCallback netCallback : postNetCallbacks) {
+        for (NetCallback<Model> netCallback : postNetCallbacks) {
             netCallback.onSuccess(model);
         }
     }
@@ -64,13 +64,13 @@ public abstract class NetCallback<Model extends EBModel> {
     }
 
     public final void onCallFailure() {
-        for (NetCallback netCallback : preNetCallbacks) {
+        for (NetCallback<Model> netCallback : preNetCallbacks) {
             netCallback.onFailure();
         }
 
         onFailure();
 
-        for (NetCallback netCallback : postNetCallbacks) {
+        for (NetCallback<Model> netCallback : postNetCallbacks) {
             netCallback.onFailure();
         }
     }
@@ -79,23 +79,5 @@ public abstract class NetCallback<Model extends EBModel> {
      * Called on failure.
      */
     public void onFailure() {
-    }
-
-    public final void onCallCancel() {
-        for (NetCallback netCallback : preNetCallbacks) {
-            netCallback.onCancel();
-        }
-
-        onCancel();
-
-        for (NetCallback netCallback : postNetCallbacks) {
-            netCallback.onCancel();
-        }
-    }
-
-    /**
-     * Called on cancel.
-     */
-    public void onCancel() {
     }
 }

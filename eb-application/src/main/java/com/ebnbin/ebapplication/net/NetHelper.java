@@ -100,21 +100,6 @@ public final class NetHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, IOException e) {
-                if (call.isCanceled()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (canPost()) {
-                                callback.onCallCancel();
-                            }
-
-                            removeCall(call);
-                        }
-                    });
-
-                    return;
-                }
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
