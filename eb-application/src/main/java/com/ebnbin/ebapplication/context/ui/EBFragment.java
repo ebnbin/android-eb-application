@@ -2,6 +2,7 @@ package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -297,7 +298,17 @@ public abstract class EBFragment extends Fragment {
         }
 
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-        activity.getFragmentManagerHelper().add(webViewFragment, url, true, true);
+        if (activity.getFragmentManagerHelper().canAdd(url)) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            activity.getFragmentManagerHelper().beginTransaction(ft);
+
+            activity.getFragmentManagerHelper().add(url, webViewFragment);
+            activity.getFragmentManagerHelper().hideAll(webViewFragment);
+            activity.getFragmentManagerHelper().push();
+
+            activity.getFragmentManagerHelper().endTransaction();
+            ft.commit();
+        }
     }
 
     //*****************************************************************************************************************
@@ -349,7 +360,7 @@ public abstract class EBFragment extends Fragment {
             pop = true;
         }
 
-        mChildFragmentManagerHelper.onBackPressed();
+        mChildFragmentManagerHelper.onPopped();
 
         return pop;
     }

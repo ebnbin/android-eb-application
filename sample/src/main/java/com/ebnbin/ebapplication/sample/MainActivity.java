@@ -1,5 +1,6 @@
 package com.ebnbin.ebapplication.sample;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -11,6 +12,17 @@ public final class MainActivity extends EBActivity {
         super.onCreate(savedInstanceState);
 
         SampleFragment sampleFragment = new SampleFragment();
-        getFragmentManagerHelper().add(sampleFragment, null, true, false);
+
+        String tag = getFragmentManagerHelper().validTag(sampleFragment);
+        if (getFragmentManagerHelper().canAdd(tag)) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            getFragmentManagerHelper().beginTransaction(ft);
+
+            getFragmentManagerHelper().add(tag, sampleFragment);
+            getFragmentManagerHelper().push();
+
+            getFragmentManagerHelper().endTransaction();
+            ft.commit();
+        }
     }
 }

@@ -176,7 +176,7 @@ public abstract class EBActivity extends Activity {
         // Pops.
         super.onBackPressed();
 
-        mFragmentManagerHelper.onBackPressed();
+        mFragmentManagerHelper.onPopped();
     }
 
     //*****************************************************************************************************************
