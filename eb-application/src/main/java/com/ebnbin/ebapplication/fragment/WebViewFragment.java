@@ -184,17 +184,17 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        setLoadLoading();
+        getStateFrameLayout().switchLoadingState();
     }
 
     @Override
     public void onPageFinished(String url) {
-        setLoadNone();
+        getStateFrameLayout().clearState();
     }
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
-        setLoadFailure(new View.OnClickListener() {
+        getStateFrameLayout().switchFailureState(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWebView.loadUrl(mUrl);

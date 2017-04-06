@@ -13,13 +13,13 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.WebViewFragment;
 import com.ebnbin.ebapplication.model.EBModel;
 import com.ebnbin.ebapplication.net.NetHelper;
 import com.ebnbin.ebapplication.net.NetModelCallback;
+import com.ebnbin.ebapplication.view.StateFrameLayout;
 
 import okhttp3.Call;
 
@@ -33,7 +33,7 @@ public abstract class EBFragment extends Fragment {
 
         initLayoutInflater();
 
-        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_root);
+        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_state_frame_layout);
 
         initArguments();
     }
@@ -109,10 +109,7 @@ public abstract class EBFragment extends Fragment {
     //*****************************************************************************************************************
     // Content view.
 
-    private ViewGroup mRootViewGroup;
-    private FrameLayout mViewContainerFrameLayout;
-
-    private FrameLayout mContentViewContainerFrameLayout;
+    private StateFrameLayout mStateFrameLayout;
 
     /**
      * This method is overrode, a new way to initialize content view is to override {@link #overrideContentView()} and
@@ -121,8 +118,6 @@ public abstract class EBFragment extends Fragment {
      * will be used, and the return of {@link #overrideContentViewLayout()} will be ignored. After that, override
      * {@link #onInitContentView(View)} to initialize views with the given content view. If content view if
      * {@code null}, method {@link #onInitContentView(View)} will not be called. <br>
-     * Root view also contains {@link #mFailureContainerFrameLayout}, {@link #mLoadingContainerFrameLayout} and
-     * {@code childFragmentContainerFrameLayout}.
      *
      * @see #overrideContentView()
      * @see #overrideContentViewLayout()
@@ -130,22 +125,21 @@ public abstract class EBFragment extends Fragment {
      */
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        mRootViewGroup = (FrameLayout) inflater.inflate(R.layout.eb_fragment, container, false);
+        mStateFrameLayout = (StateFrameLayout) inflater.inflate(R.layout.eb_fragment, container, false);
 
-        mViewContainerFrameLayout = (FrameLayout) mRootViewGroup.findViewById(R.id.eb_view_container);
+        initContentView(mStateFrameLayout, inflater, container, savedInstanceState);
 
-        initContentView(mRootViewGroup, inflater, container, savedInstanceState);
-        initLoadViews(mRootViewGroup, inflater, container, savedInstanceState);
+        return mStateFrameLayout;
+    }
 
-        return mRootViewGroup;
+    public StateFrameLayout getStateFrameLayout() {
+        return mStateFrameLayout;
     }
 
     private void initContentView(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        mContentViewContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_content_view_container);
-
         View contentView = overrideContentView();
         if (contentView == null) {
             int contentViewRes = overrideContentViewLayout();
@@ -156,7 +150,7 @@ public abstract class EBFragment extends Fragment {
             contentView = inflater.inflate(contentViewRes, rootView, false);
         }
 
-        mContentViewContainerFrameLayout.addView(contentView);
+        mStateFrameLayout.addView(contentView);
 
         onInitContentView(contentView);
     }
@@ -184,50 +178,6 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // Load.
-
-    private FrameLayout mFailureContainerFrameLayout;
-    private FrameLayout mLoadingContainerFrameLayout;
-
-    private void initLoadViews(@NonNull ViewGroup rootView, LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
-        mFailureContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_failure_container);
-        mLoadingContainerFrameLayout = (FrameLayout) rootView.findViewById(R.id.eb_loading_container);
-    }
-
-    /**
-     * Shows content view, hides failure view and loading view.
-     */
-    public void setLoadNone() {
-        mContentViewContainerFrameLayout.setVisibility(View.VISIBLE);
-        mFailureContainerFrameLayout.setVisibility(View.GONE);
-        mLoadingContainerFrameLayout.setVisibility(View.GONE);
-    }
-
-    /**
-     * Shows loading view, hides content view and failure view.
-     */
-    public void setLoadLoading() {
-        mContentViewContainerFrameLayout.setVisibility(View.GONE);
-        mFailureContainerFrameLayout.setVisibility(View.GONE);
-        mLoadingContainerFrameLayout.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Shows failure view, hides content view and loading view.
-     *
-     * @param listener
-     *         {@link View.OnClickListener} of failure view.
-     */
-    public void setLoadFailure(@Nullable View.OnClickListener listener) {
-        mContentViewContainerFrameLayout.setVisibility(View.GONE);
-        mFailureContainerFrameLayout.setVisibility(View.VISIBLE);
-        mLoadingContainerFrameLayout.setVisibility(View.GONE);
-
-        mFailureContainerFrameLayout.setOnClickListener(listener);
-    }
-
-    //*****************************************************************************************************************
     // Net.
 
     /**
@@ -250,21 +200,21 @@ public abstract class EBFragment extends Fragment {
             public void onLoading(@NonNull Call call) {
                 super.onLoading(call);
 
-                setLoadLoading();
+                mStateFrameLayout.switchLoadingState();
             }
 
             @Override
             public void onSuccess(@NonNull Call call, @NonNull Model model) {
                 super.onSuccess(call, model);
 
-                setLoadNone();
+                mStateFrameLayout.clearState();
             }
 
             @Override
             public void onFailure(@NonNull Call call) {
                 super.onFailure(call);
 
-                setLoadFailure(new View.OnClickListener() {
+                mStateFrameLayout.switchFailureState(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         netGet(url, callback);

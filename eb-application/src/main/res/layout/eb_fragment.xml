@@ -1,37 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.ebnbin.ebapplication.view.StateFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/eb_root"
+    android:id="@+id/eb_state_frame_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <FrameLayout
-        android:id="@+id/eb_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <FrameLayout
-            android:id="@+id/eb_content_view_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <FrameLayout
-            android:id="@+id/eb_failure_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:src="@drawable/eb_state_frame_layout_refresh"/>
-        </FrameLayout>
-        <FrameLayout
-            android:id="@+id/eb_loading_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-            <ProgressBar
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"/>
-        </FrameLayout>
-    </FrameLayout>
-</FrameLayout>
+    android:layout_height="match_parent"/>
