@@ -1,6 +1,7 @@
 package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.fragment.WebViewFragment;
 import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**
@@ -156,8 +158,7 @@ public abstract class EBActivity extends Activity {
     private boolean fragmentHelperOnBackPressed() {
         EBFragment topVisibleFragment = mFragmentHelper.topVisible();
         if (topVisibleFragment != null) {
-            boolean childCanPop = topVisibleFragment.onBackPressed();
-            if (!childCanPop) {
+            if (topVisibleFragment.onBackPressed()) {
                 return true;
             }
 
@@ -165,5 +166,23 @@ public abstract class EBActivity extends Activity {
         }
 
         return false;
+    }
+
+    //*****************************************************************************************************************
+    // Uses WebView to load urls.
+
+    public void webViewLoadUrl(@NonNull String url) {
+        WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
+
+        if (getFragmentHelper().canAdd(webViewFragment)) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            getFragmentHelper()
+                    .beginTransaction(ft)
+                    .add(webViewFragment)
+                    .hideAll(webViewFragment)
+                    .push()
+                    .endTransaction();
+            ft.commit();
+        }
     }
 }

@@ -276,8 +276,18 @@ public final class FragmentHelper {
     //*****************************************************************************************************************
     // Can add.
 
+    public boolean canAdd(@NonNull EBFragment fragment) {
+        String tag = validTag(fragment);
+        return canAdd(tag);
+    }
+
     public boolean canAdd(@NonNull String tag) {
         return !exist(tag) && !found(tag);
+    }
+
+    public boolean canAdd(@NonNull String tag, @NonNull EBFragment fragment) {
+        String validTag = validTag(tag, fragment);
+        return canAdd(validTag);
     }
 
     //*****************************************************************************************************************
@@ -374,10 +384,13 @@ public final class FragmentHelper {
     //*****************************************************************************************************************
     // Pops.
 
-    public void pop() {
-        mFm.popBackStackImmediate();
+    public boolean pop() {
+        boolean popped = mFm.popBackStackImmediate();
+        if (popped) {
+            onPopped();
+        }
 
-        onPopped();
+        return popped;
     }
 
     //*****************************************************************************************************************

@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import com.ebnbin.eb.base.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
+import com.ebnbin.ebapplication.view.StateFrameLayout;
 
 import im.delight.android.webview.AdvancedWebView;
 
@@ -184,22 +185,31 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        getStateFrameLayout().switchLoadingState();
+        StateFrameLayout stateFrameLayout = getStateFrameLayout();
+        if (stateFrameLayout != null) {
+            stateFrameLayout.switchLoadingState();
+        }
     }
 
     @Override
     public void onPageFinished(String url) {
-        getStateFrameLayout().clearState();
+        StateFrameLayout stateFrameLayout = getStateFrameLayout();
+        if (stateFrameLayout != null) {
+            stateFrameLayout.clearState();
+        }
     }
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
-        getStateFrameLayout().switchFailureState(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWebView.loadUrl(mUrl);
-            }
-        });
+        StateFrameLayout stateFrameLayout = getStateFrameLayout();
+        if (stateFrameLayout != null) {
+            stateFrameLayout.switchFailureState(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mWebView.loadUrl(mUrl);
+                }
+            });
+        }
     }
 
     @Override
