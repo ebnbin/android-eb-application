@@ -93,6 +93,8 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         super.onAttach(context);
 
         setHasOptionsMenu(true);
+
+        setRestoreActionBarTitle(true);
     }
 
     @Override

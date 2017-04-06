@@ -304,6 +304,16 @@ public abstract class EBFragment extends Fragment {
         return activity.getActionBar();
     }
 
+    private boolean mRestoreActionBarTitle;
+
+    public boolean shouldRestoreActionBarTitle() {
+        return mRestoreActionBarTitle;
+    }
+
+    public void setRestoreActionBarTitle(boolean restoreActionBarTitle) {
+        mRestoreActionBarTitle = restoreActionBarTitle;
+    }
+
     private CharSequence mSavedActionBarTitle;
 
     private void saveActionBarTitle() {
@@ -316,6 +326,10 @@ public abstract class EBFragment extends Fragment {
     }
 
     private void restoreActionBarTitle() {
+        if (!mRestoreActionBarTitle) {
+            return;
+        }
+
         ActionBar actionBar = getActionBar();
         if (actionBar == null) {
             return;
