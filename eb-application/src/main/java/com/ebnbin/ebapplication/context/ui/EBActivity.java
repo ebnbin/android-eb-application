@@ -1,30 +1,24 @@
 package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**
- * Base {@link Activity} with custom theme.
+ * Base {@link Activity}.
  */
 public abstract class EBActivity extends Activity {
+    //*****************************************************************************************************************
+    // Lifecycle.
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initTheme();
@@ -32,14 +26,26 @@ public abstract class EBActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        mFragmentHelper = new FragmentHelper(getFragmentManager(), android.R.id.content);
-
-        mFragmentHelper.onRestoreInstanceState(savedInstanceState);
+        initFragmentHelper(savedInstanceState);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        fragmentHelperOnSaveInstanceState(outState);
+    }
+
+    //*****************************************************************************************************************
+    // Overrides.
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentHelperOnBackPressed()) {
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     //*****************************************************************************************************************
@@ -47,8 +53,6 @@ public abstract class EBActivity extends Activity {
 
     /**
      * Returns current instance as a {@link Context}.
-     *
-     * @return Current instance.
      */
     @NonNull
     public final Context getContext() {
@@ -57,8 +61,6 @@ public abstract class EBActivity extends Activity {
 
     /**
      * Returns current instance as an {@link Activity}.
-     *
-     * @return Current instance.
      */
     @NonNull
     public final Activity getActivity() {
@@ -67,8 +69,6 @@ public abstract class EBActivity extends Activity {
 
     /**
      * Returns current instance as an {@link EBActivity}.
-     *
-     * @return Current instance.
      */
     @NonNull
     public final EBActivity getEBActivity() {
@@ -83,44 +83,9 @@ public abstract class EBActivity extends Activity {
      */
     protected final Handler handler = new Handler(Looper.getMainLooper());
 
-    //*****************************************************************************************************************
-    // TaskDescription.
-
-    /**
-     * Initializes {@link ActivityManager.TaskDescription}.
-     */
-    private void initTaskDescription() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eb);
-        Bitmap icon = tintBitmap(bitmap, Color.WHITE);
-        int colorPrimary = getColor(R.color.eb_primary_light);
-        ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(null, icon,
-                colorPrimary);
-        setTaskDescription(taskDescription);
-    }
-
-    // TODO: Moves to library.
-    /**
-     * Tints a {@link Bitmap} with the given color.
-     *
-     * @return Result {@link Bitmap}.
-     */
     @NonNull
-    private static Bitmap tintBitmap(@NonNull Bitmap bitmap, @ColorInt int tintColor) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        Bitmap.Config config = Bitmap.Config.ARGB_8888;
-        Bitmap resultBitmap = Bitmap.createBitmap(width, height, config);
-
-        Canvas canvas = new Canvas(resultBitmap);
-
-        Paint paint = new Paint();
-
-        ColorFilter filter = new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN);
-        paint.setColorFilter(filter);
-
-        canvas.drawBitmap(bitmap, 0f, 0f, paint);
-
-        return resultBitmap;
+    public Handler getHandler() {
+        return handler;
     }
 
     //*****************************************************************************************************************
@@ -132,9 +97,6 @@ public abstract class EBActivity extends Activity {
     @StyleRes
     private static final int DEFAULT_THEME_ID = R.style.EBLightTheme;
 
-    /**
-     * Initializes custom theme.
-     */
     private void initTheme() {
         @StyleRes
         int themeId = overrideTheme();
@@ -151,9 +113,10 @@ public abstract class EBActivity extends Activity {
     }
 
     /**
-     * Overrides this method to set custom theme.
+     * Overrides this method to set a custom theme.
      *
-     * @return Style resource id. Use the default value if 0 is returned, not to set custom theme if -1 is returned.
+     * @return Sets the default custom theme if {@code 0} is returned, not to set a custom theme if {@code -1} is
+     * returned.
      */
     @StyleRes
     protected int overrideTheme() {
@@ -161,24 +124,10 @@ public abstract class EBActivity extends Activity {
     }
 
     //*****************************************************************************************************************
-    // OnBackPressed.
+    // TaskDescription.
 
-    @Override
-    public void onBackPressed() {
-        boolean childShouldPop;
-
-        EBFragment topFragment = mFragmentHelper.top();
-        if (topFragment != null) {
-            childShouldPop = topFragment.onBackPressed();
-            if (!childShouldPop) {
-                return;
-            }
-        }
-
-        // Pops.
-        super.onBackPressed();
-
-        mFragmentHelper.onPopped();
+    private void initTaskDescription() {
+        setTaskDescription(EBAppUtil.getDefTaskDescription(getContext()));
     }
 
     //*****************************************************************************************************************
@@ -186,17 +135,35 @@ public abstract class EBActivity extends Activity {
 
     private FragmentHelper mFragmentHelper;
 
+    @NonNull
     public FragmentHelper getFragmentHelper() {
         return mFragmentHelper;
     }
 
-    //*****************************************************************************************************************
-    // Instance state.
+    private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
+        mFragmentHelper = new FragmentHelper(getFragmentManager(), android.R.id.content);
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        mFragmentHelper.onRestoreInstanceState(savedInstanceState);
+    }
 
+    private void fragmentHelperOnSaveInstanceState(@Nullable Bundle outState) {
         mFragmentHelper.onSaveInstanceState(outState);
+    }
+
+    /**
+     * @return Whether handled. Call super if {@code false} is returned.
+     */
+    private boolean fragmentHelperOnBackPressed() {
+        EBFragment topVisibleFragment = mFragmentHelper.topVisible();
+        if (topVisibleFragment != null) {
+            boolean childCanPop = topVisibleFragment.onBackPressed();
+            if (!childCanPop) {
+                return true;
+            }
+
+            mFragmentHelper.onPopped();
+        }
+
+        return false;
     }
 }

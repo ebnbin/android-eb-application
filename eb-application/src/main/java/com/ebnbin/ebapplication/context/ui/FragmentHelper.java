@@ -27,7 +27,7 @@ public final class FragmentHelper {
     @IdRes
     public int defGroup;
 
-    FragmentHelper(FragmentManager fm) {
+    FragmentHelper(@NonNull FragmentManager fm) {
         this(fm, 0);
     }
 
@@ -324,6 +324,33 @@ public final class FragmentHelper {
     @Nullable
     public EBFragment bottom(@IdRes int group) {
         return get(0, group);
+    }
+
+    //*****************************************************************************************************************
+    // Gets first visible fragment at stack top.
+
+    @Nullable
+    public EBFragment topVisible() {
+        for (int i = count() - 1; i >= 0; i--) {
+            EBFragment fragment = get(i);
+            if (fragment != null && !fragment.isHidden()) {
+                return fragment;
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public EBFragment topVisible(@IdRes int group) {
+        for (int i = count(group) - 1; i >= 0; i--) {
+            EBFragment fragment = get(i, group);
+            if (fragment != null && !fragment.isHidden()) {
+                return fragment;
+            }
+        }
+
+        return null;
     }
 
     //*****************************************************************************************************************
