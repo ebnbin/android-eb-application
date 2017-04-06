@@ -46,6 +46,7 @@ public abstract class EBFragment extends Fragment {
         initFragmentHelper(savedInstanceState);
 
         initSavedActionBarTitle(savedInstanceState);
+        initSavedActionBarDisplayHomeAsUp(savedInstanceState);
     }
 
     /**
@@ -71,6 +72,7 @@ public abstract class EBFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         savedActionBarTitleOnSaveInstanceState(outState);
+        savedActionBarDisplayHomeAsUpOnSaveInstanceState(outState);
 
         fragmentHelperOnSaveInstanceState(outState);
 
@@ -87,6 +89,7 @@ public abstract class EBFragment extends Fragment {
     @Override
     public void onDestroy() {
         restoreActionBarTitle();
+        restoreActionBarDisplayHomeAsUp();
 
         super.onDestroy();
     }
@@ -304,6 +307,9 @@ public abstract class EBFragment extends Fragment {
         return activity.getActionBar();
     }
 
+    //*****************************************************************************************************************
+    // ActionBar title.
+
     private boolean mRestoreActionBarTitle;
 
     public boolean shouldRestoreActionBarTitle() {
@@ -356,6 +362,65 @@ public abstract class EBFragment extends Fragment {
         }
 
         outState.putCharSequence(INSTANCE_STATE_SAVED_ACTION_BAR_TITLE, mSavedActionBarTitle);
+    }
+
+    //*****************************************************************************************************************
+    // ActionBar displayHomeAsUp.
+
+    private boolean mRestoreActionBarDisplayHomeAsUp;
+
+    public boolean shouldRestoreActionBarDisplayHomeAsUp() {
+        return mRestoreActionBarDisplayHomeAsUp;
+    }
+
+    public void setRestoreActionBarDisplayHomeAsUp(boolean restoreActionBarDisplayHomeAsUp) {
+        mRestoreActionBarDisplayHomeAsUp = restoreActionBarDisplayHomeAsUp;
+    }
+
+    private boolean mSavedActionBarDisplayHomeAsUp;
+
+    private void saveActionBarDisplayHomeAsUp() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        mSavedActionBarDisplayHomeAsUp = (actionBar.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0;
+    }
+
+    private void restoreActionBarDisplayHomeAsUp() {
+        if (!mRestoreActionBarDisplayHomeAsUp) {
+            return;
+        }
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        actionBar.setDisplayHomeAsUpEnabled(mSavedActionBarDisplayHomeAsUp);
+    }
+
+    private static final String INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP
+            = "saved_action_bar_display_home_as_up";
+
+    private void initSavedActionBarDisplayHomeAsUp(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            saveActionBarDisplayHomeAsUp();
+
+            return;
+        }
+
+        mSavedActionBarDisplayHomeAsUp = savedInstanceState
+                .getBoolean(INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP);
+    }
+
+    private void savedActionBarDisplayHomeAsUpOnSaveInstanceState(@Nullable Bundle outState) {
+        if (outState == null) {
+            return;
+        }
+
+        outState.putBoolean(INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP, mSavedActionBarDisplayHomeAsUp);
     }
 
     //*****************************************************************************************************************

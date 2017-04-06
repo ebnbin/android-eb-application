@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
+import com.ebnbin.ebapplication.context.ui.FragmentHelper;
 import com.ebnbin.ebapplication.view.StateFrameLayout;
 
 import im.delight.android.webview.AdvancedWebView;
@@ -144,6 +145,13 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        initActionBar();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -195,12 +203,27 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     }
 
     //*****************************************************************************************************************
+    // ActionBar.
+
+    private void initActionBar() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        actionBar.setTitle(null);
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    //*****************************************************************************************************************
     // Options menu.
 
     private void initOptionsMenus() {
         setHasOptionsMenu(true);
 
         setRestoreActionBarTitle(true);
+        setRestoreActionBarDisplayHomeAsUp(true);
     }
 
     @Override
@@ -214,7 +237,14 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.eb_open_in_browser) {
+        if (itemId == android.R.id.home) {
+            FragmentHelper fragmentHelper = getActivityFragmentHelper();
+            if (fragmentHelper != null) {
+                fragmentHelper.pop();
+            }
+
+            return true;
+        } else if (itemId == R.id.eb_open_in_browser) {
             if (AdvancedWebView.Browsers.hasAlternative(getContext())) {
                 Activity activity = getActivity();
                 if (activity != null) {
