@@ -32,9 +32,9 @@ public abstract class EBActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        mFragmentManagerHelper = new FragmentManagerHelper(getFragmentManager(), android.R.id.content);
+        mFragmentHelper = new FragmentHelper(getFragmentManager(), android.R.id.content);
 
-        mFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
+        mFragmentHelper.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -167,7 +167,7 @@ public abstract class EBActivity extends Activity {
     public void onBackPressed() {
         boolean childShouldPop;
 
-        EBFragment topFragment = mFragmentManagerHelper.top();
+        EBFragment topFragment = mFragmentHelper.top();
         if (topFragment != null) {
             childShouldPop = topFragment.onBackPressed();
             if (!childShouldPop) {
@@ -178,16 +178,16 @@ public abstract class EBActivity extends Activity {
         // Pops.
         super.onBackPressed();
 
-        mFragmentManagerHelper.onPopped();
+        mFragmentHelper.onPopped();
     }
 
     //*****************************************************************************************************************
-    // FragmentManagerHelper.
+    // FragmentHelper.
 
-    private FragmentManagerHelper mFragmentManagerHelper;
+    private FragmentHelper mFragmentHelper;
 
-    public FragmentManagerHelper getFragmentManagerHelper() {
-        return mFragmentManagerHelper;
+    public FragmentHelper getFragmentHelper() {
+        return mFragmentHelper;
     }
 
     //*****************************************************************************************************************
@@ -197,6 +197,6 @@ public abstract class EBActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        mFragmentManagerHelper.onSaveInstanceState(outState);
+        mFragmentHelper.onSaveInstanceState(outState);
     }
 }

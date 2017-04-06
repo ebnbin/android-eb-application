@@ -246,9 +246,9 @@ public abstract class EBFragment extends Fragment {
         }
 
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-        if (activity.getFragmentManagerHelper().canAdd(url)) {
+        if (activity.getFragmentHelper().canAdd(url)) {
             FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-            activity.getFragmentManagerHelper().beginTransaction(ft)
+            activity.getFragmentHelper().beginTransaction(ft)
                     .add(url, webViewFragment)
                     .hideAll(webViewFragment)
                     .push()
@@ -258,21 +258,21 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // FragmentManagerHelper.
+    // FragmentHelper.
 
-    private FragmentManagerHelper mChildFragmentManagerHelper;
+    private FragmentHelper mChildFragmentHelper;
 
-    public FragmentManagerHelper getChildFragmentManagerHelper() {
-        return mChildFragmentManagerHelper;
+    public FragmentHelper getChildFragmentHelper() {
+        return mChildFragmentHelper;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_state_frame_layout);
+        mChildFragmentHelper = new FragmentHelper(getChildFragmentManager(), R.id.eb_state_frame_layout);
 
-        mChildFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
+        mChildFragmentHelper.onRestoreInstanceState(savedInstanceState);
     }
 
     //*****************************************************************************************************************
@@ -282,7 +282,7 @@ public abstract class EBFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        mChildFragmentManagerHelper.onSaveInstanceState(outState);
+        mChildFragmentHelper.onSaveInstanceState(outState);
     }
 
     //*****************************************************************************************************************
@@ -295,7 +295,7 @@ public abstract class EBFragment extends Fragment {
         boolean childHasPopped;
         boolean pop;
 
-        EBFragment topFragment = mChildFragmentManagerHelper.top();
+        EBFragment topFragment = mChildFragmentHelper.top();
         if (topFragment != null) {
             childShouldPop = topFragment.onBackPressed();
             if (childShouldPop) {
@@ -308,7 +308,7 @@ public abstract class EBFragment extends Fragment {
             pop = true;
         }
 
-        mChildFragmentManagerHelper.onPopped();
+        mChildFragmentHelper.onPopped();
 
         return pop;
     }

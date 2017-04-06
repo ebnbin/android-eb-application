@@ -12,11 +12,11 @@ public final class MainActivity extends EBActivity {
         super.onCreate(savedInstanceState);
 
         SampleFragment sampleFragment = new SampleFragment();
-        String tag = getFragmentManagerHelper().validTag(sampleFragment);
+        String tag = getFragmentHelper().validTag(sampleFragment);
 
-        if (getFragmentManagerHelper().canAdd(tag)) {
+        if (getFragmentHelper().canAdd(tag)) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            getFragmentManagerHelper()
+            getFragmentHelper()
                     .beginTransaction(ft)
                     .add(tag, sampleFragment)
                     .push()
