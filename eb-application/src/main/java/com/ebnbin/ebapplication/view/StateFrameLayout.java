@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.ebnbin.ebapplication.R;
 
@@ -63,9 +64,13 @@ public final class StateFrameLayout extends FrameLayout {
      * Failure state.
      */
     private static final int STATE_FAILURE = 2;
+    /**
+     * Progressing state.
+     */
+    private static final int STATE_PROGRESSING = 3;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STATE_NONE, STATE_LOADING, STATE_FAILURE})
+    @IntDef({STATE_NONE, STATE_LOADING, STATE_FAILURE, STATE_PROGRESSING})
     public @interface State {
     }
 
@@ -211,6 +216,43 @@ public final class StateFrameLayout extends FrameLayout {
         mRefreshImageView.setOnClickListener(onRefreshClickListener);
 
         addView(mFailureFrameLayout);
+    }
+
+    //*****************************************************************************************************************
+    // Progressing state.
+
+    private FrameLayout mProgressingFrameLayout;
+    private ProgressBar mProgressBar;
+
+    public void switchProgressingState() {
+        switchProgressingState(SWITCH_MODE_REPLACE);
+    }
+
+    public void switchProgressingState(@SwitchMode int switchMode) {
+        if (!switchState(STATE_PROGRESSING, switchMode)) {
+            return;
+        }
+
+        if (mProgressingFrameLayout == null) {
+            mProgressingFrameLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.eb_view_state_progressing, this,
+                    false);
+            mProgressBar = (ProgressBar) mProgressingFrameLayout.findViewById(R.id.progress_bar);
+        }
+
+        addView(mProgressingFrameLayout);
+    }
+
+    public void setProgress(int progress) {
+        if (mState != STATE_PROGRESSING) {
+            return;
+        }
+
+        if (progress == -1) {
+            mProgressBar.setIndeterminate(true);
+        } else {
+            mProgressBar.setIndeterminate(false);
+            mProgressBar.setProgress(progress);
+        }
     }
 
     //*****************************************************************************************************************

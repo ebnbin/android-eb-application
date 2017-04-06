@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.ebnbin.eb.util.EBUtil;
@@ -84,6 +86,18 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         super.onViewCreated(view, savedInstanceState);
 
         mWebView.setListener(this, this);
+
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+
+                StateFrameLayout stateFrameLayout = getStateFrameLayout();
+                if (stateFrameLayout != null) {
+                    stateFrameLayout.setProgress(newProgress);
+                }
+            }
+        });
 
         if (savedInstanceState == null) {
             mWebView.loadUrl(mUrl);
@@ -235,7 +249,7 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
         if (stateFrameLayout != null) {
-            stateFrameLayout.switchLoadingState();
+            stateFrameLayout.switchProgressingState(StateFrameLayout.SWITCH_MODE_KEEP);
         }
     }
 
