@@ -370,8 +370,11 @@ public final class FragmentManagerHelper {
     /**
      * Call this method after {@link FragmentManager#beginTransaction()}.
      */
-    public void beginTransaction(@NonNull FragmentTransaction ft) {
+    @NonNull
+    public FragmentManagerHelper beginTransaction(@NonNull FragmentTransaction ft) {
         mFt = ft;
+
+        return this;
     }
 
     /**
@@ -393,22 +396,25 @@ public final class FragmentManagerHelper {
     /**
      * Calls {@link #add(String, int, EBFragment)} with tag {@code null} and group {@code -1}.
      */
-    public void add(@NonNull EBFragment fragment) {
-        add(null, -1, fragment);
+    @NonNull
+    public FragmentManagerHelper add(@NonNull EBFragment fragment) {
+        return add(null, -1, fragment);
     }
 
     /**
      * Calls {@link #add(String, int, EBFragment)} with group {@code -1}.
      */
-    public void add(@Nullable String tag, @NonNull EBFragment fragment) {
-        add(tag, -1, fragment);
+    @NonNull
+    public FragmentManagerHelper add(@Nullable String tag, @NonNull EBFragment fragment) {
+        return add(tag, -1, fragment);
     }
 
     /**
      * Calls {@link #add(String, int, EBFragment)} with tag {@code null}.
      */
-    public void add(@IdRes int group, @NonNull EBFragment fragment) {
-        add(null, group, fragment);
+    @NonNull
+    public FragmentManagerHelper add(@IdRes int group, @NonNull EBFragment fragment) {
+        return add(null, group, fragment);
     }
 
     /**
@@ -419,7 +425,8 @@ public final class FragmentManagerHelper {
      * @param group If {@code -1}, {@link #defGroup} will be used.
      * @param fragment Target {@link EBFragment}.
      */
-    public void add(@Nullable String tag, @IdRes int group, @NonNull EBFragment fragment) {
+    @NonNull
+    public FragmentManagerHelper add(@Nullable String tag, @IdRes int group, @NonNull EBFragment fragment) {
         final String validTag = validTag(tag, fragment);
         if (!canAdd(validTag)) {
             throw new EBRuntimeException();
@@ -437,6 +444,8 @@ public final class FragmentManagerHelper {
                 mFragmentEntryArrayList.add(fragmentEntry);
             }
         });
+
+        return this;
     }
 
     //*****************************************************************************************************************
@@ -445,21 +454,23 @@ public final class FragmentManagerHelper {
     /**
      * {@link FragmentTransaction#show(Fragment)} or {@link FragmentTransaction#hide(Fragment)}.
      */
-    private void show(boolean show, @NonNull String tag) {
+    @NonNull
+    private FragmentManagerHelper show(boolean show, @NonNull String tag) {
         EBFragment fragment = find(tag);
         if (fragment == null) {
-            return;
+            return this;
         }
 
-        show(show, fragment);
+        return show(show, fragment);
     }
 
     /**
      * {@link FragmentTransaction#show(Fragment)} or {@link FragmentTransaction#hide(Fragment)}.
      */
-    private void show(boolean show, @NonNull EBFragment fragment) {
+    @NonNull
+    private FragmentManagerHelper show(boolean show, @NonNull EBFragment fragment) {
         if (fragment.isHidden() != show) {
-            return;
+            return this;
         }
 
         if (show) {
@@ -467,26 +478,31 @@ public final class FragmentManagerHelper {
         } else {
             mFt.hide(fragment);
         }
+
+        return this;
     }
 
     /**
      * Shows or hides all except.
      */
-    private void showAll(boolean show, @NonNull String... exceptTags) {
-        showAll(show, -1, exceptTags);
+    @NonNull
+    private FragmentManagerHelper showAll(boolean show, @NonNull String... exceptTags) {
+        return showAll(show, -1, exceptTags);
     }
 
     /**
      * Shows or hides all except.
      */
-    private void showAll(boolean show, @NonNull EBFragment... exceptFragments) {
-        showAll(show, -1, exceptFragments);
+    @NonNull
+    private FragmentManagerHelper showAll(boolean show, @NonNull EBFragment... exceptFragments) {
+        return showAll(show, -1, exceptFragments);
     }
 
     /**
      * Shows or hides group all except.
      */
-    private void showAll(boolean show, @IdRes int group, @NonNull String... exceptTags) {
+    @NonNull
+    private FragmentManagerHelper showAll(boolean show, @IdRes int group, @NonNull String... exceptTags) {
         ArrayList<EBFragment> exceptFragmentArrayList = new ArrayList<>();
         for (String exceptTag : exceptTags) {
             EBFragment fragment = find(exceptTag);
@@ -498,15 +514,16 @@ public final class FragmentManagerHelper {
         }
 
         EBFragment[] exceptFragments = exceptFragmentArrayList.toArray(new EBFragment[] {});
-        showAll(show, group, exceptFragments);
+        return showAll(show, group, exceptFragments);
     }
 
     /**
      * Shows or hides group all except.
      */
-    private void showAll(boolean show, @IdRes int group, @NonNull EBFragment... exceptFragments) {
+    @NonNull
+    private FragmentManagerHelper showAll(boolean show, @IdRes int group, @NonNull EBFragment... exceptFragments) {
         if (group == 0) {
-            return;
+            return this;
         }
 
         OUTER: for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
@@ -527,60 +544,74 @@ public final class FragmentManagerHelper {
 
             show(show, foundFragment);
         }
+
+        return this;
     }
 
     //*****************************************************************************************************************
     // Show transaction.
 
-    public void show(@NonNull String tag) {
-        show(true, tag);
+    @NonNull
+    public FragmentManagerHelper show(@NonNull String tag) {
+        return show(true, tag);
     }
 
-    public void show(@NonNull EBFragment fragment) {
-        show(true, fragment);
+    @NonNull
+    public FragmentManagerHelper show(@NonNull EBFragment fragment) {
+        return show(true, fragment);
     }
 
-    public void showAll(@NonNull String... exceptTags) {
-        showAll(true, exceptTags);
+    @NonNull
+    public FragmentManagerHelper showAll(@NonNull String... exceptTags) {
+        return showAll(true, exceptTags);
     }
 
-    public void showAll(@NonNull EBFragment... exceptFragments) {
-        showAll(true, exceptFragments);
+    @NonNull
+    public FragmentManagerHelper showAll(@NonNull EBFragment... exceptFragments) {
+        return showAll(true, exceptFragments);
     }
 
-    public void showAll(@IdRes int group, @NonNull String... exceptTags) {
-        showAll(true, group, exceptTags);
+    @NonNull
+    public FragmentManagerHelper showAll(@IdRes int group, @NonNull String... exceptTags) {
+        return showAll(true, group, exceptTags);
     }
 
-    public void showAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
-        showAll(true, group, exceptFragments);
+    @NonNull
+    public FragmentManagerHelper showAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
+        return showAll(true, group, exceptFragments);
     }
 
     //*****************************************************************************************************************
     // Hide transaction.
 
-    public void hide(@NonNull String tag) {
-        show(false, tag);
+    @NonNull
+    public FragmentManagerHelper hide(@NonNull String tag) {
+        return show(false, tag);
     }
 
-    public void hide(@NonNull EBFragment fragment) {
-        show(false, fragment);
+    @NonNull
+    public FragmentManagerHelper hide(@NonNull EBFragment fragment) {
+        return show(false, fragment);
     }
 
-    public void hideAll(@NonNull String... exceptTags) {
-        showAll(false, exceptTags);
+    @NonNull
+    public FragmentManagerHelper hideAll(@NonNull String... exceptTags) {
+        return showAll(false, exceptTags);
     }
 
-    public void hideAll(@NonNull EBFragment... exceptFragments) {
-        showAll(false, exceptFragments);
+    @NonNull
+    public FragmentManagerHelper hideAll(@NonNull EBFragment... exceptFragments) {
+        return showAll(false, exceptFragments);
     }
 
-    public void hideAll(@IdRes int group, @NonNull String... exceptTags) {
-        showAll(false, group, exceptTags);
+    @NonNull
+    public FragmentManagerHelper hideAll(@IdRes int group, @NonNull String... exceptTags) {
+        return showAll(false, group, exceptTags);
     }
 
-    public void hideAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
-        showAll(false, group, exceptFragments);
+    @NonNull
+    public FragmentManagerHelper hideAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
+        return showAll(false, group, exceptFragments);
     }
 
     //*****************************************************************************************************************
@@ -589,7 +620,10 @@ public final class FragmentManagerHelper {
     /**
      * {@link FragmentTransaction#addToBackStack(String)}.
      */
-    public void push() {
+    @NonNull
+    public FragmentManagerHelper push() {
         mFt.addToBackStack(null);
+
+        return this;
     }
 }

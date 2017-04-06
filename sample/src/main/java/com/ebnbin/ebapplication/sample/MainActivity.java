@@ -19,7 +19,6 @@ public final class MainActivity extends EBActivity {
         setContentView(R.layout.activity_main);
 
         mStateFrameLayout = (StateFrameLayout) findViewById(R.id.state_view);
-        mStateFrameLayout.switchLoadingState();
 
         mStateFrameLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,12 +28,11 @@ public final class MainActivity extends EBActivity {
 
                 if (getFragmentManagerHelper().canAdd(url)) {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    getFragmentManagerHelper().beginTransaction(ft);
-
-                    getFragmentManagerHelper().add(url, webViewFragment);
-                    getFragmentManagerHelper().push();
-
-                    getFragmentManagerHelper().endTransaction();
+                    getFragmentManagerHelper()
+                            .beginTransaction(ft)
+                            .add(url, webViewFragment)
+                            .push()
+                            .endTransaction();
                     ft.commit();
                 }
             }

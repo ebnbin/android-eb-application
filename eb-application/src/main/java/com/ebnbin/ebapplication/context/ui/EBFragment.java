@@ -250,13 +250,11 @@ public abstract class EBFragment extends Fragment {
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
         if (activity.getFragmentManagerHelper().canAdd(url)) {
             FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
-            activity.getFragmentManagerHelper().beginTransaction(ft);
-
-            activity.getFragmentManagerHelper().add(url, webViewFragment);
-            activity.getFragmentManagerHelper().hideAll(webViewFragment);
-            activity.getFragmentManagerHelper().push();
-
-            activity.getFragmentManagerHelper().endTransaction();
+            activity.getFragmentManagerHelper().beginTransaction(ft)
+                    .add(url, webViewFragment)
+                    .hideAll(webViewFragment)
+                    .push()
+                    .endTransaction();
             ft.commit();
         }
     }
