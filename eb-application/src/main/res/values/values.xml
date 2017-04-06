@@ -80,6 +80,7 @@
     <eat-comment/>
 
     <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
+    <string name="eb_fragment_web_view_url_error">无法打开地址</string>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>

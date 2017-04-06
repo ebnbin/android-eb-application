@@ -1,21 +1,21 @@
 package com.ebnbin.ebapplication.fragment;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
+import android.widget.Toast;
 
-import com.ebnbin.eb.base.EBRuntimeException;
+import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
 import com.ebnbin.ebapplication.view.StateFrameLayout;
@@ -23,7 +23,7 @@ import com.ebnbin.ebapplication.view.StateFrameLayout;
 import im.delight.android.webview.AdvancedWebView;
 
 /**
- * A fragment that loads a url by {@link WebView}.
+ * A fragment that loads a url using {@link AdvancedWebView}.
  */
 public class WebViewFragment extends EBFragment implements AdvancedWebView.Listener {
     //*****************************************************************************************************************
@@ -43,6 +43,10 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
 
     private String mUrl;
 
+    public String getUrl() {
+        return mUrl;
+    }
+
     @Override
     protected void onInitArguments(@NonNull Bundle args) {
         super.onInitArguments(args);
@@ -51,15 +55,28 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     }
 
     //*****************************************************************************************************************
+    // Content view.
+
+    @Override
+    protected int overrideContentViewLayout() {
+        return R.layout.eb_fragment_web_view;
+    }
 
     private AdvancedWebView mWebView;
 
-    @Nullable
-    @Override
-    protected View overrideContentView() {
-        mWebView = new AdvancedWebView(getContext());
-
+    public AdvancedWebView getWebView() {
         return mWebView;
+    }
+
+    private void webViewOnSaveInstanceState(@Nullable Bundle outState) {
+        mWebView.saveState(outState);
+    }
+
+    @Override
+    protected void onInitContentView(@NonNull View contentView) {
+        super.onInitContentView(contentView);
+
+        mWebView = (AdvancedWebView) contentView.findViewById(R.id.eb_web_view);
     }
 
     @Override
@@ -68,56 +85,49 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
 
         mWebView.setListener(this, this);
 
-        onInitWebView(mWebView);
+        if (savedInstanceState == null) {
+            mWebView.loadUrl(mUrl);
+        } else {
+            mWebView.restoreState(savedInstanceState);
+        }
     }
 
-    /**
-     * Overrides this method to set up {@link AdvancedWebView}.
-     */
-    protected void onInitWebView(@NonNull AdvancedWebView webView) {
+    //*****************************************************************************************************************
+    // Current url.
+
+    private static final String INSTANCE_STATE_CURRENT_URL = "current_url";
+
+    private String mCurrentUrl;
+
+    public String getCurrentUrl() {
+        return mCurrentUrl;
     }
 
-    @NonNull
-    public AdvancedWebView getWebView() {
-        if (mWebView == null) {
-            throw new EBRuntimeException();
+    private void currentUrlOnRestoreInstanceState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
         }
 
-        return mWebView;
+        mCurrentUrl = savedInstanceState.getString(INSTANCE_STATE_CURRENT_URL);
     }
+
+    private void currentUrlOnSaveInstanceState(@Nullable Bundle outState) {
+        if (outState == null) {
+            return;
+        }
+
+        outState.putString(INSTANCE_STATE_CURRENT_URL, mCurrentUrl);
+    }
+
     //*****************************************************************************************************************
-    // Options menu.
+    // Lifecycle.
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        setHasOptionsMenu(true);
-
-        setRestoreActionBarTitle(true);
+        initOptionsMenus();
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.eb_web_view_fragment, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.eb_open_in_browser) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrl));
-            startActivity(intent);
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    //*****************************************************************************************************************
 
     @Override
     public void onResume() {
@@ -140,6 +150,9 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         super.onDestroy();
     }
 
+    //*****************************************************************************************************************
+    // Overrides.
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,68 +160,95 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         mWebView.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * Handles back pressed.
-     */
     @Override
-    public boolean onBackPressed() {
-        return mWebView.onBackPressed() && super.onBackPressed();
-    }
-
-    //*****************************************************************************************************************
-    // Instance state.
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            if (!TextUtils.isEmpty(mUrl)) {
-                mWebView.loadUrl(mUrl);
-            }
-
-            return;
-        }
-
-        mWebView.restoreState(savedInstanceState);
+        currentUrlOnRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (outState == null) {
-            return;
-        }
+        currentUrlOnSaveInstanceState(outState);
+        webViewOnSaveInstanceState(outState);
+    }
 
-        mWebView.saveState(outState);
+    @Override
+    public boolean onBackPressed() {
+        return !mWebView.onBackPressed() || super.onBackPressed();
     }
 
     //*****************************************************************************************************************
+    // Options menu.
+
+    private void initOptionsMenus() {
+        setHasOptionsMenu(true);
+
+        setRestoreActionBarTitle(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.eb_fragment_web_view, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.eb_open_in_browser) {
+            if (AdvancedWebView.Browsers.hasAlternative(getContext())) {
+                Activity activity = getActivity();
+                if (activity != null) {
+                    try {
+                        AdvancedWebView.Browsers.openUrl(activity, mCurrentUrl);
+                    } catch (ActivityNotFoundException e) {
+                        EBUtil.log(e);
+
+                        Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //*****************************************************************************************************************
+    // Callbacks.
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        StateFrameLayout stateFrameLayout = getStateFrameLayout();
-        if (stateFrameLayout != null) {
-            stateFrameLayout.switchLoadingState();
-        }
+        mCurrentUrl = url;
 
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(url);
+            actionBar.setTitle(mCurrentUrl);
+        }
+
+        StateFrameLayout stateFrameLayout = getStateFrameLayout();
+        if (stateFrameLayout != null) {
+            stateFrameLayout.switchLoadingState();
         }
     }
 
     @Override
     public void onPageFinished(String url) {
-        StateFrameLayout stateFrameLayout = getStateFrameLayout();
-        if (stateFrameLayout != null) {
-            stateFrameLayout.clearState();
-        }
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(mWebView.getTitle());
+        }
+
+        StateFrameLayout stateFrameLayout = getStateFrameLayout();
+        if (stateFrameLayout != null) {
+            stateFrameLayout.clearState();
         }
     }
 
@@ -219,7 +259,7 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
             stateFrameLayout.switchFailureState(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mWebView.loadUrl(mUrl);
+                    mWebView.loadUrl(mCurrentUrl);
                 }
             });
         }
