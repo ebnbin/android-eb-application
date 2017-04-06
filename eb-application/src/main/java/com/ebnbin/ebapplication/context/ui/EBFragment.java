@@ -1,5 +1,7 @@
 package com.ebnbin.ebapplication.context.ui;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -42,6 +44,8 @@ public abstract class EBFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         initFragmentHelper(savedInstanceState);
+
+        initSavedActionBarTitle(savedInstanceState);
     }
 
     /**
@@ -66,6 +70,8 @@ public abstract class EBFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        savedActionBarTitleOnSaveInstanceState(outState);
+
         fragmentHelperOnSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
@@ -76,6 +82,13 @@ public abstract class EBFragment extends Fragment {
         disposeNet();
 
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        restoreActionBarTitle();
+
+        super.onDestroy();
     }
 
     //*****************************************************************************************************************
@@ -276,6 +289,59 @@ public abstract class EBFragment extends Fragment {
      * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
      */
     protected void onInitContentView(@NonNull View contentView) {
+    }
+
+    //*****************************************************************************************************************
+    // ActionBar.
+
+    @Nullable
+    public ActionBar getActionBar() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return null;
+        }
+
+        return activity.getActionBar();
+    }
+
+    private CharSequence mSavedActionBarTitle;
+
+    private void saveActionBarTitle() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        mSavedActionBarTitle = actionBar.getTitle();
+    }
+
+    private void restoreActionBarTitle() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
+
+        actionBar.setTitle(mSavedActionBarTitle);
+    }
+
+    private static final String INSTANCE_STATE_SAVED_ACTION_BAR_TITLE = "saved_action_bar_title";
+
+    private void initSavedActionBarTitle(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            saveActionBarTitle();
+
+            return;
+        }
+
+        mSavedActionBarTitle = savedInstanceState.getCharSequence(INSTANCE_STATE_SAVED_ACTION_BAR_TITLE);
+    }
+
+    private void savedActionBarTitleOnSaveInstanceState(@Nullable Bundle outState) {
+        if (outState == null) {
+            return;
+        }
+
+        outState.putCharSequence(INSTANCE_STATE_SAVED_ACTION_BAR_TITLE, mSavedActionBarTitle);
     }
 
     //*****************************************************************************************************************

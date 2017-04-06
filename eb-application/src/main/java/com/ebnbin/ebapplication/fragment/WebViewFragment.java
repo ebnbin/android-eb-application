@@ -1,5 +1,6 @@
 package com.ebnbin.ebapplication.fragment;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -189,6 +190,11 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         if (stateFrameLayout != null) {
             stateFrameLayout.switchLoadingState();
         }
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(url);
+        }
     }
 
     @Override
@@ -196,6 +202,11 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
         if (stateFrameLayout != null) {
             stateFrameLayout.clearState();
+        }
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(mWebView.getTitle());
         }
     }
 

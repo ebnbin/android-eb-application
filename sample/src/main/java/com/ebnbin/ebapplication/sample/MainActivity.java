@@ -1,5 +1,6 @@
 package com.ebnbin.ebapplication.sample;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -10,6 +11,15 @@ public final class MainActivity extends EBActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        webViewLoadUrl("http://ebnbin.com");
+        SampleFragment sampleFragment = new SampleFragment();
+
+        if (getFragmentHelper().canAdd(sampleFragment)) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            getFragmentHelper()
+                    .beginTransaction(ft)
+                    .add(sampleFragment)
+                    .endTransaction();
+            ft.commit();
+        }
     }
 }

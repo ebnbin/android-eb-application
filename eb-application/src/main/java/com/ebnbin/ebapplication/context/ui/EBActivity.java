@@ -48,6 +48,9 @@ public abstract class EBActivity extends Activity {
         }
 
         super.onBackPressed();
+
+        // Can't know whether popped, always check after calling super.
+        mFragmentHelper.onPopped();
     }
 
     //*****************************************************************************************************************
@@ -161,8 +164,6 @@ public abstract class EBActivity extends Activity {
             if (topVisibleFragment.onBackPressed()) {
                 return true;
             }
-
-            mFragmentHelper.onPopped();
         }
 
         return false;

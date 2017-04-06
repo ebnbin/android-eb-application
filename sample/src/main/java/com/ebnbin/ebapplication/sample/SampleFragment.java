@@ -1,34 +1,27 @@
 package com.ebnbin.ebapplication.sample;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.Button;
 
 import com.ebnbin.ebapplication.context.ui.EBFragment;
-import com.ebnbin.ebapplication.net.NetModelCallback;
-
-import okhttp3.Call;
 
 public final class SampleFragment extends EBFragment {
+    @Nullable
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected View overrideContentView() {
+        return new Button(getContext());
+    }
 
-        netGet("http://gank.io/api/data/all/1000/1", new NetModelCallback<SampleModel>() {
+    @Override
+    protected void onInitContentView(@NonNull View contentView) {
+        super.onInitContentView(contentView);
+
+        contentView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(@NonNull Call call, @NonNull SampleModel model) {
-                super.onSuccess(call, model);
-
-                Toast.makeText(getContext(), "onSuccess", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call call) {
-                super.onFailure(call);
-
-                Toast.makeText(getContext(), "onFailure", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                webViewLoadUrl("http://ebnbin.com");
             }
         });
     }
