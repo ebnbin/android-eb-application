@@ -33,6 +33,8 @@ public abstract class EBActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         mFragmentManagerHelper = new FragmentManagerHelper(getFragmentManager(), android.R.id.content);
+
+        mFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -190,13 +192,6 @@ public abstract class EBActivity extends Activity {
 
     //*****************************************************************************************************************
     // Instance state.
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        mFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

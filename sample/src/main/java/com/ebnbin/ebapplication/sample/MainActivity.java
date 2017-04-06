@@ -3,39 +3,25 @@ package com.ebnbin.ebapplication.sample;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.ebnbin.ebapplication.context.ui.EBActivity;
-import com.ebnbin.ebapplication.fragment.WebViewFragment;
-import com.ebnbin.ebapplication.view.StateFrameLayout;
 
 public final class MainActivity extends EBActivity {
-    private StateFrameLayout mStateFrameLayout;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        SampleFragment sampleFragment = new SampleFragment();
+        String tag = getFragmentManagerHelper().validTag(sampleFragment);
 
-        mStateFrameLayout = (StateFrameLayout) findViewById(R.id.state_view);
-
-        mStateFrameLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "http://ebnbin.com";
-                WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-
-                if (getFragmentManagerHelper().canAdd(url)) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    getFragmentManagerHelper()
-                            .beginTransaction(ft)
-                            .add(url, webViewFragment)
-                            .push()
-                            .endTransaction();
-                    ft.commit();
-                }
-            }
-        });
+        if (getFragmentManagerHelper().canAdd(tag)) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            getFragmentManagerHelper()
+                    .beginTransaction(ft)
+                    .add(tag, sampleFragment)
+                    .push()
+                    .endTransaction();
+            ft.commit();
+        }
     }
 }

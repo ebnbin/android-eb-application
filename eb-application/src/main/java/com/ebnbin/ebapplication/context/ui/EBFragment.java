@@ -33,8 +33,6 @@ public abstract class EBFragment extends Fragment {
 
         initLayoutInflater();
 
-        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_state_frame_layout);
-
         initArguments();
     }
 
@@ -268,15 +266,17 @@ public abstract class EBFragment extends Fragment {
         return mChildFragmentManagerHelper;
     }
 
-    //*****************************************************************************************************************
-    // Instance state.
-
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mChildFragmentManagerHelper = new FragmentManagerHelper(getChildFragmentManager(), R.id.eb_state_frame_layout);
 
         mChildFragmentManagerHelper.onRestoreInstanceState(savedInstanceState);
     }
+
+    //*****************************************************************************************************************
+    // Instance state.
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
