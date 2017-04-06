@@ -1,28 +1,21 @@
 package com.ebnbin.ebapplication.sample;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.ebnbin.ebapplication.context.ui.EBActivity;
+import com.ebnbin.ebapplication.view.StateFrameLayout;
 
 public final class MainActivity extends EBActivity {
+    private StateFrameLayout mStateFrameLayout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SampleFragment sampleFragment = new SampleFragment();
+        setContentView(R.layout.activity_main);
 
-        String tag = getFragmentManagerHelper().validTag(sampleFragment);
-        if (getFragmentManagerHelper().canAdd(tag)) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            getFragmentManagerHelper().beginTransaction(ft);
-
-            getFragmentManagerHelper().add(tag, sampleFragment);
-            getFragmentManagerHelper().push();
-
-            getFragmentManagerHelper().endTransaction();
-            ft.commit();
-        }
+        mStateFrameLayout = (StateFrameLayout) findViewById(R.id.state_view);
+        mStateFrameLayout.switchLoadingState();
     }
 }

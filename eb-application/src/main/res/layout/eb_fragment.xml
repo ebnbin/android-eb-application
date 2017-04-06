@@ -21,7 +21,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
-                android:src="@drawable/eb_fragment_refresh"/>
+                android:src="@drawable/eb_state_frame_layout_refresh"/>
         </FrameLayout>
         <FrameLayout
             android:id="@+id/eb_loading_container"
