@@ -93,7 +93,7 @@
     </style>
 
     <!-- Base light theme. -->
-    <style name="EBLightTheme" parent="Theme.Design.Light">
+    <style name="EBLightTheme" parent="Theme.Design.Light.NoActionBar">
         <item name="android:windowBackground">@color/eb_window_background_light</item>
         <item name="colorPrimary">@color/eb_primary_light</item>
         <item name="colorPrimaryDark">@color/eb_primary_dark_light</item>
@@ -102,7 +102,7 @@
         <item name="ebColorPlaceholder">@color/eb_placeholder_light</item>
     </style>
     <!-- Base dark theme. -->
-    <style name="EBDarkTheme" parent="Theme.Design">
+    <style name="EBDarkTheme" parent="Theme.Design.NoActionBar">
         <item name="android:windowBackground">@color/eb_window_background_dark</item>
         <item name="colorPrimary">@color/eb_primary_dark</item>
         <item name="colorPrimaryDark">@color/eb_primary_dark_dark</item>

@@ -11,13 +11,13 @@ public final class MainActivity extends EBActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SampleFragment sampleFragment = new SampleFragment();
+        SampleActionBarFragment sampleActionBarFragment = new SampleActionBarFragment();
 
-        if (getFragmentHelper().canAdd(sampleFragment)) {
+        if (getFragmentHelper().canAdd(sampleActionBarFragment)) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             getFragmentHelper()
                     .beginTransaction(ft)
-                    .add(sampleFragment)
+                    .add(sampleActionBarFragment)
                     .endTransaction();
             ft.commit();
         }

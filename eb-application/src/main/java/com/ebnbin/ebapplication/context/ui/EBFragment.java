@@ -45,9 +45,6 @@ public abstract class EBFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         initFragmentHelper(savedInstanceState);
-
-        initSavedActionBarTitle(savedInstanceState);
-        initSavedActionBarDisplayHomeAsUp(savedInstanceState);
     }
 
     /**
@@ -68,6 +65,14 @@ public abstract class EBFragment extends Fragment {
         initFragmentHelperDefGroup();
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initSavedActionBarTitle(savedInstanceState);
+        initSavedActionBarDisplayHomeAsUp(savedInstanceState);
     }
 
     @Override

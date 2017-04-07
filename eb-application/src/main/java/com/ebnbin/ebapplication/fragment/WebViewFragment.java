@@ -86,6 +86,8 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initActionBar();
+
         mWebView.setListener(this, this);
 
         mWebView.setWebChromeClient(new WebChromeClient() {
@@ -142,13 +144,6 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         super.onAttach(context);
 
         initOptionsMenus();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        initActionBar();
     }
 
     @Override
