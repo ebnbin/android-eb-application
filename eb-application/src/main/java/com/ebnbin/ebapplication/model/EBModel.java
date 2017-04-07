@@ -10,6 +10,8 @@ import java.io.Serializable;
  * Base model.
  */
 public abstract class EBModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Implements this method to check and return whether data of current model is valid.
      */
