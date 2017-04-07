@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.WebViewFragment;
@@ -17,7 +18,7 @@ import com.ebnbin.ebapplication.util.EBAppUtil;
 /**
  * Base {@link Activity}.
  */
-public abstract class EBActivity extends Activity {
+public abstract class EBActivity extends AppCompatActivity {
     //*****************************************************************************************************************
     // Lifecycle.
 
@@ -69,6 +70,14 @@ public abstract class EBActivity extends Activity {
      */
     @NonNull
     public final Activity getActivity() {
+        return this;
+    }
+
+    /**
+     * Returns current instance as an {@link AppCompatActivity}.
+     */
+    @NonNull
+    public final AppCompatActivity getAppCompatActivity() {
         return this;
     }
 

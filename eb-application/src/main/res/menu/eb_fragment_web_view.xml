@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/eb_open_in_browser"
         android:title="@string/eb_fragment_web_view_open_in_browser"
         android:icon="@drawable/eb_fragment_web_view_open_in_browser"
-        android:showAsAction="always"/>
+        app:showAsAction="always"/>
 </menu>
