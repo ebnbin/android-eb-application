@@ -7,10 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toolbar;
 
 import com.ebnbin.ebapplication.R;
 
@@ -29,6 +30,30 @@ public abstract class EBActionBarFragment extends EBFragment {
     private FrameLayout mCollapsingToolbarLayoutContentContainerFrameLayout;
     private Toolbar mToolbar;
     private FrameLayout mCoordinatorLayoutContentContainerFrameLayout;
+
+    public CoordinatorLayout getCoordinatorLayout() {
+        return mCoordinatorLayout;
+    }
+
+    public AppBarLayout getAppBarLayout() {
+        return mAppBarLayout;
+    }
+
+    public CollapsingToolbarLayout getCollapsingToolbarLayout() {
+        return mCollapsingToolbarLayout;
+    }
+
+    public FrameLayout getCollapsingToolbarLayoutContentContainerFrameLayout() {
+        return mCollapsingToolbarLayoutContentContainerFrameLayout;
+    }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
+    }
+
+    public FrameLayout getCoordinatorLayoutContentContainerFrameLayout() {
+        return mCoordinatorLayoutContentContainerFrameLayout;
+    }
 
     @Override
     protected void onInitContentView(@NonNull View contentView) {
@@ -49,9 +74,11 @@ public abstract class EBActionBarFragment extends EBFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setAppBarLayoutCanDrag(false);
+
         AppCompatActivity activity = getAppCompatActivity();
         if (activity != null) {
-            activity.setActionBar(mToolbar);
+            activity.setSupportActionBar(mToolbar);
         }
     }
 
@@ -60,4 +87,34 @@ public abstract class EBActionBarFragment extends EBFragment {
             = R.id.eb_collapsing_toolbar_layout_content_container;
     @IdRes
     protected static final int COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID = R.id.eb_coordinator_layout_content_container;
+
+    /**
+     * Sets whether {@link AppBarLayout} can drag.
+     */
+    public void setAppBarLayoutCanDrag(final boolean canDrag) {
+        mAppBarLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!ViewCompat.isLaidOut(mAppBarLayout)) {
+                    mAppBarLayout.post(this);
+
+                    return;
+                }
+
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mAppBarLayout
+                        .getLayoutParams();
+                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+                if (behavior == null) {
+                    return;
+                }
+
+                behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+                    @Override
+                    public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
+                        return canDrag;
+                    }
+                });
+            }
+        });
+    }
 }

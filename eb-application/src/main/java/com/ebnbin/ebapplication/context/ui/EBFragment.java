@@ -1,7 +1,5 @@
 package com.ebnbin.ebapplication.context.ui;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +8,7 @@ import android.os.Looper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -313,12 +312,12 @@ public abstract class EBFragment extends Fragment {
 
     @Nullable
     public ActionBar getActionBar() {
-        Activity activity = getActivity();
+        AppCompatActivity activity = getAppCompatActivity();
         if (activity == null) {
             return null;
         }
 
-        return activity.getActionBar();
+        return activity.getSupportActionBar();
     }
 
     //*****************************************************************************************************************

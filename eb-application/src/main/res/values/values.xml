@@ -73,6 +73,12 @@
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
 
+    <!-- 56dp (actionBarSize) * 2 + 24dp (windowTranslucentStatus = true 时 statusBarSize). -->
+    <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">136dp</dimen>
+
+    <!-- ********************************************************************************************************** -->
+    <eat-comment/>
+
     <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
     <string name="eb_fragment_web_view_url_error">无法打开地址</string>
 

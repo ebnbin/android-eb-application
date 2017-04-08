@@ -8,19 +8,36 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/eb_app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:expanded="false">
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/eb_collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <!--
+            默认 actionBarSize: 56dp, 横屏时 48dp, 平板时 64dp.
+            statusBarSize: 24dp, 当 windowTranslucentStatus = true 时, 需要添加 statusBarSize.
+
+            当 minHeight <= 88dp 时, ActionBar 标题无法显示.
+            88dp = 56dp (默认 actionBarSize) + 24dp (windowTranslucentStatus = true 时) + 8dp (系统默认偏移值).
+            在任何情况下都使用默认 actionBarSize, 不使用横屏或平板时的 actionBarSize.
+
+            当 height >= 136dp 时, 当前 FrameLayout 的内容将自动显示.
+            136dp = 56dp (默认 actionBarSize) * 2 + 24dp (windowTranslucentStatus = true 时).
+            横屏时这个值为 120dp = 48dp * 2 + 24dp.
+            平板时这个值为 152dp = 64dp * 2 + 24dp.
+            -->
             <FrameLayout
                 android:id="@+id/eb_collapsing_toolbar_layout_content_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <Toolbar
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/eb_min_height_collapsing_toolbar_layout_content_container"/>
+            <android.support.v7.widget.Toolbar
                 android:id="@+id/eb_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
     <FrameLayout
