@@ -14,7 +14,7 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
 
         SampleActionBarContentBFragment sampleActionBarContentBFragment = new SampleActionBarContentBFragment();
         if (getFragmentHelper().canAdd(sampleActionBarContentBFragment)) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
             getFragmentHelper()
                     .beginTransaction(ft)
                     .add(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID, sampleActionBarContentBFragment)

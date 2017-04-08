@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.ebnbin.ebapplication.R;
+
+import java.util.ArrayList;
 
 /**
  * Base fragment with ActionBar.
@@ -74,7 +77,8 @@ public abstract class EBActionBarFragment extends EBFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setAppBarLayoutCanDrag(false);
+        setAppBarLayoutCanDrag(mAppBarScrollable);
+        invalidateNestedScrollingChildren();
 
         AppCompatActivity activity = getAppCompatActivity();
         if (activity != null) {
@@ -87,6 +91,9 @@ public abstract class EBActionBarFragment extends EBFragment {
             = R.id.eb_collapsing_toolbar_layout_content_container;
     @IdRes
     protected static final int COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID = R.id.eb_coordinator_layout_content_container;
+
+    //*****************************************************************************************************************
+    // AppBarLayout scrollable.
 
     /**
      * Sets whether {@link AppBarLayout} can drag.
@@ -116,5 +123,45 @@ public abstract class EBActionBarFragment extends EBFragment {
                 });
             }
         });
+    }
+
+    private boolean mAppBarScrollable = false;
+
+    private final ArrayList<NestedScrollingChild> mNestedScrollingChildArrayList = new ArrayList<>();
+
+    private void addNestedScrollingChild(@NonNull NestedScrollingChild nestedScrollingChild) {
+        mNestedScrollingChildArrayList.add(nestedScrollingChild);
+
+        invalidateNestedScrollingChildren();
+    }
+
+    private void removeNestedScrollingChild(@NonNull NestedScrollingChild nestedScrollingChild) {
+        mNestedScrollingChildArrayList.remove(nestedScrollingChild);
+    }
+
+    private void invalidateNestedScrollingChildren() {
+        for (NestedScrollingChild nestedScrollingChild : mNestedScrollingChildArrayList) {
+            nestedScrollingChild.setNestedScrollingEnabled(mAppBarScrollable);
+        }
+    }
+
+    public static void addNestedScrollingChild(@NonNull EBFragment fragment,
+            @NonNull NestedScrollingChild nestedScrollingChild) {
+        EBActionBarFragment actionBarFragment = getTParent(EBActionBarFragment.class, fragment);
+        if (actionBarFragment == null) {
+            return;
+        }
+
+        actionBarFragment.addNestedScrollingChild(nestedScrollingChild);
+    }
+
+    public static void removeNestedScrollingChild(@NonNull EBFragment fragment,
+            @NonNull NestedScrollingChild nestedScrollingChild) {
+        EBActionBarFragment actionBarFragment = getTParent(EBActionBarFragment.class, fragment);
+        if (actionBarFragment == null) {
+            return;
+        }
+
+        actionBarFragment.removeNestedScrollingChild(nestedScrollingChild);
     }
 }

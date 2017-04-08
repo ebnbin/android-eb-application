@@ -508,4 +508,20 @@ public abstract class EBFragment extends Fragment {
 
         activity.webViewLoadUrl(url);
     }
+
+    //*****************************************************************************************************************
+    // Gets a specify type parent fragment.
+
+    @Nullable
+    public static <T> T getTParent(@NonNull Class<T> tClass, @Nullable Fragment fragment) {
+        if (fragment == null) {
+            return null;
+        }
+
+        if (tClass.isAssignableFrom(fragment.getClass())) {
+            return tClass.cast(fragment);
+        }
+
+        return getTParent(tClass, fragment.getParentFragment());
+    }
 }
