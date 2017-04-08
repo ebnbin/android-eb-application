@@ -14,7 +14,8 @@
             android:id="@+id/eb_collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
             <!--
             默认 actionBarSize: 56dp, 横屏时 48dp, 平板时 64dp.
             statusBarSize: 24dp, 当 windowTranslucentStatus = true 时, 需要添加 statusBarSize.
