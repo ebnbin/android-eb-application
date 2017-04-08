@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.context.ui.EBFragment;
+import com.ebnbin.ebapplication.context.ui.EBActionBarFragment;
 import com.ebnbin.ebapplication.context.ui.FragmentHelper;
 import com.ebnbin.ebapplication.view.StateFrameLayout;
 
@@ -28,7 +28,7 @@ import im.delight.android.webview.AdvancedWebView;
 /**
  * A fragment that loads a url using {@link AdvancedWebView}.
  */
-public class WebViewFragment extends EBFragment implements AdvancedWebView.Listener {
+public class WebViewFragment extends EBActionBarFragment implements AdvancedWebView.Listener {
     //*****************************************************************************************************************
     // Arguments.
 
@@ -60,11 +60,6 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     //*****************************************************************************************************************
     // Content view.
 
-    @Override
-    protected int overrideContentViewLayout() {
-        return R.layout.eb_fragment_web_view;
-    }
-
     private AdvancedWebView mWebView;
 
     public AdvancedWebView getWebView() {
@@ -76,17 +71,12 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
     }
 
     @Override
-    protected void onInitContentView(@NonNull View contentView) {
-        super.onInitContentView(contentView);
-
-        mWebView = (AdvancedWebView) contentView.findViewById(R.id.eb_web_view);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         initActionBar();
+
+        mWebView = new AdvancedWebView(getContext());
 
         mWebView.setListener(this, this);
 
@@ -107,6 +97,8 @@ public class WebViewFragment extends EBFragment implements AdvancedWebView.Liste
         } else {
             mWebView.restoreState(savedInstanceState);
         }
+
+        getCoordinatorLayoutContentContainerFrameLayout().addView(mWebView);
     }
 
     //*****************************************************************************************************************
