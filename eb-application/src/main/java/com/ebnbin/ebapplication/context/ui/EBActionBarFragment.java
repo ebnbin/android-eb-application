@@ -86,6 +86,21 @@ public abstract class EBActionBarFragment extends EBFragment {
         }
     }
 
+    // TODO: Need refactor.
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (hidden) {
+            return;
+        }
+
+        AppCompatActivity activity = getAppCompatActivity();
+        if (activity != null) {
+            activity.setSupportActionBar(mToolbar);
+        }
+    }
+
     @IdRes
     protected static final int COLLAPSING_TOOLBAR_LAYOUT_CONTENT_CONTAINER_ID
             = R.id.eb_collapsing_toolbar_layout_content_container;
