@@ -95,7 +95,9 @@ public class WebViewFragment extends EBActionBarFragment implements AdvancedWebV
         if (savedInstanceState == null) {
             mWebView.loadUrl(mUrl);
         } else {
-            mWebView.restoreState(savedInstanceState);
+            if (mWebView.restoreState(savedInstanceState) == null) {
+                mWebView.loadUrl(mUrl);
+            }
         }
 
         getCoordinatorLayoutContentContainerFrameLayout().addView(mWebView);
