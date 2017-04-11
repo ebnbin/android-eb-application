@@ -102,6 +102,9 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
             }
         });
 
+        mWebView.getSettings().setBuiltInZoomControls(true);
+        mWebView.getSettings().setDisplayZoomControls(false);
+
         if (savedInstanceState == null) {
             mWebView.loadUrl(mUrl);
         } else {
