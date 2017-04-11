@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -67,18 +68,7 @@ public abstract class EBFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        initSavedActionBarTitle(savedInstanceState);
-        initSavedActionBarDisplayHomeAsUp(savedInstanceState);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
-        savedActionBarTitleOnSaveInstanceState(outState);
-        savedActionBarDisplayHomeAsUpOnSaveInstanceState(outState);
-
         fragmentHelperOnSaveInstanceState(outState);
 
         super.onSaveInstanceState(outState);
@@ -89,14 +79,6 @@ public abstract class EBFragment extends Fragment {
         disposeNet();
 
         super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        restoreActionBarTitle();
-        restoreActionBarDisplayHomeAsUp();
-
-        super.onDestroy();
     }
 
     //*****************************************************************************************************************
@@ -321,122 +303,6 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // ActionBar title.
-
-    private boolean mRestoreActionBarTitle;
-
-    public boolean shouldRestoreActionBarTitle() {
-        return mRestoreActionBarTitle;
-    }
-
-    public void setRestoreActionBarTitle(boolean restoreActionBarTitle) {
-        mRestoreActionBarTitle = restoreActionBarTitle;
-    }
-
-    private CharSequence mSavedActionBarTitle;
-
-    private void saveActionBarTitle() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar == null) {
-            return;
-        }
-
-        mSavedActionBarTitle = actionBar.getTitle();
-    }
-
-    private void restoreActionBarTitle() {
-        if (!mRestoreActionBarTitle) {
-            return;
-        }
-
-        ActionBar actionBar = getActionBar();
-        if (actionBar == null) {
-            return;
-        }
-
-        actionBar.setTitle(mSavedActionBarTitle);
-    }
-
-    private static final String INSTANCE_STATE_SAVED_ACTION_BAR_TITLE = "saved_action_bar_title";
-
-    private void initSavedActionBarTitle(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            saveActionBarTitle();
-
-            return;
-        }
-
-        mSavedActionBarTitle = savedInstanceState.getCharSequence(INSTANCE_STATE_SAVED_ACTION_BAR_TITLE);
-    }
-
-    private void savedActionBarTitleOnSaveInstanceState(@Nullable Bundle outState) {
-        if (outState == null) {
-            return;
-        }
-
-        outState.putCharSequence(INSTANCE_STATE_SAVED_ACTION_BAR_TITLE, mSavedActionBarTitle);
-    }
-
-    //*****************************************************************************************************************
-    // ActionBar displayHomeAsUp.
-
-    private boolean mRestoreActionBarDisplayHomeAsUp;
-
-    public boolean shouldRestoreActionBarDisplayHomeAsUp() {
-        return mRestoreActionBarDisplayHomeAsUp;
-    }
-
-    public void setRestoreActionBarDisplayHomeAsUp(boolean restoreActionBarDisplayHomeAsUp) {
-        mRestoreActionBarDisplayHomeAsUp = restoreActionBarDisplayHomeAsUp;
-    }
-
-    private boolean mSavedActionBarDisplayHomeAsUp;
-
-    private void saveActionBarDisplayHomeAsUp() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar == null) {
-            return;
-        }
-
-        mSavedActionBarDisplayHomeAsUp = (actionBar.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0;
-    }
-
-    private void restoreActionBarDisplayHomeAsUp() {
-        if (!mRestoreActionBarDisplayHomeAsUp) {
-            return;
-        }
-
-        ActionBar actionBar = getActionBar();
-        if (actionBar == null) {
-            return;
-        }
-
-        actionBar.setDisplayHomeAsUpEnabled(mSavedActionBarDisplayHomeAsUp);
-    }
-
-    private static final String INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP
-            = "saved_action_bar_display_home_as_up";
-
-    private void initSavedActionBarDisplayHomeAsUp(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            saveActionBarDisplayHomeAsUp();
-
-            return;
-        }
-
-        mSavedActionBarDisplayHomeAsUp = savedInstanceState
-                .getBoolean(INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP);
-    }
-
-    private void savedActionBarDisplayHomeAsUpOnSaveInstanceState(@Nullable Bundle outState) {
-        if (outState == null) {
-            return;
-        }
-
-        outState.putBoolean(INSTANCE_STATE_SAVED_ACTION_BAR_DISPLAY_HOME_AS_UP, mSavedActionBarDisplayHomeAsUp);
-    }
-
-    //*****************************************************************************************************************
     // Net.
 
     private final Object mNetTag = hashCode();
@@ -523,5 +389,33 @@ public abstract class EBFragment extends Fragment {
         }
 
         return getTParent(tClass, fragment.getParentFragment());
+    }
+
+    //*****************************************************************************************************************
+    // Shared.
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+            onChangeShared();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (!hidden) {
+            onChangeShared();
+        }
+    }
+
+    /**
+     * Called when current fragment is visible to user or is shown from hidden.
+     */
+    @CallSuper
+    protected void onChangeShared() {
     }
 }

@@ -86,14 +86,9 @@ public abstract class EBActionBarFragment extends EBFragment {
         }
     }
 
-    // TODO: Need refactor.
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-
-        if (hidden) {
-            return;
-        }
+    protected void onChangeShared() {
+        super.onChangeShared();
 
         AppCompatActivity activity = getAppCompatActivity();
         if (activity != null) {

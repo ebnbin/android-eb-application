@@ -208,9 +208,6 @@ public class WebViewFragment extends EBActionBarFragment implements AdvancedWebV
 
     private void initOptionsMenus() {
         setHasOptionsMenu(true);
-
-        setRestoreActionBarTitle(true);
-        setRestoreActionBarDisplayHomeAsUp(true);
     }
 
     @Override
