@@ -112,33 +112,6 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     }
 
     //*****************************************************************************************************************
-    // Current url.
-
-    private static final String INSTANCE_STATE_CURRENT_URL = "current_url";
-
-    private String mCurrentUrl;
-
-    public String getCurrentUrl() {
-        return mCurrentUrl;
-    }
-
-    private void currentUrlOnRestoreInstanceState(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return;
-        }
-
-        mCurrentUrl = savedInstanceState.getString(INSTANCE_STATE_CURRENT_URL);
-    }
-
-    private void currentUrlOnSaveInstanceState(@Nullable Bundle outState) {
-        if (outState == null) {
-            return;
-        }
-
-        outState.putString(INSTANCE_STATE_CURRENT_URL, mCurrentUrl);
-    }
-
-    //*****************************************************************************************************************
     // Lifecycle.
 
     @Override
@@ -180,17 +153,9 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        currentUrlOnRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        currentUrlOnSaveInstanceState(outState);
         webViewOnSaveInstanceState(outState);
     }
 
@@ -243,7 +208,7 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
                 Activity activity = getActivity();
                 if (activity != null) {
                     try {
-                        AdvancedWebView.Browsers.openUrl(activity, mCurrentUrl);
+                        AdvancedWebView.Browsers.openUrl(activity, mWebView.getUrl());
                     } catch (ActivityNotFoundException e) {
                         EBUtil.log(e);
 
@@ -264,11 +229,9 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        mCurrentUrl = url;
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(mCurrentUrl);
+            actionBar.setTitle(url);
         }
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
@@ -291,13 +254,13 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     }
 
     @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {
+    public void onPageError(int errorCode, String description, final String failingUrl) {
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
         if (stateFrameLayout != null) {
             stateFrameLayout.switchFailureState(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mWebView.loadUrl(mCurrentUrl);
+                    mWebView.loadUrl(failingUrl);
                 }
             });
         }
