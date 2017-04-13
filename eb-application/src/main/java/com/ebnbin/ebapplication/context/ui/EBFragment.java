@@ -392,6 +392,14 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
+    // ActionBar fragment.
+
+    @Nullable
+    public EBActionBarFragment getActionBarParentFragment() {
+        return getTParent(EBActionBarFragment.class, this);
+    }
+
+    //*****************************************************************************************************************
     // Shared.
 
     @Override
