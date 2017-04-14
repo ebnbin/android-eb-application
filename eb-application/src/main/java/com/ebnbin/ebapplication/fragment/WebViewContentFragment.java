@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.context.ui.EBActionBarFragment;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
 import com.ebnbin.ebapplication.context.ui.FragmentHelper;
 import com.ebnbin.ebapplication.view.StateFrameLayout;
@@ -60,9 +61,9 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     //*****************************************************************************************************************
     // Content view.
 
-    private AdvancedWebView mWebView;
+    private CustomWebView mWebView;
 
-    public AdvancedWebView getWebView() {
+    public CustomWebView getWebView() {
         return mWebView;
     }
 
@@ -79,7 +80,7 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     protected void onInitContentView(@NonNull View contentView) {
         super.onInitContentView(contentView);
 
-        mWebView = (AdvancedWebView) contentView.findViewById(R.id.eb_web_view);
+        mWebView = (CustomWebView) contentView.findViewById(R.id.eb_web_view);
     }
 
     @Override
@@ -112,6 +113,15 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
                 mWebView.loadUrl(mUrl);
             }
         }
+
+        EBActionBarFragment.addNestedScrollingChild(this, mWebView);
+    }
+
+    @Override
+    public void onDestroyView() {
+        EBActionBarFragment.removeNestedScrollingChild(this, mWebView);
+
+        super.onDestroyView();
     }
 
     //*****************************************************************************************************************
@@ -241,6 +251,11 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         if (stateFrameLayout != null) {
             stateFrameLayout.switchProgressingState(StateFrameLayout.SWITCH_MODE_KEEP);
         }
+
+        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
+        if (actionBarFragment != null) {
+            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD, true);
+        }
     }
 
     @Override
@@ -253,6 +268,11 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
         if (stateFrameLayout != null) {
             stateFrameLayout.clearState();
+        }
+
+        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
+        if (actionBarFragment != null) {
+            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
         }
     }
 
