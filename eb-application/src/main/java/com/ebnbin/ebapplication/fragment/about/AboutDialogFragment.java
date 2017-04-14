@@ -7,9 +7,8 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,27 +19,13 @@ import com.ebnbin.ebapplication.R;
  * Shows about info.
  */
 public final class AboutDialogFragment extends DialogFragment {
-    private static final String ARG_ICON_ID = "icon_id";
-    private static final String ARG_LABEL_ID = "label_id";
-    private static final String ARG_SLOGAN = "slogan";
     private static final String ARG_VERSION_NAME = "version_name";
     private static final String ARG_VERSION_CODE = "version_code";
-    private static final String ARG_LINK_A = "link_a";
-    private static final String ARG_LINK_B = "link_b";
-    private static final String ARG_LINK_C = "link_c";
 
-    public static void show(@NonNull FragmentManager fm, @DrawableRes int iconId, @StringRes int labelId,
-            @StringRes int slogan, @NonNull String versionName, int versionCode, @StringRes int linkA,
-            @StringRes int linkB, @StringRes int linkC) {
+    public static void show(@NonNull FragmentManager fm, @NonNull String versionName, int versionCode) {
         Bundle args = new Bundle();
-        args.putInt(ARG_ICON_ID, iconId);
-        args.putInt(ARG_LABEL_ID, labelId);
-        args.putInt(ARG_SLOGAN, slogan);
         args.putString(ARG_VERSION_NAME, versionName);
         args.putInt(ARG_VERSION_CODE, versionCode);
-        args.putInt(ARG_LINK_A, linkA);
-        args.putInt(ARG_LINK_B, linkB);
-        args.putInt(ARG_LINK_C, linkC);
 
         AboutDialogFragment aboutDialogFragment = new AboutDialogFragment();
         aboutDialogFragment.setArguments(args);
@@ -48,20 +33,8 @@ public final class AboutDialogFragment extends DialogFragment {
         aboutDialogFragment.show(fm, null);
     }
 
-    @DrawableRes
-    private int mIconId;
-    @StringRes
-    private int mLabelId;
-    @StringRes
-    private int mSlogan;
     private String mVersionName;
     private int mVersionCode;
-    @StringRes
-    private int mLinkA;
-    @StringRes
-    private int mLinkB;
-    @StringRes
-    private int mLinkC;
 
     @Override
     public void onAttach(Context context) {
@@ -69,14 +42,8 @@ public final class AboutDialogFragment extends DialogFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            mIconId = args.getInt(ARG_ICON_ID);
-            mLabelId = args.getInt(ARG_LABEL_ID);
-            mSlogan = args.getInt(ARG_SLOGAN);
             mVersionName = args.getString(ARG_VERSION_NAME);
             mVersionCode = args.getInt(ARG_VERSION_CODE);
-            mLinkA = args.getInt(ARG_LINK_A);
-            mLinkB = args.getInt(ARG_LINK_B);
-            mLinkC = args.getInt(ARG_LINK_C);
         }
     }
 
@@ -86,13 +53,14 @@ public final class AboutDialogFragment extends DialogFragment {
 
         View view = View.inflate(getContext(), R.layout.eb_dialog_fragment_about, null);
         TextView labelTextView = (TextView) view.findViewById(R.id.eb_label);
-        labelTextView.setText(mLabelId);
+        labelTextView.setText(R.string.app_label);
         ImageView iconImageView = (ImageView) view.findViewById(R.id.eb_icon);
-        iconImageView.setImageResource(mIconId);
-        if (mSlogan != 0) {
+        iconImageView.setImageResource(R.drawable.eb_icon_128dp);
+        String slogan = getString(R.string.app_slogan);
+        if (!TextUtils.isEmpty(slogan)) {
             TextView sloganTextView = (TextView) view.findViewById(R.id.eb_slogan);
             sloganTextView.setVisibility(View.VISIBLE);
-            sloganTextView.setText(mSlogan);
+            sloganTextView.setText(slogan);
         }
         final TextView versionCodeTextView = (TextView) view.findViewById(R.id.eb_version_code);
         versionCodeTextView.setText(getString(R.string.eb_version_code_format, mVersionCode));
@@ -104,20 +72,23 @@ public final class AboutDialogFragment extends DialogFragment {
                 versionCodeTextView.setVisibility(View.VISIBLE);
             }
         });
-        if (mLinkA != 0) {
+        String linkA = getString(R.string.app_link_a);
+        if (!TextUtils.isEmpty(linkA)) {
             TextView linkATextView = (TextView) view.findViewById(R.id.eb_link_a);
             linkATextView.setVisibility(View.VISIBLE);
-            linkATextView.setText(mLinkA);
+            linkATextView.setText(linkA);
         }
-        if (mLinkB != 0) {
+        String linkB = getString(R.string.app_link_b);
+        if (!TextUtils.isEmpty(linkB)) {
             TextView linkBTextView = (TextView) view.findViewById(R.id.eb_link_b);
             linkBTextView.setVisibility(View.VISIBLE);
-            linkBTextView.setText(mLinkB);
+            linkBTextView.setText(linkB);
         }
-        if (mLinkC != 0) {
+        String linkC = getString(R.string.app_link_c);
+        if (!TextUtils.isEmpty(linkC)) {
             TextView linkCTextView = (TextView) view.findViewById(R.id.eb_link_c);
             linkCTextView.setVisibility(View.VISIBLE);
-            linkCTextView.setText(mLinkC);
+            linkCTextView.setText(linkC);
         }
         TextView linkEbnbinTextView = (TextView) view.findViewById(R.id.eb_link_ebnbin);
         linkEbnbinTextView.setText(R.string.eb_dialog_fragment_about_link_ebnbin);

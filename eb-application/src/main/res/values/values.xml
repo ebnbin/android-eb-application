@@ -79,6 +79,11 @@
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
 
+    <string name="app_label">EB Application</string>
+    <string name="app_slogan"/>
+    <string name="app_link_a"/>
+    <string name="app_link_b"/>
+    <string name="app_link_c"/>
     <string name="eb_ok">确定</string>
     <string name="eb_about">关于</string>
     <string name="eb_version_code_format">(%1$d)</string>
