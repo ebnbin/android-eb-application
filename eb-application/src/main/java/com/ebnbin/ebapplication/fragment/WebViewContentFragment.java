@@ -245,6 +245,7 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(url);
+            actionBar.setSubtitle(null);
         }
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
@@ -263,6 +264,7 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(mWebView.getTitle());
+            actionBar.setSubtitle(url);
         }
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
