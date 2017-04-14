@@ -25,7 +25,7 @@ public final class WebViewDialogFragment extends DialogFragment {
     private static final String ARG_URL = "url";
     private static final String ARG_FAVICON = "favicon";
 
-    public static void show(@NonNull FragmentManager fm, @Nullable String title, @Nullable String url,
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable String title, @Nullable String url,
             @Nullable Bitmap favicon) {
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);

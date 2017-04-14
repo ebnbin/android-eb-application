@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,37 +13,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebnbin.ebapplication.R;
+import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**
  * Shows about info.
  */
 public final class AboutDialogFragment extends DialogFragment {
-    private static final String ARG_VERSION_NAME = "version_name";
-    private static final String ARG_VERSION_CODE = "version_code";
-
-    public static void show(@NonNull FragmentManager fm, @NonNull String versionName, int versionCode) {
-        Bundle args = new Bundle();
-        args.putString(ARG_VERSION_NAME, versionName);
-        args.putInt(ARG_VERSION_CODE, versionCode);
-
+    public static void showDialog(@NonNull FragmentManager fm) {
         AboutDialogFragment aboutDialogFragment = new AboutDialogFragment();
-        aboutDialogFragment.setArguments(args);
-
-        aboutDialogFragment.show(fm, null);
-    }
-
-    private String mVersionName;
-    private int mVersionCode;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        Bundle args = getArguments();
-        if (args != null) {
-            mVersionName = args.getString(ARG_VERSION_NAME);
-            mVersionCode = args.getInt(ARG_VERSION_CODE);
-        }
+        aboutDialogFragment.show(fm, AboutDialogFragment.class.getName());
     }
 
     @Override
@@ -63,9 +40,9 @@ public final class AboutDialogFragment extends DialogFragment {
             sloganTextView.setText(slogan);
         }
         final TextView versionCodeTextView = (TextView) view.findViewById(R.id.eb_version_code);
-        versionCodeTextView.setText(getString(R.string.eb_version_code_format, mVersionCode));
+        versionCodeTextView.setText(getString(R.string.eb_version_code_format, EBAppUtil.getVersionCode()));
         TextView versionNameTextView = (TextView) view.findViewById(R.id.eb_version_name);
-        versionNameTextView.setText(mVersionName);
+        versionNameTextView.setText(EBAppUtil.getVersionName());
         versionNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
