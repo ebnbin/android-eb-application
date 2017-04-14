@@ -60,7 +60,7 @@ public final class WebViewDialogFragment extends DialogFragment {
         builder.setIcon(new BitmapDrawable(getResources(), mFavicon));
         builder.setTitle(mTitle);
         builder.setMessage(mUrl);
-        builder.setPositiveButton(R.string.eb_dialog_fragment_web_view_ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.eb_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dismiss();
