@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,6 +62,7 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
     //*****************************************************************************************************************
     // Content view.
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private CustomWebView mWebView;
 
     public CustomWebView getWebView() {
@@ -73,13 +75,14 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
 
     @Override
     protected int overrideContentViewLayout() {
-        return R.layout.eb_fragment_web_view;
+        return R.layout.eb_fragment_web_view_content;
     }
 
     @Override
     protected void onInitContentView(@NonNull View contentView) {
         super.onInitContentView(contentView);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.eb_swipe_refresh_layout);
         mWebView = (CustomWebView) contentView.findViewById(R.id.eb_web_view);
     }
 
@@ -120,6 +123,14 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         if (actionBarFragment != null) {
             actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
         }
+
+        mSwipeRefreshLayout.setColorSchemeColors(EBUtil.getColorAttr(getContext(), R.attr.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mWebView.reload();
+            }
+        });
     }
 
     @Override
@@ -222,24 +233,31 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
 
             return true;
         } else if (itemId == R.id.eb_open_in_browser) {
-            if (AdvancedWebView.Browsers.hasAlternative(getContext())) {
-                Activity activity = getActivity();
-                if (activity != null) {
-                    try {
-                        AdvancedWebView.Browsers.openUrl(activity, mWebView.getUrl());
-                    } catch (ActivityNotFoundException e) {
-                        EBUtil.log(e);
-
-                        Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                }
-            }
+            openInBrowser();
 
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openInBrowser() {
+        if (AdvancedWebView.Browsers.hasAlternative(getContext())) {
+            Activity activity = getActivity();
+            if (activity != null) {
+                try {
+                    AdvancedWebView.Browsers.openUrl(activity, mWebView.getUrl());
+                } catch (ActivityNotFoundException e) {
+                    EBUtil.log(e);
+
+                    Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     //*****************************************************************************************************************
@@ -271,6 +289,8 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         if (stateFrameLayout != null) {
             stateFrameLayout.clearState();
         }
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -284,14 +304,22 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
                 }
             });
         }
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength,
+    public void onDownloadRequested(final String url, String suggestedFilename, String mimeType, long contentLength,
             String contentDisposition, String userAgent) {
+        openInBrowser();
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void onExternalPageRequest(String url) {
+    public void onExternalPageRequest(final String url) {
+        openInBrowser();
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }
