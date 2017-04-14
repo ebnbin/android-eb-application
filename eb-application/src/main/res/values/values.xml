@@ -81,6 +81,9 @@
 
     <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
     <string name="eb_fragment_web_view_url_error">无法打开地址</string>
+    <string name="eb_dialog_fragment_web_view_ok">确定</string>
+    <string name="eb_dialog_fragment_web_view_copy_url">复制 URL</string>
+    <string name="eb_dialog_fragment_web_view_copy_url_success">复制 URL 成功</string>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>

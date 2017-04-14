@@ -2,6 +2,8 @@ package com.ebnbin.ebapplication.fragment;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -122,6 +124,31 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         EBActionBarFragment actionBarFragment = getActionBarParentFragment();
         if (actionBarFragment != null) {
             actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
+
+            actionBarFragment.getToolbar().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WebViewDialogFragment.show(getChildFragmentManager(), mWebView.getTitle(), mWebView.getUrl(),
+                            mWebView.getFavicon());
+                }
+            });
+
+            actionBarFragment.getToolbar().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    String url = mWebView.getUrl();
+
+                    ClipData clipData = ClipData.newPlainText(url, url);
+
+                    ClipboardManager cm = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setPrimaryClip(clipData);
+
+                    Toast.makeText(getContext(), R.string.eb_dialog_fragment_web_view_copy_url_success,
+                            Toast.LENGTH_SHORT).show();
+
+                    return true;
+                }
+            });
         }
 
         mSwipeRefreshLayout.setColorSchemeColors(EBUtil.getColorAttr(getContext(), R.attr.colorAccent));
@@ -268,7 +295,6 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(url);
-            actionBar.setSubtitle(null);
         }
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
@@ -282,7 +308,6 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(mWebView.getTitle());
-            actionBar.setSubtitle(url);
         }
 
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
