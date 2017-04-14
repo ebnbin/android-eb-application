@@ -115,6 +115,11 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         }
 
         EBActionBarFragment.addNestedScrollingChild(this, mWebView);
+
+        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
+        if (actionBarFragment != null) {
+            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
+        }
     }
 
     @Override
@@ -252,11 +257,6 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         if (stateFrameLayout != null) {
             stateFrameLayout.switchProgressingState(StateFrameLayout.SWITCH_MODE_KEEP);
         }
-
-        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
-        if (actionBarFragment != null) {
-            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD, true);
-        }
     }
 
     @Override
@@ -270,11 +270,6 @@ public class WebViewContentFragment extends EBFragment implements AdvancedWebVie
         StateFrameLayout stateFrameLayout = getStateFrameLayout();
         if (stateFrameLayout != null) {
             stateFrameLayout.clearState();
-        }
-
-        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
-        if (actionBarFragment != null) {
-            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
         }
     }
 
