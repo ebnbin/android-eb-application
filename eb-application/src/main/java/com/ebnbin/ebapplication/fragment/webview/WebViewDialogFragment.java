@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment;
+package com.ebnbin.ebapplication.fragment.webview;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,7 +20,7 @@ import com.ebnbin.ebapplication.R;
 /**
  * Shows WebView info.
  */
-public class WebViewDialogFragment extends DialogFragment {
+public final class WebViewDialogFragment extends DialogFragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_URL = "url";
     private static final String ARG_FAVICON = "favicon";

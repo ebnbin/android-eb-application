@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment;
+package com.ebnbin.ebapplication.fragment.webview;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;

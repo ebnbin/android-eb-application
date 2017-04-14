@@ -4,7 +4,7 @@
     android:id="@+id/eb_swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.ebnbin.ebapplication.fragment.CustomWebView
+    <com.ebnbin.ebapplication.fragment.webview.CustomWebView
         android:id="@+id/eb_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

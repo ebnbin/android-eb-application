@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment;
+package com.ebnbin.ebapplication.fragment.webview;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import im.delight.android.webview.AdvancedWebView;
 /**
  * A fragment that loads a url using {@link AdvancedWebView}.
  */
-public class WebViewFragment extends EBActionBarFragment {
+public final class WebViewFragment extends EBActionBarFragment {
     //*****************************************************************************************************************
     // Arguments.
 

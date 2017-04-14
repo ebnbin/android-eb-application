@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment;
+package com.ebnbin.ebapplication.fragment.webview;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -32,7 +32,7 @@ import im.delight.android.webview.AdvancedWebView;
 /**
  * A fragment that loads a url using {@link AdvancedWebView}.
  */
-public class WebViewContentFragment extends EBFragment implements AdvancedWebView.Listener {
+public final class WebViewContentFragment extends EBFragment implements AdvancedWebView.Listener {
     //*****************************************************************************************************************
     // Arguments.
 

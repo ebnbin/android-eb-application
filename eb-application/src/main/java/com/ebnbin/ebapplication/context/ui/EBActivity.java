@@ -12,7 +12,7 @@ import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.fragment.WebViewFragment;
+import com.ebnbin.ebapplication.fragment.webview.WebViewFragment;
 import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**

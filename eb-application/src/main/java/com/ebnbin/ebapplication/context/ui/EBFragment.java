@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.fragment.WebViewFragment;
+import com.ebnbin.ebapplication.fragment.webview.WebViewFragment;
 import com.ebnbin.ebapplication.model.EBModel;
 import com.ebnbin.ebapplication.net.NetHelper;
 import com.ebnbin.ebapplication.net.NetModelCallback;
