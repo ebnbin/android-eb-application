@@ -21,5 +21,7 @@ public final class SampleActionBarFragment extends EBActionBarFragment {
                     .endTransaction();
             ft.commit();
         }
+
+        setActionBarMode(ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
     }
 }

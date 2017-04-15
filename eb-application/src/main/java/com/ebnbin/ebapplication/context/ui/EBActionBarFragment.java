@@ -14,7 +14,6 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -193,31 +192,6 @@ public abstract class EBActionBarFragment extends EBFragment {
     private void invalidateNestedScrollingChildren() {
         for (NestedScrollingChild nestedScrollingChild : mNestedScrollingChildArrayList) {
             nestedScrollingChild.setNestedScrollingEnabled(mAppBarContentScrollable);
-
-            if (nestedScrollingChild instanceof View) {
-                View view = (View) nestedScrollingChild;
-                view.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getActionMasked() != MotionEvent.ACTION_UP
-                                && event.getActionMasked() != MotionEvent.ACTION_CANCEL) {
-                            return false;
-                        }
-
-                        if (mAppBarLayoutVisibleHeight > mToolbar.getHeight()) {
-                            return false;
-                        }
-
-                        if (mAppBarLayoutVisibleHeight < mToolbar.getHeight() / 2f) {
-                            mAppBarLayout.setExpanded(false, true);
-                        } else {
-                            mAppBarLayout.setExpanded(true, true);
-                        }
-
-                        return false;
-                    }
-                });
-            }
         }
     }
 
@@ -294,7 +268,8 @@ public abstract class EBActionBarFragment extends EBFragment {
                         .getLayoutParams();
                 params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                         | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+                        | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
 
                 setAppBarScrollable(false, true);
 
