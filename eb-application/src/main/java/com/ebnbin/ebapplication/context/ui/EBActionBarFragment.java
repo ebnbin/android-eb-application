@@ -12,8 +12,10 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.ArrayMap;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -22,7 +24,6 @@ import com.ebnbin.ebapplication.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 /**
  * Base fragment with ActionBar.
@@ -101,17 +102,17 @@ public abstract class EBActionBarFragment extends EBFragment {
                 int toolbarHeight = mToolbar.getHeight();
 
                 if (mAppBarLayoutVisibleHeight == toolbarHeight
-                        && mActionBarMode == ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS) {
+                        && mActionBarMode == ACTION_BAR_MODE_SCROLL) {
                     mAppBarLayout.setStateListAnimator(mIgnoreExpandedAppBarStateListAnimator);
                 } else {
                     mAppBarLayout.setStateListAnimator(mDefaultAppBarStateListAnimator);
                 }
+
+                mActionBarModeExpanded = mAppBarLayoutVisibleHeight != 0;
             }
         });
 
         actionBarModeOnRestoreInstanceState(savedInstanceState);
-
-        setActionBarMode(mActionBarMode, true);
     }
 
     private StateListAnimator mDefaultAppBarStateListAnimator;
@@ -136,15 +137,18 @@ public abstract class EBActionBarFragment extends EBFragment {
     //*****************************************************************************************************************
     // AppBarLayout scrollable.
 
-    /**
-     * Sets whether {@link AppBarLayout} can drag.
-     */
-    public void invalidateAppBarLayoutCanDrag() {
+    private boolean mAppBarCanDrag = true;
+
+    private void setAppBarLayoutCanDrag(boolean appBarCanDrag) {
+        if (mAppBarCanDrag == appBarCanDrag) {
+            return;
+        }
+
         mAppBarLayout.post(new Runnable() {
             @Override
             public void run() {
                 if (!ViewCompat.isLaidOut(mAppBarLayout)) {
-                    mAppBarLayout.post(this);
+                    mAppBarLayout.postDelayed(this, 16L);
 
                     return;
                 }
@@ -159,124 +163,222 @@ public abstract class EBActionBarFragment extends EBFragment {
                 behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
                     @Override
                     public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
-                        return mAppBarScrollable;
+                        return mAppBarCanDrag;
                     }
                 });
             }
         });
     }
 
-    private boolean mAppBarScrollable = false;
-    private boolean mAppBarContentScrollable = false;
+    private View mNestedScrollingView;
+    private boolean mNestedScrollingEnabled = true;
 
-    private void setAppBarScrollable(boolean scrollable, boolean contentScrollable) {
-        mAppBarScrollable = scrollable;
-        mAppBarContentScrollable = contentScrollable;
-
-        invalidateAppBarLayoutCanDrag();
-        invalidateNestedScrollingChildren();
+    public void addNestedScrollingView(@NonNull View nestedScrollingView) {
+        invalidateNestedScrollingEnabled(nestedScrollingView, mNestedScrollingEnabled);
     }
 
-    private final ArrayList<NestedScrollingChild> mNestedScrollingChildArrayList = new ArrayList<>();
-
-    private void addNestedScrollingChild(@NonNull NestedScrollingChild nestedScrollingChild) {
-        mNestedScrollingChildArrayList.add(nestedScrollingChild);
-
-        invalidateNestedScrollingChildren();
+    public void removeNestedScrollingView(@NonNull View nestedScrollingView) {
+        invalidateNestedScrollingEnabled(mNestedScrollingView == nestedScrollingView ? null : mNestedScrollingView,
+                mNestedScrollingEnabled);
     }
 
-    private void removeNestedScrollingChild(@NonNull NestedScrollingChild nestedScrollingChild) {
-        mNestedScrollingChildArrayList.remove(nestedScrollingChild);
+    private void setNestedScrollingEnabled(boolean nestedScrollingEnabled) {
+        invalidateNestedScrollingEnabled(mNestedScrollingView, nestedScrollingEnabled);
     }
 
-    private void invalidateNestedScrollingChildren() {
-        for (NestedScrollingChild nestedScrollingChild : mNestedScrollingChildArrayList) {
-            nestedScrollingChild.setNestedScrollingEnabled(mAppBarContentScrollable);
+    private void invalidateNestedScrollingEnabled(@Nullable View nestedScrollingView, boolean nestedScrollingEnabled) {
+        boolean needInvalidate = false;
+
+        if (mNestedScrollingView != nestedScrollingView) {
+            mNestedScrollingView = nestedScrollingView;
+
+            needInvalidate = true;
         }
-    }
 
-    public static void addNestedScrollingChild(@NonNull EBFragment fragment,
-            @NonNull NestedScrollingChild nestedScrollingChild) {
-        EBActionBarFragment actionBarFragment = getTParent(EBActionBarFragment.class, fragment);
-        if (actionBarFragment == null) {
+        if (mNestedScrollingEnabled != nestedScrollingEnabled) {
+            mNestedScrollingEnabled = nestedScrollingEnabled;
+
+            needInvalidate = true;
+        }
+
+        if (!needInvalidate) {
             return;
         }
 
-        actionBarFragment.addNestedScrollingChild(nestedScrollingChild);
-    }
-
-    public static void removeNestedScrollingChild(@NonNull EBFragment fragment,
-            @NonNull NestedScrollingChild nestedScrollingChild) {
-        EBActionBarFragment actionBarFragment = getTParent(EBActionBarFragment.class, fragment);
-        if (actionBarFragment == null) {
-            return;
+        if (nestedScrollingView instanceof NestedScrollingChild
+                && !(nestedScrollingView instanceof SwipeRefreshLayout)) {
+            NestedScrollingChild nestedScrollingChild = (NestedScrollingChild) nestedScrollingView;
+            nestedScrollingChild.setNestedScrollingEnabled(mNestedScrollingEnabled);
         }
-
-        actionBarFragment.removeNestedScrollingChild(nestedScrollingChild);
     }
+
+    //*****************************************************************************************************************
+    // AppBarLayout animation duration.
+
+    private static final long APP_BAR_LAYOUT_ANIMATION_DURATION_STANDARD = 300L;
+    private static final long APP_BAR_LAYOUT_ANIMATION_DURATION_MAX = 600L;
 
     //*****************************************************************************************************************
     // ActionBar mode.
 
     public static final int ACTION_BAR_MODE_STANDARD = 0;
-    public static final int ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS = 1;
+    public static final int ACTION_BAR_MODE_SCROLL = 1;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ACTION_BAR_MODE_STANDARD, ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS})
+    @IntDef({ACTION_BAR_MODE_STANDARD, ACTION_BAR_MODE_SCROLL})
     public @interface ActionBarMode {
     }
 
     @ActionBarMode
-    private int mActionBarMode = ACTION_BAR_MODE_STANDARD;
+    private int mActionBarMode = -1;
 
-    private Boolean mActionBarModeExpanded = null;
+    private boolean mActionBarModeExpanded = true;
 
     @ActionBarMode
     public int getActionBarMode() {
         return mActionBarMode;
     }
 
-    public void setActionBarMode(@ActionBarMode int actionBarMode, boolean forceInvalidate) {
+    public void setActionBarMode(@ActionBarMode int actionBarMode, boolean forceInvalidate, @Nullable Boolean expanded,
+            boolean animate) {
+        if (mSetCollapsingToolbarLayoutScrollFlagsRunnable != null) {
+            mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
+        }
+
         if (!forceInvalidate && mActionBarMode == actionBarMode) {
             return;
         }
 
-        mActionBarMode = actionBarMode;
+        if (expanded != null) {
+            mActionBarModeExpanded = expanded;
+        }
 
-        switch (mActionBarMode) {
+        mAppBarLayout.setExpanded(mActionBarModeExpanded, animate);
+
+        mSetCollapsingToolbarLayoutScrollFlagsRunnable = new SetCollapsingToolbarLayoutScrollFlagsRunnable(
+                actionBarMode);
+
+        setActionBarModeByConstants(actionBarMode);
+
+        if (animate) {
+            mCollapsingToolbarLayout.postDelayed(mSetCollapsingToolbarLayoutScrollFlagsRunnable,
+                    APP_BAR_LAYOUT_ANIMATION_DURATION_STANDARD);
+        } else {
+            mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
+        }
+    }
+
+    private void setActionBarModeByConstants(@ActionBarMode int actionBarMode) {
+        if (mActionBarMode == actionBarMode) {
+            return;
+        }
+
+        ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
+        if (actionBarModeConstants == null) {
+            return;
+        }
+
+        mCollapsingToolbarLayoutContentContainerFrameLayout.setVisibility(
+                actionBarModeConstants.collapsingToolbarLayoutContentContainerFrameLayoutVisibility);
+        setAppBarLayoutCanDrag(actionBarModeConstants.appBarLayoutCanDrag);
+        setNestedScrollingEnabled(actionBarModeConstants.nestedScrollingEnabled);
+    }
+
+    private void invalidateToolbar() {
+        AppCompatActivity activity = getAppCompatActivity();
+        if (activity != null) {
+            activity.setSupportActionBar(mToolbar);
+        }
+    }
+
+    //*****************************************************************************************************************
+    // SetCollapsingToolbarLayoutScrollFlagsRunnable.
+
+    private SetCollapsingToolbarLayoutScrollFlagsRunnable mSetCollapsingToolbarLayoutScrollFlagsRunnable;
+
+    private class SetCollapsingToolbarLayoutScrollFlagsRunnable implements Runnable {
+        @ActionBarMode
+        private final int mActionBarMode;
+
+        public SetCollapsingToolbarLayoutScrollFlagsRunnable(@ActionBarMode int actionBarMode) {
+            mActionBarMode = actionBarMode;
+        }
+
+        @Override
+        public void run() {
+            mAppBarLayout.removeCallbacks(this);
+
+            mSetCollapsingToolbarLayoutScrollFlagsRunnable = null;
+
+            setCollapsingToolbarLayoutScrollFlagsByConstants(mActionBarMode);
+
+            EBActionBarFragment.this.mActionBarMode = mActionBarMode;
+
+            invalidateToolbar();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (mSetCollapsingToolbarLayoutScrollFlagsRunnable != null) {
+            mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
+        }
+    }
+
+    //*****************************************************************************************************************
+    // CollapsingToolbarLayout scroll flags.
+
+    private int mCollapsingToolbarLayoutScrollFlags = -1;
+
+    private void setCollapsingToolbarLayoutScrollFlags(int flags) {
+        if (mCollapsingToolbarLayoutScrollFlags == flags) {
+            return;
+        }
+
+        mCollapsingToolbarLayoutScrollFlags = flags;
+
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mCollapsingToolbarLayout.getLayoutParams();
+        params.setScrollFlags(mCollapsingToolbarLayoutScrollFlags);
+    }
+
+    private void setCollapsingToolbarLayoutScrollFlagsByConstants(@ActionBarMode int actionBarMode) {
+        if (mActionBarMode == actionBarMode) {
+            return;
+        }
+
+        ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
+        if (actionBarModeConstants == null) {
+            return;
+        }
+
+        setCollapsingToolbarLayoutScrollFlags(actionBarModeConstants.collapsingToolbarLayoutScrollFlags);
+    }
+
+    //*****************************************************************************************************************
+    // Instance state.
+
+    private static final String INSTANCE_STATE_ACTION_BAR_MODE = "action_bar_mode";
+    private static final String INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED = "action_bar_mode_expanded";
+
+    private void actionBarModeOnRestoreInstanceState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            setActionBarMode(ACTION_BAR_MODE_STANDARD, true, true, false);
+            return;
+        }
+
+        int actionBarMode = savedInstanceState.getInt(INSTANCE_STATE_ACTION_BAR_MODE, ACTION_BAR_MODE_STANDARD);
+        @ActionBarMode
+        int tmpActionBarMode;
+        switch (actionBarMode) {
             case ACTION_BAR_MODE_STANDARD: {
-                mCollapsingToolbarLayoutContentContainerFrameLayout.setVisibility(View.GONE);
-
-                AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mCollapsingToolbarLayout
-                        .getLayoutParams();
-                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
-
-                setAppBarScrollable(false, false);
-
-                AppCompatActivity activity = getAppCompatActivity();
-                if (activity != null) {
-                    activity.setSupportActionBar(mToolbar);
-                }
+                tmpActionBarMode = ACTION_BAR_MODE_STANDARD;
 
                 break;
             }
-            case ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS: {
-                mCollapsingToolbarLayoutContentContainerFrameLayout.setVisibility(View.GONE);
-
-                AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mCollapsingToolbarLayout
-                        .getLayoutParams();
-                params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
-                        | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-
-                setAppBarScrollable(false, true);
-
-                AppCompatActivity activity = getAppCompatActivity();
-                if (activity != null) {
-                    activity.setSupportActionBar(mToolbar);
-                }
+            case ACTION_BAR_MODE_SCROLL: {
+                tmpActionBarMode = ACTION_BAR_MODE_SCROLL;
 
                 break;
             }
@@ -284,33 +386,9 @@ public abstract class EBActionBarFragment extends EBFragment {
                 throw new EBRuntimeException();
             }
         }
-    }
+        boolean actionBarModeExpanded = savedInstanceState.getBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED);
 
-    private static final String INSTANCE_STATE_ACTION_BAR_MODE = "action_bar_mode";
-    private static final String INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED = "action_bar_mode_expanded";
-
-    private void actionBarModeOnRestoreInstanceState(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return;
-        }
-
-        int actionBarMode = savedInstanceState.getInt(INSTANCE_STATE_ACTION_BAR_MODE, ACTION_BAR_MODE_STANDARD);
-        switch (actionBarMode) {
-            case ACTION_BAR_MODE_STANDARD: {
-                mActionBarMode = ACTION_BAR_MODE_STANDARD;
-
-                break;
-            }
-            case ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS: {
-                mActionBarMode = ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS;
-
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-        mActionBarModeExpanded = savedInstanceState.getBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED);
+        setActionBarMode(tmpActionBarMode, true, actionBarModeExpanded, false);
     }
 
     private void actionBarModeOnSaveInstanceState(@Nullable Bundle outState) {
@@ -319,9 +397,7 @@ public abstract class EBActionBarFragment extends EBFragment {
         }
 
         outState.putInt(INSTANCE_STATE_ACTION_BAR_MODE, mActionBarMode);
-        if (mActionBarModeExpanded != null) {
-            outState.putBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED, mActionBarModeExpanded);
-        }
+        outState.putBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED, mActionBarModeExpanded);
     }
 
     @Override
@@ -329,5 +405,42 @@ public abstract class EBActionBarFragment extends EBFragment {
         super.onSaveInstanceState(outState);
 
         actionBarModeOnSaveInstanceState(outState);
+    }
+
+    //*****************************************************************************************************************
+    // ActionBarMode constants.
+
+    private static final ArrayMap<Integer, ActionBarModeConstants> ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP
+            = new ArrayMap<>();
+
+    static {
+        int standardCollapsingToolbarLayoutScrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED;
+        ActionBarModeConstants standardActionBarModeConstants = new ActionBarModeConstants(
+                standardCollapsingToolbarLayoutScrollFlags, false, false, View.GONE);
+        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ACTION_BAR_MODE_STANDARD, standardActionBarModeConstants);
+
+        int scrollCollapsingToolbarLayoutScrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP;
+        ActionBarModeConstants scrollActionBarModeConstants = new ActionBarModeConstants(
+                scrollCollapsingToolbarLayoutScrollFlags, false, true, View.GONE);
+        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ACTION_BAR_MODE_SCROLL, scrollActionBarModeConstants);
+    }
+
+    private static final class ActionBarModeConstants {
+        public final int collapsingToolbarLayoutScrollFlags;
+        public final boolean appBarLayoutCanDrag;
+        public final boolean nestedScrollingEnabled;
+        public final int collapsingToolbarLayoutContentContainerFrameLayoutVisibility;
+
+        private ActionBarModeConstants(int collapsingToolbarLayoutScrollFlags, boolean appBarLayoutCanDrag,
+                boolean nestedScrollingEnabled, int collapsingToolbarLayoutContentContainerFrameLayoutVisibility) {
+            this.collapsingToolbarLayoutScrollFlags = collapsingToolbarLayoutScrollFlags;
+            this.appBarLayoutCanDrag = appBarLayoutCanDrag;
+            this.nestedScrollingEnabled = nestedScrollingEnabled;
+            this.collapsingToolbarLayoutContentContainerFrameLayoutVisibility
+                    = collapsingToolbarLayoutContentContainerFrameLayoutVisibility;
+        }
     }
 }

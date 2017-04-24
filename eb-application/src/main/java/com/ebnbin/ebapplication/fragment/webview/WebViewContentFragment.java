@@ -119,11 +119,11 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
             }
         }
 
-        EBActionBarFragment.addNestedScrollingChild(this, mWebView);
-
         EBActionBarFragment actionBarFragment = getActionBarParentFragment();
         if (actionBarFragment != null) {
-            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_STANDARD_SCROLL_ALWAYS, true);
+            actionBarFragment.addNestedScrollingView(mWebView);
+            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_SCROLL, true,
+                    savedInstanceState == null ? true : null, false);
 
             actionBarFragment.getToolbar().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -162,7 +162,10 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onDestroyView() {
-        EBActionBarFragment.removeNestedScrollingChild(this, mWebView);
+        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
+        if (actionBarFragment != null) {
+            actionBarFragment.removeNestedScrollingView(mWebView);
+        }
 
         super.onDestroyView();
     }
