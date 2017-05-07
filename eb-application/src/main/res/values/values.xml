@@ -73,6 +73,8 @@
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
 
+    <dimen name="eb_task_description_icon_size">48dp</dimen>
+
     <!-- 56dp (actionBarSize) * 2 + 24dp (windowTranslucentStatus = true 时 statusBarSize). -->
     <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">136dp</dimen>
 

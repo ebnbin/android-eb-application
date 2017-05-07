@@ -1,8 +1,10 @@
 package com.ebnbin.ebapplication.sample;
 
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.Button;
 
 import com.ebnbin.ebapplication.context.ui.EBActivity;
 
@@ -11,15 +13,15 @@ public final class MainActivity extends EBActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SampleActionBarFragment sampleActionBarFragment = new SampleActionBarFragment();
+        Button button = new Button(this);
 
-        if (getFragmentHelper().canAdd(sampleActionBarFragment)) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            getFragmentHelper()
-                    .beginTransaction(ft)
-                    .add(sampleActionBarFragment)
-                    .endTransaction();
-            ft.commit();
-        }
+        setContentView(button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+            }
+        });
     }
 }
