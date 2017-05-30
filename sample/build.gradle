@@ -1,11 +1,9 @@
-buildscript {
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-    }
-}
-
 repositories {
     jcenter()
+
+    maven {
+        url 'https://maven.google.com'
+    }
 
     maven {
         url 'https://jitpack.io'
@@ -13,26 +11,30 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 'android-O'
+    buildToolsVersion '26.0.0 rc2'
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 25
-
-        jackOptions {
-            enabled true
-        }
+        targetSdkVersion 'O'
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
-    compile project(':eb-application')
+    implementation project(':eb-application')
+
+//    implementation 'com.ebnbin:eb-application:0.2.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

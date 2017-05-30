@@ -137,7 +137,7 @@ public abstract class EBFragment extends Fragment {
     private LayoutInflater mLayoutInflater;
 
     @NonNull
-    public LayoutInflater getLayoutInflater() {
+    public LayoutInflater getEBLayoutInflater() {
         return mLayoutInflater;
     }
 
