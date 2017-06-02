@@ -12,6 +12,6 @@ public final class SampleApplication extends EBApplication {
     }
 
     private void initEBUtil() {
-        EBUtil.debug = BuildConfig.DEBUG;
+        EBUtil.INSTANCE.init(BuildConfig.APPLICATION_ID);
     }
 }

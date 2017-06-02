@@ -151,7 +151,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
             });
         }
 
-        mSwipeRefreshLayout.setColorSchemeColors(EBUtil.getColorAttr(getContext(), R.attr.colorAccent));
+        mSwipeRefreshLayout.setColorSchemeColors(EBUtil.INSTANCE.getColorAttr(getContext(), R.attr.colorAccent));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -278,7 +278,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
                 try {
                     AdvancedWebView.Browsers.openUrl(activity, mWebView.getUrl());
                 } catch (ActivityNotFoundException e) {
-                    EBUtil.log(e);
+                    EBUtil.INSTANCE.log(e);
 
                     Toast.makeText(getContext(), R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT).show();
                 }

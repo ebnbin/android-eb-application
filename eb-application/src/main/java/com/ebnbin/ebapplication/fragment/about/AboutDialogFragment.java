@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.R;
-import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**
  * Shows about info.
@@ -40,9 +40,9 @@ public final class AboutDialogFragment extends DialogFragment {
             sloganTextView.setText(slogan);
         }
         final TextView versionCodeTextView = (TextView) view.findViewById(R.id.eb_version_code);
-        versionCodeTextView.setText(getString(R.string.eb_version_code_format, EBAppUtil.getVersionCode()));
+        versionCodeTextView.setText(getString(R.string.eb_version_code_format, EBUtil.INSTANCE.getVersionCode()));
         TextView versionNameTextView = (TextView) view.findViewById(R.id.eb_version_name);
-        versionNameTextView.setText(EBAppUtil.getVersionName());
+        versionNameTextView.setText(EBUtil.INSTANCE.getVersionName());
         versionNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

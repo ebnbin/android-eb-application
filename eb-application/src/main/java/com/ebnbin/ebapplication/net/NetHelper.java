@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.ArrayMap;
 import android.util.ArraySet;
 
-import com.ebnbin.eb.base.EBRuntimeException;
+import com.ebnbin.eb.util.EBRuntimeException;
 import com.ebnbin.eb.util.EBUtil;
 import com.ebnbin.ebapplication.model.EBModel;
 import com.google.gson.Gson;
@@ -157,7 +157,7 @@ public final class NetHelper {
                     Gson gson = new Gson();
                     model = gson.fromJson(responseString, type);
                 } catch (JsonSyntaxException e) {
-                    EBUtil.log(e);
+                    EBUtil.INSTANCE.log(e);
 
                     postOnFailureCallback();
 

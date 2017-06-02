@@ -66,12 +66,12 @@ android {
 }
 
 dependencies {
-//    compile project(':..:android-eb:eb')
+    compile project(':..:android-eb:eb')
 
     compile 'com.android.support:cardview-v7:26.0.0-beta1'
     compile 'com.android.support:design:26.0.0-beta1'
     compile 'com.android.support:support-v13:26.0.0-beta1'
-    compile 'com.ebnbin:eb:0.3.11'
+//    compile 'com.ebnbin:eb:0.3.11'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.9'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.google.code.gson:gson:2.8.0'

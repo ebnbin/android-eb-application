@@ -19,7 +19,7 @@ import android.util.ArrayMap;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.ebnbin.eb.base.EBRuntimeException;
+import com.ebnbin.eb.util.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
 
 import java.lang.annotation.Retention;

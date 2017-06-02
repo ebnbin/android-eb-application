@@ -1,5 +1,12 @@
 buildscript {
-    ext.kotlin_version = '1.1.2-4'
+    ext {
+        kotlin_version = '1.1.2-4'
+        compile_sdk_version = 'android-O'
+        build_tools_version = '26.0.0 rc2'
+        min_sdk_version = 23
+        target_sdk_version = 'O'
+        support_version = '26.0.0-beta1'
+    }
 
     repositories {
         jcenter()

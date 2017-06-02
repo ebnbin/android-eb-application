@@ -10,7 +10,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.ebnbin.eb.base.EBRuntimeException;
+import com.ebnbin.eb.util.EBRuntimeException;
 
 import java.util.ArrayList;
 
