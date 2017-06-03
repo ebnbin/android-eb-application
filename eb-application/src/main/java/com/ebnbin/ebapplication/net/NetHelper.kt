@@ -127,12 +127,14 @@ class NetHelper private constructor() {
                     return
                 }
 
-                val responseString = responseBody.string()
+                val responseByteArray = responseBody.bytes() ?: byteArrayOf()
+
+                val gson = Gson()
+                val responseString = String(responseByteArray)
                 val type = (callback.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0]
 
                 val model: Model?
                 try {
-                    val gson = Gson()
                     model = gson.fromJson<Model>(responseString, type)
                 } catch (e: JsonSyntaxException) {
                     EBUtil.log(e)
@@ -148,13 +150,13 @@ class NetHelper private constructor() {
                     return
                 }
 
-                postSuccess(model, response)
+                postSuccess(model, response, responseByteArray)
             }
 
             /**
              * Posts success or cancel.
              */
-            private fun postSuccess(model: Model, response: Response?) {
+            private fun postSuccess(model: Model, response: Response, byteArray: ByteArray) {
                 handler.post {
                     if (!containsCall(call)) {
                         callback.cancel(call)
@@ -163,7 +165,7 @@ class NetHelper private constructor() {
                         return@post
                     }
 
-                    callback.success(call, model, response)
+                    callback.success(call, model, response, byteArray)
 
                     removeCall(call)
 

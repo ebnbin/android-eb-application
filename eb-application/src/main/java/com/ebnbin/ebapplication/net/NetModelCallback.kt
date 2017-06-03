@@ -30,7 +30,7 @@ abstract class NetModelCallback<Model : EBModel> {
      *
      * @see onBegin
      */
-    open fun onSuccess(call: Call, model: Model, response: Response?) {}
+    open fun onSuccess(call: Call, model: Model, response: Response, byteArray: ByteArray) {}
 
     /**
      * Called on failure.
@@ -78,12 +78,12 @@ abstract class NetModelCallback<Model : EBModel> {
     /**
      * @see onSuccess
      */
-    internal fun success(call: Call, model: Model, response: Response?) {
-        preCallbacks.forEach { preCallback -> preCallback.onSuccess(call, model, response) }
+    internal fun success(call: Call, model: Model, response: Response, byteArray: ByteArray) {
+        preCallbacks.forEach { preCallback -> preCallback.onSuccess(call, model, response, byteArray) }
 
-        onSuccess(call, model, response)
+        onSuccess(call, model, response, byteArray)
 
-        postCallbacks.forEach { postCallback -> postCallback.onSuccess(call, model, response) }
+        postCallbacks.forEach { postCallback -> postCallback.onSuccess(call, model, response, byteArray) }
     }
 
     /**

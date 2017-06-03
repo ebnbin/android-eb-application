@@ -328,8 +328,9 @@ public abstract class EBFragment extends Fragment {
             }
 
             @Override
-            public void onSuccess(@NonNull Call call, @NonNull Model model, @Nullable Response response) {
-                super.onSuccess(call, model, response);
+            public void onSuccess(@NonNull Call call, @NonNull Model model, @NonNull Response response,
+                    @NonNull byte[] byteArray) {
+                super.onSuccess(call, model, response, byteArray);
 
                 if (mStateFrameLayout != null) {
                     mStateFrameLayout.clearState();
