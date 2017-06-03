@@ -1,11 +1,17 @@
 package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -13,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.fragment.webview.WebViewFragment;
-import com.ebnbin.ebapplication.util.EBAppUtil;
 
 /**
  * Base {@link Activity}.
@@ -141,7 +146,37 @@ public abstract class EBActivity extends AppCompatActivity {
     // TaskDescription.
 
     private void initTaskDescription() {
-        setTaskDescription(EBAppUtil.getDefTaskDescription(getContext()));
+        setTaskDescription(getDefTaskDescription());
+    }
+
+    private static ActivityManager.TaskDescription sTaskDescription;
+
+    /**
+     * Returns a default {@link ActivityManager.TaskDescription} used in
+     * {@link com.ebnbin.ebapplication.context.ui.EBActivity}.
+     */
+    public ActivityManager.TaskDescription getDefTaskDescription() {
+        if (sTaskDescription != null) {
+            return sTaskDescription;
+        }
+
+        Bitmap icon = null;
+        VectorDrawable vectorDrawable = (VectorDrawable) getDrawable(R.drawable.eb);
+        if (vectorDrawable != null) {
+            vectorDrawable.setTint(Color.WHITE);
+
+            int size = getResources().getDimensionPixelSize(R.dimen.eb_task_description_icon_size);
+            icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(icon);
+            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            vectorDrawable.draw(canvas);
+        }
+
+        @ColorInt
+        int colorPrimary = getColor(R.color.eb_primary_light);
+
+        sTaskDescription = new ActivityManager.TaskDescription(null, icon, colorPrimary);
+        return sTaskDescription;
     }
 
     //*****************************************************************************************************************
