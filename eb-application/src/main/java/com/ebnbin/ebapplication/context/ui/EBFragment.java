@@ -316,8 +316,8 @@ public abstract class EBFragment extends Fragment {
             @NonNull final NetModelCallback<Model> callback) {
         final NetModelCallback<Model> loadingPreCallback = new NetModelCallback<Model>() {
             @Override
-            public void onLoading(@NonNull Call call) {
-                super.onLoading(call);
+            public void onBegin(@NonNull Call call) {
+                super.onBegin(call);
 
                 if (mStateFrameLayout != null) {
                     mStateFrameLayout.switchLoadingState();

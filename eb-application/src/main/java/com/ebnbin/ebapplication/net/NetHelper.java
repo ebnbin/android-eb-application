@@ -132,7 +132,7 @@ public final class NetHelper {
 
         addCall(call);
 
-        callback.onLoadingCallback(call);
+        callback.onBeginCallback(call);
 
         call.enqueue(new Callback() {
             @Override
@@ -198,6 +198,8 @@ public final class NetHelper {
                         removeCall(call);
                     }
                 });
+
+                callback.onEndCallback(call);
             }
 
             /**
@@ -216,6 +218,8 @@ public final class NetHelper {
                         removeCall(call);
                     }
                 });
+
+                callback.onEndCallback(call);
             }
         });
 

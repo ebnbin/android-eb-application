@@ -24,17 +24,17 @@ public abstract class NetModelCallback<Model extends EBModel> {
     public final ArrayList<NetModelCallback<Model>> postCallbacks = new ArrayList<>();
 
     /**
-     * Called when loading with pre-callbacks and post-callbacks.
+     * Called on begin with pre-callbacks and post-callbacks.
      */
-    final void onLoadingCallback(@NonNull Call call) {
+    final void onBeginCallback(@NonNull Call call) {
         for (NetModelCallback<Model> callback : preCallbacks) {
-            callback.onLoading(call);
+            callback.onBegin(call);
         }
 
-        onLoading(call);
+        onBegin(call);
 
         for (NetModelCallback<Model> callback : postCallbacks) {
-            callback.onLoading(call);
+            callback.onBegin(call);
         }
     }
 
@@ -71,9 +71,24 @@ public abstract class NetModelCallback<Model extends EBModel> {
     }
 
     /**
-     * Called when loading.
+     * Called on end with pre-callbacks and post-callbacks.
      */
-    public void onLoading(@NonNull Call call) {
+    final void onEndCallback(@NonNull Call call) {
+        for (NetModelCallback<Model> callback : preCallbacks) {
+            callback.onEnd(call);
+        }
+
+        onEnd(call);
+
+        for (NetModelCallback<Model> callback : postCallbacks) {
+            callback.onEnd(call);
+        }
+    }
+
+    /**
+     * Called on begin.
+     */
+    public void onBegin(@NonNull Call call) {
     }
 
     /**
@@ -88,5 +103,11 @@ public abstract class NetModelCallback<Model extends EBModel> {
      * Called when failure.
      */
     public void onFailure(@NonNull Call call) {
+    }
+
+    /**
+     * Called on end.
+     */
+    public void onEnd(@NonNull Call call) {
     }
 }
