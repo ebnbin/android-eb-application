@@ -32,7 +32,7 @@ public final class AboutDialogFragment extends DialogFragment {
         TextView labelTextView = (TextView) view.findViewById(R.id.eb_label);
         labelTextView.setText(R.string.app_label);
         ImageView iconImageView = (ImageView) view.findViewById(R.id.eb_icon);
-        iconImageView.setImageResource(R.drawable.eb_icon_128dp);
+        iconImageView.setImageResource(R.drawable.eb_icon_128);
         String slogan = getString(R.string.app_slogan);
         if (!TextUtils.isEmpty(slogan)) {
             TextView sloganTextView = (TextView) view.findViewById(R.id.eb_slogan);
