@@ -2,6 +2,8 @@ package com.ebnbin.ebapplication.net
 
 import com.ebnbin.ebapplication.model.EBModel
 import okhttp3.Call
+import okhttp3.Response
+import java.io.IOException
 
 /**
  * Net callback for getting a model.
@@ -28,14 +30,14 @@ abstract class NetModelCallback<Model : EBModel> {
      *
      * @see onBegin
      */
-    open fun onSuccess(call: Call, model: Model) {}
+    open fun onSuccess(call: Call, model: Model, response: Response?) {}
 
     /**
      * Called on failure.
      *
      * @see onBegin
      */
-    open fun onFailure(call: Call) {}
+    open fun onFailure(call: Call, errorCode: Int, e: IOException?, response: Response?) {}
 
     /**
      * Called on cancel.
@@ -76,23 +78,23 @@ abstract class NetModelCallback<Model : EBModel> {
     /**
      * @see onSuccess
      */
-    internal fun success(call: Call, model: Model) {
-        preCallbacks.forEach { preCallback -> preCallback.onSuccess(call, model) }
+    internal fun success(call: Call, model: Model, response: Response?) {
+        preCallbacks.forEach { preCallback -> preCallback.onSuccess(call, model, response) }
 
-        onSuccess(call, model)
+        onSuccess(call, model, response)
 
-        postCallbacks.forEach { postCallback -> postCallback.onSuccess(call, model) }
+        postCallbacks.forEach { postCallback -> postCallback.onSuccess(call, model, response) }
     }
 
     /**
      * @see onFailure
      */
-    internal fun failure(call: Call) {
-        preCallbacks.forEach { preCallback -> preCallback.onFailure(call) }
+    internal fun failure(call: Call, errorCode: Int, e: IOException?, response: Response?) {
+        preCallbacks.forEach { preCallback -> preCallback.onFailure(call, errorCode, e, response) }
 
-        onFailure(call)
+        onFailure(call, errorCode, e, response)
 
-        postCallbacks.forEach { postCallback -> postCallback.onFailure(call) }
+        postCallbacks.forEach { postCallback -> postCallback.onFailure(call, errorCode, e, response) }
     }
 
     /**
@@ -115,5 +117,20 @@ abstract class NetModelCallback<Model : EBModel> {
         onEnd(call)
 
         postCallbacks.forEach { postCallback -> postCallback.onEnd(call) }
+    }
+
+    //*****************************************************************************************************************
+
+    companion object {
+        //*************************************************************************************************************
+        // Error codes.
+
+        const val ERROR_CODE_WTF = 0
+        const val ERROR_CODE_FAILURE = 1
+        const val ERROR_CODE_RESPONSE_NULL = 2
+        const val ERROR_CODE_RESPONSE_UNSUCCESSFUL = 3
+        const val ERROR_CODE_RESPONSE_BODY_NULL = 4
+        const val ERROR_CODE_JSON_SYNTAX_EXCEPTION = 5
+        const val ERROR_CODE_MODEL_INVALID = 6
     }
 }

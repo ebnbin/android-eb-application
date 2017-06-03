@@ -104,25 +104,25 @@ class NetHelper private constructor() {
 
         call.enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
-                postFailure()
+                postFailure(NetModelCallback.ERROR_CODE_FAILURE, e, null)
             }
 
             override fun onResponse(call: Call?, response: Response?) {
                 if (response == null) {
-                    postFailure()
+                    postFailure(NetModelCallback.ERROR_CODE_RESPONSE_NULL, null, response)
 
                     return
                 }
 
                 if (!response.isSuccessful) {
-                    postFailure()
+                    postFailure(NetModelCallback.ERROR_CODE_RESPONSE_UNSUCCESSFUL, null, response)
 
                     return
                 }
 
                 val responseBody = response.body()
                 if (responseBody == null) {
-                    postFailure()
+                    postFailure(NetModelCallback.ERROR_CODE_RESPONSE_BODY_NULL, null, response)
 
                     return
                 }
@@ -137,24 +137,24 @@ class NetHelper private constructor() {
                 } catch (e: JsonSyntaxException) {
                     EBUtil.log(e)
 
-                    postFailure()
+                    postFailure(NetModelCallback.ERROR_CODE_JSON_SYNTAX_EXCEPTION, null, response)
 
                     return
                 }
 
                 if (model == null || !model.isValid) {
-                    postFailure()
+                    postFailure(NetModelCallback.ERROR_CODE_MODEL_INVALID, null, response)
 
                     return
                 }
 
-                postSuccess(model)
+                postSuccess(model, response)
             }
 
             /**
              * Posts success or cancel.
              */
-            private fun postSuccess(model: Model) {
+            private fun postSuccess(model: Model, response: Response?) {
                 handler.post {
                     if (!containsCall(call)) {
                         callback.cancel(call)
@@ -163,7 +163,7 @@ class NetHelper private constructor() {
                         return@post
                     }
 
-                    callback.success(call, model)
+                    callback.success(call, model, response)
 
                     removeCall(call)
 
@@ -174,7 +174,7 @@ class NetHelper private constructor() {
             /**
              * Posts failure or cancel.
              */
-            private fun postFailure() {
+            private fun postFailure(errorCode: Int, e: IOException?, response: Response?) {
                 handler.post {
                     if (!containsCall(call)) {
                         callback.cancel(call)
@@ -183,7 +183,7 @@ class NetHelper private constructor() {
                         return@post
                     }
 
-                    callback.failure(call)
+                    callback.failure(call, errorCode, e, response)
 
                     removeCall(call)
 

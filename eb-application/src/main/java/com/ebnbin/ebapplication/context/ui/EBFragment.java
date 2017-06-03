@@ -22,7 +22,10 @@ import com.ebnbin.ebapplication.net.NetHelper;
 import com.ebnbin.ebapplication.net.NetModelCallback;
 import com.ebnbin.ebapplication.view.StateFrameLayout;
 
+import java.io.IOException;
+
 import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * Base {@link Fragment}.
@@ -325,8 +328,8 @@ public abstract class EBFragment extends Fragment {
             }
 
             @Override
-            public void onSuccess(@NonNull Call call, @NonNull Model model) {
-                super.onSuccess(call, model);
+            public void onSuccess(@NonNull Call call, @NonNull Model model, @Nullable Response response) {
+                super.onSuccess(call, model, response);
 
                 if (mStateFrameLayout != null) {
                     mStateFrameLayout.clearState();
@@ -334,8 +337,9 @@ public abstract class EBFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call call) {
-                super.onFailure(call);
+            public void onFailure(@NonNull Call call, int errorCode, @Nullable IOException e,
+                    @Nullable Response response) {
+                super.onFailure(call, errorCode, e, response);
 
                 if (mStateFrameLayout != null) {
                     mStateFrameLayout.switchFailureState(new View.OnClickListener() {
