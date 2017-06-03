@@ -345,7 +345,20 @@ public abstract class EBFragment extends Fragment {
                         }
                     });
                 }
+            }
 
+            @Override
+            public void onCancel(@NonNull Call call) {
+                super.onCancel(call);
+
+                if (mStateFrameLayout != null) {
+                    mStateFrameLayout.switchFailureState(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            netGet(url, callback);
+                        }
+                    });
+                }
             }
         };
         callback.preCallbacks.add(loadingPreCallback);

@@ -71,6 +71,21 @@ public abstract class NetModelCallback<Model extends EBModel> {
     }
 
     /**
+     * Called when cancel with pre-callbacks and post-callbacks.
+     */
+    final void onCancelCallback(@NonNull Call call) {
+        for (NetModelCallback<Model> callback : preCallbacks) {
+            callback.onCancel(call);
+        }
+
+        onCancel(call);
+
+        for (NetModelCallback<Model> callback : postCallbacks) {
+            callback.onCancel(call);
+        }
+    }
+
+    /**
      * Called on end with pre-callbacks and post-callbacks.
      */
     final void onEndCallback(@NonNull Call call) {
@@ -103,6 +118,12 @@ public abstract class NetModelCallback<Model extends EBModel> {
      * Called when failure.
      */
     public void onFailure(@NonNull Call call) {
+    }
+
+    /**
+     * Called when cancel.
+     */
+    public void onCancel(@NonNull Call call) {
     }
 
     /**

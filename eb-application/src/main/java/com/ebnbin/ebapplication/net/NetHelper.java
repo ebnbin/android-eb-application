@@ -190,16 +190,20 @@ public final class NetHelper {
                     @Override
                     public void run() {
                         if (!canPost()) {
+                            callback.onCancelCallback(call);
+
+                            callback.onEndCallback(call);
+
                             return;
                         }
 
                         callback.onSuccessCallback(call, model);
 
                         removeCall(call);
+
+                        callback.onEndCallback(call);
                     }
                 });
-
-                callback.onEndCallback(call);
             }
 
             /**
@@ -210,16 +214,20 @@ public final class NetHelper {
                     @Override
                     public void run() {
                         if (!canPost()) {
+                            callback.onCancelCallback(call);
+
+                            callback.onEndCallback(call);
+
                             return;
                         }
 
                         callback.onFailureCallback(call);
 
                         removeCall(call);
+
+                        callback.onEndCallback(call);
                     }
                 });
-
-                callback.onEndCallback(call);
             }
         });
 
