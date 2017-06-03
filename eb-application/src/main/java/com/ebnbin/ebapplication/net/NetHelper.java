@@ -21,6 +21,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Helper for net.
@@ -142,13 +143,26 @@ public final class NetHelper {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                if (response == null) {
+                    postOnFailureCallback();
+
+                    return;
+                }
+
                 if (!response.isSuccessful()) {
                     postOnFailureCallback();
 
                     return;
                 }
 
-                String responseString = response.body().string();
+                ResponseBody responseBody = response.body();
+                if (responseBody == null) {
+                    postOnFailureCallback();
+
+                    return;
+                }
+
+                String responseString = responseBody.string();
                 Type type = ((ParameterizedType) callback.getClass().getGenericSuperclass())
                         .getActualTypeArguments()[0];
 
