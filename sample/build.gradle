@@ -14,27 +14,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 'android-O'
-    buildToolsVersion '26.0.0 rc2'
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion build_tools_version
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 'O'
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 dependencies {
     implementation project(':eb-application')
+//    implementation 'com.ebnbin:eb-application:0.2.2'
 
-//    implementation 'com.ebnbin:eb-application:0.2.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }

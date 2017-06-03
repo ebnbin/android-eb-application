@@ -3,6 +3,11 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.3'
 }
 
+ext {
+    version_code = 25
+    version_name = '0.2.2'
+}
+
 repositories {
     jcenter()
 
@@ -18,71 +23,59 @@ repositories {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-ext {
-    publishedGroupId = 'com.ebnbin'
-    artifact = 'eb-application'
-
-    libraryName = 'EB Application'
-    libraryDescription = 'EB Application'
-
-    siteUrl = 'https://github.com/ebnbin/android-eb-application'
-    gitUrl = 'https://github.com/ebnbin/android-eb-application.git'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-
-    developerId = 'ebnbin'
-    developerName = 'Ebn Zhang'
-    developerEmail = 'ebnbin@gmail.com'
-
-    libraryVersion = '0.2.2'
-    libraryVersionCode = 25
-
-    bintrayRepo = 'maven'
-    bintrayName = 'eb-application'
-
-    allLicenses = ['Apache-2.0']
-}
-
 android {
-    compileSdkVersion 'android-O'
-    buildToolsVersion '26.0.0 rc2'
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion build_tools_version
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 'O'
-        versionCode libraryVersionCode
-        versionName libraryVersion
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode version_code
+        versionName version_name
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 dependencies {
     compile project(':..:android-eb:eb')
+//    compile 'com.ebnbin:eb:0.3.15'
 
-    compile 'com.android.support:cardview-v7:26.0.0-beta1'
-    compile 'com.android.support:design:26.0.0-beta1'
-    compile 'com.android.support:support-v13:26.0.0-beta1'
-//    compile 'com.ebnbin:eb:0.3.11'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.9'
+    compile "com.android.support:cardview-v7:$support_version"
+    compile "com.android.support:design:$support_version"
+    compile "com.android.support:support-v13:$support_version"
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+}
+
+ext {
+    publishedGroupId = 'com.ebnbin'
+    artifact = 'eb-application'
+    libraryName = 'EB Application'
+    libraryDescription = 'EB Application'
+    siteUrl = 'https://github.com/ebnbin/android-eb-application'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    developerId = 'ebnbin'
+    developerName = 'Ebn Zhang'
+    developerEmail = 'ebnbin@gmail.com'
+    gitUrl = 'https://github.com/ebnbin/android-eb-application.git'
+    libraryVersion = version_name
+    bintrayRepo = 'maven'
+    bintrayName = 'eb-application'
+    allLicenses = ['Apache-2.0']
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 
-tasks.withType(Javadoc).all {
+tasks.withType(Javadoc) {
     enabled = false
 }
