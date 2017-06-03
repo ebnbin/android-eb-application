@@ -16,6 +16,6 @@ public abstract class EBApplication extends Application {
     }
 
     private void initNetHelper() {
-        NetHelper.init();
+        NetHelper.Companion.init();
     }
 }

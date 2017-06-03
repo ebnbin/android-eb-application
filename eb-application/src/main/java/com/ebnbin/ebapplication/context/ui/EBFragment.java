@@ -361,16 +361,16 @@ public abstract class EBFragment extends Fragment {
                 }
             }
         };
-        callback.preCallbacks.add(loadingPreCallback);
+        callback.getPreCallbacks().add(loadingPreCallback);
 
-        return NetHelper.getInstance().get(mNetTag, url, callback);
+        return NetHelper.Companion.getInstance().get(mNetTag, url, callback);
     }
 
     /**
      * Cancels and removes all saved {@link Call} by tag of current fragment.
      */
     private void disposeNet() {
-        NetHelper.getInstance().cancelCalls(mNetTag);
+        NetHelper.Companion.getInstance().cancelCalls(mNetTag);
     }
 
     //*****************************************************************************************************************
