@@ -25,7 +25,7 @@ import com.ebnbin.ebapplication.R;
 import com.ebnbin.ebapplication.context.ui.EBActionBarFragment;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
 import com.ebnbin.ebapplication.context.ui.FragmentHelper;
-import com.ebnbin.ebapplication.view.StateFrameLayout;
+import com.ebnbin.ebapplication.view.StateView;
 
 import im.delight.android.webview.AdvancedWebView;
 
@@ -101,9 +101,9 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
 
-                StateFrameLayout stateFrameLayout = getStateFrameLayout();
-                if (stateFrameLayout != null) {
-                    stateFrameLayout.setProgress(newProgress);
+                StateView stateView = getStateView();
+                if (stateView != null) {
+                    stateView.stateProgressing(newProgress);
                 }
             }
         });
@@ -295,14 +295,16 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
+        // TODO: Force show actionBar on page started.
+
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(url);
         }
 
-        StateFrameLayout stateFrameLayout = getStateFrameLayout();
-        if (stateFrameLayout != null) {
-            stateFrameLayout.switchProgressingState(StateFrameLayout.SWITCH_MODE_KEEP);
+        StateView stateView = getStateView();
+        if (stateView != null) {
+            stateView.stateProgressing();
         }
     }
 
@@ -313,9 +315,9 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
             actionBar.setTitle(mWebView.getTitle());
         }
 
-        StateFrameLayout stateFrameLayout = getStateFrameLayout();
-        if (stateFrameLayout != null) {
-            stateFrameLayout.clearState();
+        StateView stateView = getStateView();
+        if (stateView != null) {
+            stateView.stateNone();
         }
 
         mSwipeRefreshLayout.setRefreshing(false);
@@ -323,9 +325,9 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onPageError(int errorCode, String description, final String failingUrl) {
-        StateFrameLayout stateFrameLayout = getStateFrameLayout();
-        if (stateFrameLayout != null) {
-            stateFrameLayout.switchFailureState(new View.OnClickListener() {
+        StateView stateView = getStateView();
+        if (stateView != null) {
+            stateView.stateFailure(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mWebView.loadUrl(failingUrl);

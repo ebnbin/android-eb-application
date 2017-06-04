@@ -2,9 +2,9 @@ package com.ebnbin.ebapplication.view;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,37 +12,35 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ebnbin.ebapplication.R;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * A FrameLayout that switches states easily.
  */
-public final class StateFrameLayout extends FrameLayout {
+public final class StateView extends FrameLayout {
     private final LayoutInflater mLayoutInflater;
 
-    public StateFrameLayout(@NonNull Context context) {
+    public StateView(@NonNull Context context) {
         super(context);
 
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public StateView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public StateView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr,
+    public StateView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr,
             @StyleRes int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
@@ -52,30 +50,31 @@ public final class StateFrameLayout extends FrameLayout {
     //*****************************************************************************************************************
     // States.
 
-    /**
-     * No state.
-     */
-    private static final int STATE_NONE = 0;
-    /**
-     * Loading state.
-     */
-    private static final int STATE_LOADING = 1;
-    /**
-     * Failure state.
-     */
-    private static final int STATE_FAILURE = 2;
-    /**
-     * Progressing state.
-     */
-    private static final int STATE_PROGRESSING = 3;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STATE_NONE, STATE_LOADING, STATE_FAILURE, STATE_PROGRESSING})
-    public @interface State {
+    private enum State {
+        /**
+         * No state.
+         */
+        NONE,
+        /**
+         * Loading state.
+         */
+        LOADING,
+        /**
+         * Failure state.
+         */
+        FAILURE,
+        /**
+         * Progressing state.
+         */
+        PROGRESSING,
+        /**
+         * No data state.
+         */
+        NO_DATA
     }
 
-    @State
-    private int mState;
+    @NonNull
+    private State mState = State.NONE;
 
     //*****************************************************************************************************************
 
@@ -121,37 +120,34 @@ public final class StateFrameLayout extends FrameLayout {
     //*****************************************************************************************************************
     // Switch mode.
 
-    /**
-     * Keeps visibilities of child views.
-     */
-    public static final int SWITCH_MODE_KEEP = 0;
-    /**
-     * Shows child views.
-     */
-    public static final int SWITCH_MODE_OVERLAY = 1;
-    /**
-     * Hides child views.
-     */
-    public static final int SWITCH_MODE_REPLACE = 2;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SWITCH_MODE_KEEP, SWITCH_MODE_OVERLAY, SWITCH_MODE_REPLACE})
-    public @interface SwitchMode {
+    private enum SwitchMode {
+        /**
+         * Keeps visibilities of child views.
+         */
+        KEEP,
+        /**
+         * Shows child views.
+         */
+        OVERLAY,
+        /**
+         * Hides child views.
+         */
+        REPLACE
     }
 
-    private void setSwitchMode(@SwitchMode int switchMode) {
+    private void setSwitchMode(@NonNull SwitchMode switchMode) {
         switch (switchMode) {
-            case SWITCH_MODE_OVERLAY: {
+            case OVERLAY: {
                 showChildViews();
 
                 break;
             }
-            case SWITCH_MODE_REPLACE: {
+            case REPLACE: {
                 hideChildViews();
 
                 break;
             }
-            case SWITCH_MODE_KEEP:
+            case KEEP:
             default: {
                 break;
             }
@@ -161,8 +157,8 @@ public final class StateFrameLayout extends FrameLayout {
     //*****************************************************************************************************************
     // Clears state and shows child views.
 
-    public void clearState() {
-        if (mState == STATE_NONE) {
+    public void stateNone() {
+        if (mState == State.NONE) {
             return;
         }
 
@@ -170,7 +166,7 @@ public final class StateFrameLayout extends FrameLayout {
 
         showChildViews();
 
-        mState = STATE_NONE;
+        mState = State.NONE;
     }
 
     //*****************************************************************************************************************
@@ -178,12 +174,8 @@ public final class StateFrameLayout extends FrameLayout {
 
     private FrameLayout mLoadingFrameLayout;
 
-    public void switchLoadingState() {
-        switchLoadingState(SWITCH_MODE_REPLACE);
-    }
-
-    public void switchLoadingState(@SwitchMode int switchMode) {
-        if (!switchState(STATE_LOADING, switchMode)) {
+    public void stateLoading() {
+        if (!switchState(State.LOADING, SwitchMode.REPLACE)) {
             return;
         }
 
@@ -199,23 +191,63 @@ public final class StateFrameLayout extends FrameLayout {
 
     private FrameLayout mFailureFrameLayout;
     private ImageView mRefreshImageView;
+    private TextView mFailureTextView;
 
-    public void switchFailureState(@Nullable OnClickListener onRefreshClickListener) {
-        switchFailureState(onRefreshClickListener, SWITCH_MODE_REPLACE);
+    public void stateFailure(@Nullable OnClickListener onRefreshClickListener) {
+        stateFailure(onRefreshClickListener, null);
     }
 
-    public void switchFailureState(@Nullable OnClickListener onRefreshClickListener, @SwitchMode int switchMode) {
-        if (!switchState(STATE_FAILURE, switchMode)) {
+    public void stateFailure(@Nullable OnClickListener onRefreshClickListener, @StringRes int failureStringId) {
+        stateFailure(onRefreshClickListener, failureStringId == -1 ? null
+                : failureStringId == 0 ? "" : getContext().getString(failureStringId));
+    }
+
+    public void stateFailure(@Nullable OnClickListener onRefreshClickListener, @Nullable String failureString) {
+        if (!switchState(State.FAILURE, SwitchMode.REPLACE)) {
             return;
         }
 
         if (mFailureFrameLayout == null) {
             mFailureFrameLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.eb_view_state_failure, this, false);
             mRefreshImageView = (ImageView) mFailureFrameLayout.findViewById(R.id.eb_refresh);
+            mFailureTextView = mFailureFrameLayout.findViewById(R.id.eb_failure);
         }
         mRefreshImageView.setOnClickListener(onRefreshClickListener);
+        if (failureString != null) {
+            mFailureTextView.setText(failureString);
+        }
 
         addView(mFailureFrameLayout);
+    }
+
+    //*****************************************************************************************************************
+    // No data state.
+
+    private FrameLayout mNoDataFrameLayout;
+    private TextView mNoDataTextView;
+
+    public void stateNoData() {
+        stateNoData(null);
+    }
+
+    public void stateNoData(@StringRes int noDataStringId) {
+        stateNoData(noDataStringId == -1 ? null : noDataStringId == 0 ? "" : getContext().getString(noDataStringId));
+    }
+
+    public void stateNoData(@Nullable String noDataString) {
+        if (!switchState(State.NO_DATA, SwitchMode.KEEP)) {
+            return;
+        }
+
+        if (mNoDataFrameLayout == null) {
+            mNoDataFrameLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.eb_view_state_no_data, this, false);
+            mNoDataTextView = mNoDataFrameLayout.findViewById(R.id.eb_no_data);
+        }
+        if (noDataString != null) {
+            mNoDataTextView.setText(noDataString);
+        }
+
+        addView(mNoDataFrameLayout);
     }
 
     //*****************************************************************************************************************
@@ -224,12 +256,8 @@ public final class StateFrameLayout extends FrameLayout {
     private FrameLayout mProgressingFrameLayout;
     private ProgressBar mProgressBar;
 
-    public void switchProgressingState() {
-        switchProgressingState(SWITCH_MODE_REPLACE);
-    }
-
-    public void switchProgressingState(@SwitchMode int switchMode) {
-        if (!switchState(STATE_PROGRESSING, switchMode)) {
+    public void stateProgressing() {
+        if (!switchState(State.PROGRESSING, SwitchMode.OVERLAY)) {
             return;
         }
 
@@ -242,8 +270,8 @@ public final class StateFrameLayout extends FrameLayout {
         addView(mProgressingFrameLayout);
     }
 
-    public void setProgress(int progress) {
-        if (mState != STATE_PROGRESSING) {
+    public void stateProgressing(int progress) {
+        if (mState != State.PROGRESSING) {
             return;
         }
 
@@ -259,16 +287,16 @@ public final class StateFrameLayout extends FrameLayout {
     // Not none state.
 
     /**
-     * General method for all states except {@link #STATE_NONE}.
+     * General method for all states except {@link State#NONE}.
      *
      * @return Whether state has changed.
      */
-    private boolean switchState(@State int state, @SwitchMode int switchMode) {
+    private boolean switchState(@NonNull State state, @NonNull SwitchMode switchMode) {
         if (mState == state) {
             return false;
         }
 
-        if (mState != STATE_NONE) {
+        if (mState != State.NONE) {
             removeViewAt(getChildCount() - 1);
         }
 

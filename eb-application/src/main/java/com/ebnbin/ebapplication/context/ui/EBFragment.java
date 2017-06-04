@@ -20,7 +20,7 @@ import com.ebnbin.ebapplication.fragment.webview.WebViewFragment;
 import com.ebnbin.ebapplication.model.EBModel;
 import com.ebnbin.ebapplication.net.NetHelper;
 import com.ebnbin.ebapplication.net.NetModelCallback;
-import com.ebnbin.ebapplication.view.StateFrameLayout;
+import com.ebnbin.ebapplication.view.StateView;
 
 import java.io.IOException;
 
@@ -239,11 +239,11 @@ public abstract class EBFragment extends Fragment {
     //*****************************************************************************************************************
     // Content view.
 
-    private StateFrameLayout mStateFrameLayout;
+    private StateView mStateView;
 
     @Nullable
-    public StateFrameLayout getStateFrameLayout() {
-        return mStateFrameLayout;
+    public StateView getStateView() {
+        return mStateView;
     }
 
     /**
@@ -251,23 +251,23 @@ public abstract class EBFragment extends Fragment {
      */
     @Nullable
     private View initContentView(@Nullable ViewGroup container) {
-        mStateFrameLayout = (StateFrameLayout) mLayoutInflater.inflate(R.layout.eb_fragment, container, false);
+        mStateView = (StateView) mLayoutInflater.inflate(R.layout.eb_fragment, container, false);
 
         View contentView = overrideContentView();
         if (contentView == null) {
             int contentViewRes = overrideContentViewLayout();
             if (contentViewRes == 0) {
-                return mStateFrameLayout;
+                return mStateView;
             }
 
-            contentView = mLayoutInflater.inflate(contentViewRes, mStateFrameLayout, false);
+            contentView = mLayoutInflater.inflate(contentViewRes, mStateView, false);
         }
 
-        mStateFrameLayout.addView(contentView);
+        mStateView.addView(contentView);
 
         onInitContentView(contentView);
 
-        return mStateFrameLayout;
+        return mStateView;
     }
 
     /**
@@ -322,8 +322,8 @@ public abstract class EBFragment extends Fragment {
             public void onBegin(@NonNull Call call) {
                 super.onBegin(call);
 
-                if (mStateFrameLayout != null) {
-                    mStateFrameLayout.switchLoadingState();
+                if (mStateView != null) {
+                    mStateView.stateLoading();
                 }
             }
 
@@ -332,8 +332,8 @@ public abstract class EBFragment extends Fragment {
                     @NonNull byte[] byteArray) {
                 super.onSuccess(call, model, response, byteArray);
 
-                if (mStateFrameLayout != null) {
-                    mStateFrameLayout.clearState();
+                if (mStateView != null) {
+                    mStateView.stateNone();
                 }
             }
 
@@ -342,8 +342,8 @@ public abstract class EBFragment extends Fragment {
                     @Nullable Response response) {
                 super.onFailure(call, errorCode, e, response);
 
-                if (mStateFrameLayout != null) {
-                    mStateFrameLayout.switchFailureState(new View.OnClickListener() {
+                if (mStateView != null) {
+                    mStateView.stateFailure(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             netGet(url, callback);
@@ -356,8 +356,8 @@ public abstract class EBFragment extends Fragment {
             public void onCancel(@NonNull Call call) {
                 super.onCancel(call);
 
-                if (mStateFrameLayout != null) {
-                    mStateFrameLayout.switchFailureState(new View.OnClickListener() {
+                if (mStateView != null) {
+                    mStateView.stateFailure(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             netGet(url, callback);
