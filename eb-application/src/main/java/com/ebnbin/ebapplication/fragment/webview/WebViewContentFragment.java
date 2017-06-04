@@ -295,8 +295,6 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        // TODO: Force show actionBar on page started.
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle(url);
@@ -336,6 +334,11 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
         }
 
         mSwipeRefreshLayout.setRefreshing(false);
+
+        EBActionBarFragment actionBarFragment = getActionBarParentFragment();
+        if (actionBarFragment != null) {
+            actionBarFragment.getAppBarLayout().setExpanded(true, true);
+        }
     }
 
     @Override
