@@ -42,7 +42,7 @@ android {
 
 dependencies {
     compile project(':..:android-eb:eb')
-//    compile 'com.ebnbin:eb:0.3.15'
+//    compile 'com.ebnbin:eb:0.3.16'
 
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"

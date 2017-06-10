@@ -29,6 +29,9 @@
     <color name="material_blue_gray_50_20">#33eceff1</color>
     <color name="material_blue_gray_900_20">#33263238</color>
 
+    <!-- Launcher icon background. -->
+    <color name="eb_icon_background">@color/material_cyan_500</color>
+
     <!-- Window background. -->
     <eat-comment/>
     <color name="eb_window_background_light">@color/material_blue_gray_50</color>

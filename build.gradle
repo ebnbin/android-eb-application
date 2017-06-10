@@ -1,11 +1,11 @@
 buildscript {
     ext {
         kotlin_version = '1.1.2-4'
-        compile_sdk_version = 'android-O'
-        build_tools_version = '26.0.0 rc2'
+        compile_sdk_version = 26
+        build_tools_version = '26.0.0'
         min_sdk_version = 23
-        target_sdk_version = 'O'
-        support_version = '26.0.0-beta1'
+        target_sdk_version = 26
+        support_version = '26.0.0-beta2'
     }
 
     repositories {
