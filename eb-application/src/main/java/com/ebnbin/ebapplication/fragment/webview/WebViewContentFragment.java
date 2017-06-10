@@ -103,7 +103,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
                 StateView stateView = getStateView();
                 if (stateView != null) {
-                    stateView.stateProgressing(newProgress);
+                    stateView.stateProgressing(newProgress, true);
                 }
             }
         });
@@ -302,7 +302,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
         StateView stateView = getStateView();
         if (stateView != null) {
-            stateView.stateProgressing();
+            stateView.stateProgressing(0, false);
         }
     }
 
@@ -315,7 +315,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
         StateView stateView = getStateView();
         if (stateView != null) {
-            stateView.stateNone();
+            stateView.clearState();
         }
 
         mSwipeRefreshLayout.setRefreshing(false);
@@ -325,12 +325,12 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
     public void onPageError(int errorCode, String description, final String failingUrl) {
         StateView stateView = getStateView();
         if (stateView != null) {
-            stateView.stateFailure(new View.OnClickListener() {
+            stateView.stateFailure(new StateView.OnRefreshListener() {
                 @Override
-                public void onClick(View v) {
+                public void onRefresh() {
                     mWebView.loadUrl(failingUrl);
                 }
-            });
+            }, null);
         }
 
         mSwipeRefreshLayout.setRefreshing(false);

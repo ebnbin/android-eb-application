@@ -9,11 +9,15 @@
         android:orientation="vertical"
         android:padding="16dp"
         android:gravity="center">
-        <TextView
-            android:id="@+id/eb_no_data"
+        <ImageView
+            android:id="@+id/eb_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="没有数据"
+            android:src="@drawable/eb_state_frame_layout_refresh"/>
+        <TextView
+            android:id="@+id/eb_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>

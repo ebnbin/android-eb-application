@@ -91,6 +91,9 @@
     <string name="eb_dialog_fragment_web_view_copy_url">复制 URL</string>
     <string name="eb_dialog_fragment_web_view_copy_url_success">复制 URL 成功</string>
     <string name="eb_dialog_fragment_about_link_ebnbin">https://github.com/ebnbin</string>
+    <string name="eb_state_view_hint_loading">正在加载</string>
+    <string name="eb_state_view_hint_failure">未知异常</string>
+    <string name="eb_state_view_hint_no_data">没有数据</string>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>

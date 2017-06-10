@@ -323,7 +323,7 @@ public abstract class EBFragment extends Fragment {
                 super.onBegin(call);
 
                 if (mStateView != null) {
-                    mStateView.stateLoading();
+                    mStateView.stateLoading(null);
                 }
             }
 
@@ -333,7 +333,7 @@ public abstract class EBFragment extends Fragment {
                 super.onSuccess(call, model, response, byteArray);
 
                 if (mStateView != null) {
-                    mStateView.stateNone();
+                    mStateView.clearState();
                 }
             }
 
@@ -343,12 +343,12 @@ public abstract class EBFragment extends Fragment {
                 super.onFailure(call, errorCode, e, response);
 
                 if (mStateView != null) {
-                    mStateView.stateFailure(new View.OnClickListener() {
+                    mStateView.stateFailure(new StateView.OnRefreshListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onRefresh() {
                             netGet(url, callback);
                         }
-                    });
+                    }, null);
                 }
             }
 
@@ -357,12 +357,12 @@ public abstract class EBFragment extends Fragment {
                 super.onCancel(call);
 
                 if (mStateView != null) {
-                    mStateView.stateFailure(new View.OnClickListener() {
+                    mStateView.stateFailure(new StateView.OnRefreshListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onRefresh() {
                             netGet(url, callback);
                         }
-                    });
+                    }, null);
                 }
             }
         };
