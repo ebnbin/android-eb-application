@@ -80,17 +80,16 @@
 
     <string name="app_label">EB Application</string>
     <string name="app_slogan"/>
-    <string name="app_link_a"/>
-    <string name="app_link_b"/>
-    <string name="app_link_c"/>
+    <string name="app_links"/>
     <string name="eb_ok">确定</string>
     <string name="eb_about">关于</string>
-    <string name="eb_version_code_format">(%1$d)</string>
     <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
     <string name="eb_fragment_web_view_url_error">无法打开地址</string>
     <string name="eb_dialog_fragment_web_view_copy_url">复制 URL</string>
     <string name="eb_dialog_fragment_web_view_copy_url_success">复制 URL 成功</string>
-    <string name="eb_dialog_fragment_about_link_ebnbin">https://github.com/ebnbin</string>
+    <string name="eb_links">https://github.com/ebnbin</string>
+    <string name="eb_easter_egg">　</string>
+    <string name="eb_ebnbin">ebnbin</string>
     <string name="eb_state_view_hint_loading">正在加载</string>
     <string name="eb_state_view_hint_failure">未知异常</string>
     <string name="eb_state_view_hint_no_data">没有数据</string>
