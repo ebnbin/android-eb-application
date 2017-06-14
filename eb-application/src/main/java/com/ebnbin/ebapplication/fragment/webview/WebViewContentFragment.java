@@ -26,6 +26,7 @@ import com.ebnbin.ebapplication.context.ui.EBActionBarFragment;
 import com.ebnbin.ebapplication.context.ui.EBFragment;
 import com.ebnbin.ebapplication.context.ui.FragmentHelper;
 import com.ebnbin.ebapplication.view.StateView;
+import com.ebnbin.ebapplication.view.webview.EBWebView;
 
 import im.delight.android.webview.AdvancedWebView;
 
@@ -65,9 +66,9 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
     // Content view.
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CustomWebView mWebView;
+    private EBWebView mWebView;
 
-    public CustomWebView getWebView() {
+    public EBWebView getWebView() {
         return mWebView;
     }
 
@@ -85,7 +86,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
         super.onInitContentView(contentView);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.eb_swipe_refresh_layout);
-        mWebView = (CustomWebView) contentView.findViewById(R.id.eb_web_view);
+        mWebView = contentView.findViewById(R.id.eb_web_view);
     }
 
     @Override
