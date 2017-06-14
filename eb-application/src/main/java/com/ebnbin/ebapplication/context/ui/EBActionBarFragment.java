@@ -83,6 +83,11 @@ public abstract class EBActionBarFragment extends EBFragment {
     private int mAppBarLayoutVisibleHeight;
 
     @Override
+    protected int overrideFragmentHelperDefGroup() {
+        return COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID;
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 

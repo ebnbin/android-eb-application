@@ -3,7 +3,6 @@ package com.ebnbin.ebapplication.fragment.webview;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.ebnbin.ebapplication.context.ui.EBActionBarFragment;
@@ -50,13 +49,6 @@ public final class WebViewFragment extends EBActionBarFragment {
         super.onViewCreated(view, savedInstanceState);
 
         WebViewContentFragment webViewContentFragment = WebViewContentFragment.newInstance(mUrl);
-        if (getFragmentHelper().canAdd(webViewContentFragment)) {
-            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-            getFragmentHelper()
-                    .beginTransaction(ft)
-                    .add(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID, webViewContentFragment)
-                    .endTransaction();
-            ft.commit();
-        }
+        getFragmentHelper().set(webViewContentFragment);
     }
 }

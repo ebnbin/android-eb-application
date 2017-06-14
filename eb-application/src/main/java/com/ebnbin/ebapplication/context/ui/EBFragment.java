@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.CallSuper;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -65,7 +66,7 @@ public abstract class EBFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = initContentView(container);
 
-        initFragmentHelperDefGroup();
+        mFragmentHelper.defGroup = overrideFragmentHelperDefGroup();
 
         return view;
     }
@@ -187,8 +188,9 @@ public abstract class EBFragment extends Fragment {
         mFragmentHelper.onRestoreInstanceState(savedInstanceState);
     }
 
-    private void initFragmentHelperDefGroup() {
-        mFragmentHelper.defGroup = R.id.eb_state_frame_layout;
+    @IdRes
+    protected int overrideFragmentHelperDefGroup() {
+        return R.id.eb_state_frame_layout;
     }
 
     private void fragmentHelperOnSaveInstanceState(@Nullable Bundle outState) {

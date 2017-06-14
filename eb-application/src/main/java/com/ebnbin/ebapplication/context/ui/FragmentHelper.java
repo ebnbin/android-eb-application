@@ -1,16 +1,12 @@
 package com.ebnbin.ebapplication.context.ui;
 
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
-import com.ebnbin.eb.util.EBRuntimeException;
+import android.support.v4.util.ArrayMap;
 
 import java.util.ArrayList;
 
@@ -40,18 +36,21 @@ public final class FragmentHelper {
     //*****************************************************************************************************************
     // Instance state.
 
-    private static final String INSTANCE_STATE_FRAGMENT_ENTRY_ARRAY_LIST = "fragment_entry_array_list";
+    private static final String INSTANCE_STATE_FRAGMENTS_KEYS = "fragments_keys";
+    private static final String INSTANCE_STATE_FRAGMENTS_VALUES = "fragments_values";
 
     public void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             return;
         }
 
-        ArrayList<FragmentEntry> fragmentEntryArrayList = savedInstanceState
-                .getParcelableArrayList(INSTANCE_STATE_FRAGMENT_ENTRY_ARRAY_LIST);
-        if (fragmentEntryArrayList != null) {
-            mFragmentEntryArrayList.clear();
-            mFragmentEntryArrayList.addAll(fragmentEntryArrayList);
+        ArrayList<String> fragmentsKeys = savedInstanceState.getStringArrayList(INSTANCE_STATE_FRAGMENTS_KEYS);
+        ArrayList<Integer> fragmentsValues = savedInstanceState.getIntegerArrayList(INSTANCE_STATE_FRAGMENTS_VALUES);
+        if (fragmentsKeys != null && fragmentsValues != null && fragmentsKeys.size() == fragmentsValues.size()) {
+            mFragments.clear();
+            for (int i = 0; i < fragmentsKeys.size(); i++) {
+                mFragments.put(fragmentsKeys.get(i), fragmentsValues.get(i));
+            }
         }
     }
 
@@ -60,58 +59,14 @@ public final class FragmentHelper {
             return;
         }
 
-        outState.putParcelableArrayList(INSTANCE_STATE_FRAGMENT_ENTRY_ARRAY_LIST, mFragmentEntryArrayList);
+        outState.putStringArrayList(INSTANCE_STATE_FRAGMENTS_KEYS, new ArrayList<>(mFragments.keySet()));
+        outState.putIntegerArrayList(INSTANCE_STATE_FRAGMENTS_VALUES, new ArrayList<>(mFragments.values()));
     }
 
     //*****************************************************************************************************************
     // Fragment entry.
 
-    private final ArrayList<FragmentEntry> mFragmentEntryArrayList = new ArrayList<>();
-
-    private static final class FragmentEntry implements Parcelable {
-        /**
-         * Unique.
-         */
-        public final String tag;
-        /**
-         * ContainerViewId.
-         */
-        @IdRes
-        public final int group;
-
-        private FragmentEntry(@NonNull String tag, @IdRes int group) {
-            this.tag = tag;
-            this.group = group;
-        }
-
-        protected FragmentEntry(Parcel in) {
-            tag = in.readString();
-            group = in.readInt();
-        }
-
-        public static final Creator<FragmentEntry> CREATOR = new Creator<FragmentEntry>() {
-            @Override
-            public FragmentEntry createFromParcel(Parcel in) {
-                return new FragmentEntry(in);
-            }
-
-            @Override
-            public FragmentEntry[] newArray(int size) {
-                return new FragmentEntry[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(tag);
-            dest.writeInt(group);
-        }
-    }
+    private final ArrayMap<String, Integer> mFragments = new ArrayMap<>();
 
     //*****************************************************************************************************************
     // Generates default tag.
@@ -130,14 +85,14 @@ public final class FragmentHelper {
     // Count.
 
     public int count() {
-        return mFragmentEntryArrayList.size();
+        return mFragments.size();
     }
 
     public int count(@IdRes int group) {
         int count = 0;
 
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (fragmentEntry.group == group) {
+        for (int tmpGroup : mFragments.values()) {
+            if (tmpGroup == group) {
                 ++count;
             }
         }
@@ -149,12 +104,12 @@ public final class FragmentHelper {
     // Is empty.
 
     public boolean empty() {
-        return mFragmentEntryArrayList.isEmpty();
+        return mFragments.isEmpty();
     }
 
     public boolean empty(@IdRes int group) {
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (fragmentEntry.group == group) {
+        for (int tmpGroup : mFragments.values()) {
+            if (tmpGroup == group) {
                 return false;
             }
         }
@@ -163,76 +118,14 @@ public final class FragmentHelper {
     }
 
     //*****************************************************************************************************************
-    // Gets FragmentEntry by index.
-
-    @Nullable
-    private FragmentEntry fragmentEntry(int index) {
-        int count = count();
-        if (count == 0) {
-            return null;
-        }
-
-        int validIndex = (index % count + count) % count;
-        return mFragmentEntryArrayList.get(validIndex);
-    }
-
-    @Nullable
-    private FragmentEntry fragmentEntry(int index, @IdRes int group) {
-        int count = count(group);
-        if (count == 0) {
-            return null;
-        }
-
-        int validIndex = (index % count + count) % count;
-
-        int i = 0;
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (fragmentEntry.group == group) {
-                if (i == validIndex) {
-                    return fragmentEntry;
-                }
-
-                ++i;
-            }
-        }
-
-        throw new EBRuntimeException();
-    }
-
-    //*****************************************************************************************************************
-    // Gets FragmentEntry by tag.
-
-    @Nullable
-    private FragmentEntry fragmentEntry(@NonNull String tag) {
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (fragmentEntry.tag.equals(tag)) {
-                return fragmentEntry;
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private FragmentEntry fragmentEntry(@NonNull String tag, @IdRes int group) {
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (fragmentEntry.group == group && fragmentEntry.tag.equals(tag)) {
-                return fragmentEntry;
-            }
-        }
-
-        return null;
-    }
-
-    //*****************************************************************************************************************
     // Is exist.
 
     public boolean exist(@NonNull String tag) {
-        return fragmentEntry(tag) != null;
+        return mFragments.containsKey(tag);
     }
 
     public boolean exist(@NonNull String tag, @IdRes int group) {
-        return fragmentEntry(tag, group) != null;
+        return exist(tag) && mFragments.get(tag) == group;
     }
 
     //*****************************************************************************************************************
@@ -240,22 +133,22 @@ public final class FragmentHelper {
 
     @Nullable
     private String tag(int index) {
-        FragmentEntry fragmentEntry = fragmentEntry(index);
-        if (fragmentEntry == null) {
-            return null;
-        }
-
-        return fragmentEntry.tag;
+        return mFragments.keyAt(index);
     }
 
     @Nullable
     private String tag(int index, @IdRes int group) {
-        FragmentEntry fragmentEntry = fragmentEntry(index, group);
-        if (fragmentEntry == null) {
-            return null;
+        int i = 0;
+        for (int tmpGroup : mFragments.values()) {
+            if (tmpGroup == group) {
+                if (i == index) {
+                    return mFragments.keyAt(i);
+                }
+                ++i;
+            }
         }
 
-        return fragmentEntry.tag;
+        return null;
     }
 
     //*****************************************************************************************************************
@@ -271,23 +164,6 @@ public final class FragmentHelper {
 
     public boolean found(@NonNull String tag) {
         return find(tag) != null;
-    }
-
-    //*****************************************************************************************************************
-    // Can add.
-
-    public boolean canAdd(@NonNull EBFragment fragment) {
-        String tag = validTag(fragment);
-        return canAdd(tag);
-    }
-
-    public boolean canAdd(@NonNull String tag) {
-        return !exist(tag) && !found(tag);
-    }
-
-    public boolean canAdd(@NonNull String tag, @NonNull EBFragment fragment) {
-        String validTag = validTag(tag, fragment);
-        return canAdd(validTag);
     }
 
     //*****************************************************************************************************************
@@ -367,18 +243,14 @@ public final class FragmentHelper {
     // On popped.
 
     public void onPopped() {
-        ArrayList<FragmentEntry> fragmentEntryArrayList = new ArrayList<>();
-
-        for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (!found(fragmentEntry.tag)) {
-                continue;
+        ArrayList<String> removedTags = new ArrayList<>();
+        for (String tag : mFragments.keySet()) {
+            if (!found(tag)) {
+                removedTags.add(tag);
             }
-
-            fragmentEntryArrayList.add(fragmentEntry);
         }
 
-        mFragmentEntryArrayList.clear();
-        mFragmentEntryArrayList.addAll(fragmentEntryArrayList);
+        mFragments.removeAll(removedTags);
     }
 
     //*****************************************************************************************************************
@@ -394,276 +266,79 @@ public final class FragmentHelper {
     }
 
     //*****************************************************************************************************************
-    // Transaction runnable.
+    // New transactions.
 
-    // No need saving instance state.
-    /**
-     * Transactions that change {@link #mFragmentEntryArrayList}.
-     */
-    private final ArrayList<Runnable> mTransactions = new ArrayList<>();
-
-    //*****************************************************************************************************************
-    // Transaction.
-
-    private FragmentTransaction mFt;
-
-    /**
-     * Call this method after {@link FragmentManager#beginTransaction()}.
-     */
-    @NonNull
-    public FragmentHelper beginTransaction(@NonNull FragmentTransaction ft) {
-        mFt = ft;
-
-        return this;
+    public enum Others {
+        NONE,
+        HIDE,
+        REMOVE
     }
 
-    /**
-     * Call this method before {@link FragmentTransaction#commit()}.
-     */
-    public void endTransaction() {
-        mFt = null;
+    public boolean set(@NonNull EBFragment fragment) {
+        return internalAdd(fragment, null, -1, Others.REMOVE, false);
+    }
 
-        for (Runnable transaction : mTransactions) {
-            transaction.run();
+    public boolean set(@NonNull EBFragment fragment, @Nullable String tag) {
+        return internalAdd(fragment, tag, -1, Others.REMOVE, false);
+    }
+
+    public boolean set(@NonNull EBFragment fragment, @IdRes int group) {
+        return internalAdd(fragment, null, group, Others.REMOVE, false);
+    }
+
+    public boolean set(@NonNull EBFragment fragment, @Nullable String tag, @IdRes int group) {
+        return internalAdd(fragment, tag, group, Others.REMOVE, false);
+    }
+
+    public boolean push(@NonNull EBFragment fragment) {
+        return internalAdd(fragment, null, -1, Others.HIDE, true);
+    }
+
+    public boolean push(@NonNull EBFragment fragment, @Nullable String tag) {
+        return internalAdd(fragment, tag, -1, Others.HIDE, true);
+    }
+
+    public boolean push(@NonNull EBFragment fragment, @IdRes int group) {
+        return internalAdd(fragment, null, group, Others.HIDE, true);
+    }
+
+    public boolean push(@NonNull EBFragment fragment, @Nullable String tag, @IdRes int group) {
+        return internalAdd(fragment, tag, group, Others.HIDE, true);
+    }
+
+    private boolean internalAdd(@NonNull EBFragment fragment, @Nullable String tag, @IdRes int group,
+            @NonNull Others others, boolean push) {
+        String validTag = validTag(tag, fragment);
+        if (found(validTag)) {
+            return false;
         }
 
-        mTransactions.clear();
-    }
+        @IdRes int validGroup = group == -1 ? defGroup : group;
 
-    //*****************************************************************************************************************
-    // Add transaction.
-
-    /**
-     * Calls {@link #add(String, int, EBFragment)} with tag {@code null} and group {@code -1}.
-     */
-    @NonNull
-    public FragmentHelper add(@NonNull EBFragment fragment) {
-        return add(null, -1, fragment);
-    }
-
-    /**
-     * Calls {@link #add(String, int, EBFragment)} with group {@code -1}.
-     */
-    @NonNull
-    public FragmentHelper add(@Nullable String tag, @NonNull EBFragment fragment) {
-        return add(tag, -1, fragment);
-    }
-
-    /**
-     * Calls {@link #add(String, int, EBFragment)} with tag {@code null}.
-     */
-    @NonNull
-    public FragmentHelper add(@IdRes int group, @NonNull EBFragment fragment) {
-        return add(null, group, fragment);
-    }
-
-    /**
-     * {@link FragmentTransaction#add(int, Fragment, String)}.
-     *
-     * @param tag If {@code null}, {@code fragment.getClass().getName()} will be used. If exist,
-     * {@link EBRuntimeException} will be thrown.
-     * @param group If {@code -1}, {@link #defGroup} will be used.
-     * @param fragment Target {@link EBFragment}.
-     */
-    @NonNull
-    public FragmentHelper add(@Nullable String tag, @IdRes int group, @NonNull EBFragment fragment) {
-        final String validTag = validTag(tag, fragment);
-        if (!canAdd(validTag)) {
-            throw new EBRuntimeException();
-        }
-
-        @IdRes final
-        int validGroup = group == -1 ? defGroup : group;
-
-        mFt.add(validGroup, fragment, validTag);
-
-        mTransactions.add(new Runnable() {
-            @Override
-            public void run() {
-                FragmentEntry fragmentEntry = new FragmentEntry(validTag, validGroup);
-                mFragmentEntryArrayList.add(fragmentEntry);
-            }
-        });
-
-        return this;
-    }
-
-    //*****************************************************************************************************************
-    // Show or hide transaction.
-
-    /**
-     * {@link FragmentTransaction#show(Fragment)} or {@link FragmentTransaction#hide(Fragment)}.
-     */
-    @NonNull
-    private FragmentHelper show(boolean show, @NonNull String tag) {
-        EBFragment fragment = find(tag);
-        if (fragment == null) {
-            return this;
-        }
-
-        return show(show, fragment);
-    }
-
-    /**
-     * {@link FragmentTransaction#show(Fragment)} or {@link FragmentTransaction#hide(Fragment)}.
-     */
-    @NonNull
-    private FragmentHelper show(boolean show, @NonNull EBFragment fragment) {
-        if (fragment.isHidden() != show) {
-            return this;
-        }
-
-        if (show) {
-            mFt.show(fragment);
-        } else {
-            mFt.hide(fragment);
-        }
-
-        return this;
-    }
-
-    /**
-     * Shows or hides all except.
-     */
-    @NonNull
-    private FragmentHelper showAll(boolean show, @NonNull String... exceptTags) {
-        return showAll(show, -1, exceptTags);
-    }
-
-    /**
-     * Shows or hides all except.
-     */
-    @NonNull
-    private FragmentHelper showAll(boolean show, @NonNull EBFragment... exceptFragments) {
-        return showAll(show, -1, exceptFragments);
-    }
-
-    /**
-     * Shows or hides group all except.
-     */
-    @NonNull
-    private FragmentHelper showAll(boolean show, @IdRes int group, @NonNull String... exceptTags) {
-        ArrayList<EBFragment> exceptFragmentArrayList = new ArrayList<>();
-        for (String exceptTag : exceptTags) {
-            EBFragment fragment = find(exceptTag);
-            if (fragment == null) {
-                continue;
-            }
-
-            exceptFragmentArrayList.add(fragment);
-        }
-
-        EBFragment[] exceptFragments = exceptFragmentArrayList.toArray(new EBFragment[] {});
-        return showAll(show, group, exceptFragments);
-    }
-
-    /**
-     * Shows or hides group all except.
-     */
-    @NonNull
-    private FragmentHelper showAll(boolean show, @IdRes int group, @NonNull EBFragment... exceptFragments) {
-        if (group == 0) {
-            return this;
-        }
-
-        OUTER: for (FragmentEntry fragmentEntry : mFragmentEntryArrayList) {
-            if (group != -1 && fragmentEntry.group != group) {
-                continue;
-            }
-
-            EBFragment foundFragment = find(fragmentEntry.tag);
-            if (foundFragment == null) {
-                continue;
-            }
-
-            for (EBFragment exceptFragment : exceptFragments) {
-                if (foundFragment == exceptFragment) {
-                    continue OUTER;
+        FragmentTransaction ft = mFm.beginTransaction();
+        ft.add(validGroup, fragment, validTag);
+        if (others != Others.NONE) {
+            for (String tmpTag : mFragments.keySet()) {
+                int tmpGroup = mFragments.get(tmpTag);
+                if (tmpGroup == validGroup) {
+                    EBFragment tmpFragment = find(tmpTag);
+                    if (tmpFragment != null) {
+                        if (others == Others.HIDE) {
+                            ft.hide(tmpFragment);
+                        } else if (others == Others.REMOVE) {
+                            ft.remove(tmpFragment);
+                        }
+                    }
                 }
             }
-
-            show(show, foundFragment);
         }
+        if (push) {
+            ft.addToBackStack(null);
+        }
+        ft.commit();
 
-        return this;
-    }
+        mFragments.put(validTag, validGroup);
 
-    //*****************************************************************************************************************
-    // Show transaction.
-
-    @NonNull
-    public FragmentHelper show(@NonNull String tag) {
-        return show(true, tag);
-    }
-
-    @NonNull
-    public FragmentHelper show(@NonNull EBFragment fragment) {
-        return show(true, fragment);
-    }
-
-    @NonNull
-    public FragmentHelper showAll(@NonNull String... exceptTags) {
-        return showAll(true, exceptTags);
-    }
-
-    @NonNull
-    public FragmentHelper showAll(@NonNull EBFragment... exceptFragments) {
-        return showAll(true, exceptFragments);
-    }
-
-    @NonNull
-    public FragmentHelper showAll(@IdRes int group, @NonNull String... exceptTags) {
-        return showAll(true, group, exceptTags);
-    }
-
-    @NonNull
-    public FragmentHelper showAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
-        return showAll(true, group, exceptFragments);
-    }
-
-    //*****************************************************************************************************************
-    // Hide transaction.
-
-    @NonNull
-    public FragmentHelper hide(@NonNull String tag) {
-        return show(false, tag);
-    }
-
-    @NonNull
-    public FragmentHelper hide(@NonNull EBFragment fragment) {
-        return show(false, fragment);
-    }
-
-    @NonNull
-    public FragmentHelper hideAll(@NonNull String... exceptTags) {
-        return showAll(false, exceptTags);
-    }
-
-    @NonNull
-    public FragmentHelper hideAll(@NonNull EBFragment... exceptFragments) {
-        return showAll(false, exceptFragments);
-    }
-
-    @NonNull
-    public FragmentHelper hideAll(@IdRes int group, @NonNull String... exceptTags) {
-        return showAll(false, group, exceptTags);
-    }
-
-    @NonNull
-    public FragmentHelper hideAll(@IdRes int group, @NonNull EBFragment... exceptFragments) {
-        return showAll(false, group, exceptFragments);
-    }
-
-    //*****************************************************************************************************************
-    // Add to back stack transaction.
-
-    /**
-     * {@link FragmentTransaction#addToBackStack(String)}.
-     */
-    @NonNull
-    public FragmentHelper push() {
-        mFt.addToBackStack(null);
-
-        return this;
+        return true;
     }
 }
