@@ -2,7 +2,6 @@ package com.ebnbin.ebapplication.context.ui;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,6 +14,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.ebnbin.ebapplication.R;
@@ -190,7 +190,7 @@ public abstract class EBActivity extends AppCompatActivity {
     }
 
     private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
-        mFragmentHelper = new FragmentHelper(getFragmentManager(), android.R.id.content);
+        mFragmentHelper = new FragmentHelper(getSupportFragmentManager(), android.R.id.content);
 
         mFragmentHelper.onRestoreInstanceState(savedInstanceState);
     }
@@ -220,7 +220,7 @@ public abstract class EBActivity extends AppCompatActivity {
         WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
 
         if (getFragmentHelper().canAdd(webViewFragment)) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             getFragmentHelper()
                     .beginTransaction(ft)
                     .add(webViewFragment)

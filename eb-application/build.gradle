@@ -46,7 +46,6 @@ dependencies {
 
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
-    compile "com.android.support:support-v13:$support_version"
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.google.code.gson:gson:2.8.1'
