@@ -66,7 +66,7 @@ public abstract class EBFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = initContentView(container);
 
-        mFragmentHelper.defGroup = overrideFragmentHelperDefGroup();
+        mFragmentHelper.setDefGroup(overrideFragmentHelperDefGroup());
 
         return view;
     }
