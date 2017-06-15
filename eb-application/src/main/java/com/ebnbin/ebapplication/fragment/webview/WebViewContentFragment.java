@@ -257,7 +257,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
         int itemId = item.getItemId();
 
         if (itemId == android.R.id.home) {
-            FragmentHelper fragmentHelper = getActivityFragmentHelper();
+            FragmentHelper fragmentHelper = getRootFragmentHelper();
             if (fragmentHelper != null) {
                 fragmentHelper.pop();
             }

@@ -2,8 +2,6 @@ package com.ebnbin.ebapplication.context.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -38,8 +36,6 @@ public abstract class EBFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        initLayoutInflater();
 
         initArguments();
     }
@@ -86,6 +82,62 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
+    // Content view.
+
+    private StateView mStateView;
+
+    @Nullable
+    public StateView getStateView() {
+        return mStateView;
+    }
+
+    /**
+     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     */
+    @Nullable
+    private View initContentView(@Nullable ViewGroup container) {
+        mStateView = (StateView) getLayoutInflater().inflate(R.layout.eb_fragment, container, false);
+
+        View contentView = overrideContentView();
+        if (contentView == null) {
+            int contentViewRes = overrideContentViewLayout();
+            if (contentViewRes == 0) {
+                return mStateView;
+            }
+
+            contentView = getLayoutInflater().inflate(contentViewRes, mStateView, false);
+        }
+
+        mStateView.addView(contentView);
+
+        onInitContentView(contentView);
+
+        return mStateView;
+    }
+
+    /**
+     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     */
+    @Nullable
+    protected View overrideContentView() {
+        return null;
+    }
+
+    /**
+     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     */
+    @LayoutRes
+    protected int overrideContentViewLayout() {
+        return 0;
+    }
+
+    /**
+     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     */
+    protected void onInitContentView(@NonNull View contentView) {
+    }
+
+    //*****************************************************************************************************************
     // OnBackPressed.
 
     /**
@@ -120,33 +172,6 @@ public abstract class EBFragment extends Fragment {
     @Nullable
     public final EBFragment getParentEBFragment() {
         return (EBFragment) getParentFragment();
-    }
-
-    //*****************************************************************************************************************
-    // Handler.
-
-    /**
-     * Handler with main {@link Looper}.
-     */
-    protected final Handler handler = new Handler(Looper.getMainLooper());
-
-    @NonNull
-    public Handler getHandler() {
-        return handler;
-    }
-
-    //*****************************************************************************************************************
-    // LayoutInflater.
-
-    private LayoutInflater mLayoutInflater;
-
-    @NonNull
-    public LayoutInflater getEBLayoutInflater() {
-        return mLayoutInflater;
-    }
-
-    private void initLayoutInflater() {
-        mLayoutInflater = LayoutInflater.from(getContext());
     }
 
     //*****************************************************************************************************************
@@ -190,7 +215,7 @@ public abstract class EBFragment extends Fragment {
 
     @IdRes
     protected int overrideFragmentHelperDefGroup() {
-        return R.id.eb_state_frame_layout;
+        return R.id.eb_state_view;
     }
 
     private void fragmentHelperOnSaveInstanceState(@Nullable Bundle outState) {
@@ -209,7 +234,7 @@ public abstract class EBFragment extends Fragment {
     // Other FragmentHelpers.
 
     @Nullable
-    public FragmentHelper getActivityFragmentHelper() {
+    public FragmentHelper getRootFragmentHelper() {
         EBActivity activity = getEBActivity();
         if (activity == null) {
             return null;
@@ -222,76 +247,10 @@ public abstract class EBFragment extends Fragment {
     public FragmentHelper getParentFragmentHelper() {
         EBFragment fragment = getParentEBFragment();
         if (fragment == null) {
-            return null;
+            return getRootFragmentHelper();
         }
 
         return fragment.getFragmentHelper();
-    }
-
-    @Nullable
-    public FragmentHelper getParentOrActivityFragmentHelper() {
-        FragmentHelper fragmentHelper = getParentFragmentHelper();
-        if (fragmentHelper == null) {
-            fragmentHelper = getActivityFragmentHelper();
-        }
-
-        return fragmentHelper;
-    }
-
-    //*****************************************************************************************************************
-    // Content view.
-
-    private StateView mStateView;
-
-    @Nullable
-    public StateView getStateView() {
-        return mStateView;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    @Nullable
-    private View initContentView(@Nullable ViewGroup container) {
-        mStateView = (StateView) mLayoutInflater.inflate(R.layout.eb_fragment, container, false);
-
-        View contentView = overrideContentView();
-        if (contentView == null) {
-            int contentViewRes = overrideContentViewLayout();
-            if (contentViewRes == 0) {
-                return mStateView;
-            }
-
-            contentView = mLayoutInflater.inflate(contentViewRes, mStateView, false);
-        }
-
-        mStateView.addView(contentView);
-
-        onInitContentView(contentView);
-
-        return mStateView;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    @Nullable
-    protected View overrideContentView() {
-        return null;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    @LayoutRes
-    protected int overrideContentViewLayout() {
-        return 0;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    protected void onInitContentView(@NonNull View contentView) {
     }
 
     //*****************************************************************************************************************
@@ -386,7 +345,7 @@ public abstract class EBFragment extends Fragment {
     /**
      * Uses a {@link WebViewFragment} to load a url.
      */
-    public void webViewLoadUrl(@NonNull String url) {
+    public void loadUrl(@NonNull String url) {
         EBActivity activity = getEBActivity();
         if (activity == null) {
             return;
@@ -396,10 +355,18 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // Gets a specify type parent fragment.
+    // ActionBar fragment.
 
     @Nullable
-    public static <T> T getTParent(@NonNull Class<T> tClass, @Nullable Fragment fragment) {
+    public EBActionBarFragment getActionBarParentFragment() {
+        return getTParent(EBActionBarFragment.class, this);
+    }
+
+    /**
+     * Gets a specify type parent fragment.
+     */
+    @Nullable
+    private static <T> T getTParent(@NonNull Class<T> tClass, @Nullable Fragment fragment) {
         if (fragment == null) {
             return null;
         }
@@ -409,14 +376,6 @@ public abstract class EBFragment extends Fragment {
         }
 
         return getTParent(tClass, fragment.getParentFragment());
-    }
-
-    //*****************************************************************************************************************
-    // ActionBar fragment.
-
-    @Nullable
-    public EBActionBarFragment getActionBarParentFragment() {
-        return getTParent(EBActionBarFragment.class, this);
     }
 
     //*****************************************************************************************************************
