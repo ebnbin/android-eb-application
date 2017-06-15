@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentManager
 import android.support.v4.util.ArrayMap
-import java.util.*
 
 /**
  * Helper for [android.support.v4.app.Fragment], [FragmentManager] and [android.support.v4.app.FragmentTransaction]
@@ -53,7 +52,7 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
     }
 
     /**
-     * Is found.
+     * Whether found.
      */
     private fun found(tag: String): Boolean {
         return find(tag) != null
@@ -86,6 +85,8 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
 
     /**
      * Pops.
+     *
+     * @return Whether popped.
      */
     fun pop(): Boolean {
         val popped = fm.popBackStackImmediate()
@@ -103,43 +104,68 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
      * Operators for other fragments in transactions.
      */
     private enum class Others {
+        /**
+         * Do nothing.
+         */
         NONE,
+        /**
+         * Hides other fragments in the same group.
+         */
         HIDE,
+        /**
+         * Removes other fragments in the same group.
+         */
         REMOVE
     }
 
     /**
      * Sets a fragment and removes others in the same group.
+     *
+     * @param tag Should be unique. If not set, class name of fragment will be used.
+     * @param group Container view id. If not set, default container view id will be used.
+     *
+     * @return Whether successful.
      */
-    @JvmOverloads fun set(fragment: EBFragment, tag: String? = null, @IdRes group: Int = -1): Boolean {
+    @JvmOverloads fun set(fragment: EBFragment, tag: String = fragment.javaClass.name,
+            @IdRes group: Int = defGroup): Boolean {
         return internalAdd(fragment, tag, group, Others.REMOVE, false)
     }
 
     /**
      * Pushes a fragment, hides others in the same group and adds to back stack.
+     *
+     * @param tag Should be unique. If not set, class name of fragment will be used.
+     * @param group Container view id. If not set, default container view id will be used.
+     *
+     * @return Whether successful.
      */
-    @JvmOverloads fun push(fragment: EBFragment, tag: String? = null, @IdRes group: Int = -1): Boolean {
+    @JvmOverloads fun push(fragment: EBFragment, tag: String = fragment.javaClass.name,
+            @IdRes group: Int = defGroup): Boolean {
         return internalAdd(fragment, tag, group, Others.HIDE, true)
     }
 
     /**
      * Transaction add.
+     *
+     * @param tag Should be unique. If not set, class name of fragment will be used.
+     * @param group Container view id. If not set, default container view id will be used.
+     * @param others Operators for other fragments.
+     * @param push Whether to transact [android.support.v4.app.FragmentTransaction.addToBackStack].
+     *
+     * @return Whether successful.
      */
-    private fun internalAdd(fragment: EBFragment, tag: String?, @IdRes group: Int, others: Others,
+    private fun internalAdd(fragment: EBFragment, tag: String, @IdRes group: Int, others: Others,
             push: Boolean): Boolean {
-        val validTag = tag ?: fragment.javaClass.name
-        if (found(validTag)) {
+        if (found(tag)) {
             return false
         }
 
-        @IdRes val validGroup = if (group == -1) defGroup else group
-
         val ft = fm.beginTransaction()
-        ft.add(validGroup, fragment, validTag)
+        ft.add(group, fragment, tag)
         if (others != Others.NONE) {
             for (tmpTag in fragments.keys) {
                 val tmpGroup = fragments[tmpTag]
-                if (tmpGroup == validGroup) {
+                if (tmpGroup == group) {
                     val tmpFragment = find(tmpTag)
                     if (tmpFragment != null) {
                         if (others == Others.HIDE) {
@@ -156,7 +182,7 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
         }
         ft.commit()
 
-        fragments.put(validTag, validGroup)
+        fragments.put(tag, group)
 
         return true
     }
