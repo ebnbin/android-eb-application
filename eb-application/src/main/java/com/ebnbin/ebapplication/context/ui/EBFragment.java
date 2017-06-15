@@ -392,7 +392,7 @@ public abstract class EBFragment extends Fragment {
             return;
         }
 
-        activity.webViewLoadUrl(url);
+        activity.loadUrl(url);
     }
 
     //*****************************************************************************************************************
