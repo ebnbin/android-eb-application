@@ -4,7 +4,6 @@ import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -19,11 +18,8 @@ import android.util.ArrayMap;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.ebnbin.eb.util.EBRuntimeException;
 import com.ebnbin.ebapplication.R;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import com.ebnbin.ebapplication.view.StateView;
 
 /**
  * Base fragment with ActionBar.
@@ -33,16 +29,7 @@ public abstract class EBActionBarFragment extends EBFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initFragmentHelper(savedInstanceState);
-    }
-
-    private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
-        getFragmentHelper().setDefGroup(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID);
-    }
-
-    @Override
-    protected int overrideContentViewLayout() {
-        return R.layout.eb_fragment_action_bar;
+        initFragmentHelper();
     }
 
     private CoordinatorLayout mCoordinatorLayout;
@@ -78,17 +65,21 @@ public abstract class EBActionBarFragment extends EBFragment {
 
     private int mAppBarLayoutVisibleHeight;
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    private StateListAnimator mDefaultAppBarStateListAnimator;
+    private StateListAnimator mIgnoreExpandedAppBarStateListAnimator;
 
-        mCoordinatorLayout = view.findViewById(R.id.eb_coordinator_layout);
-        mAppBarLayout = view.findViewById(R.id.eb_app_bar_layout);
-        mCollapsingToolbarLayout = view.findViewById(R.id.eb_collapsing_toolbar_layout);
-        mCollapsingToolbarLayoutContentContainerFrameLayout = view
+    @Override
+    protected void onInitContentView(@NonNull StateView stateView, @Nullable Bundle savedInstanceState) {
+        View actionBarContentContainer = getLayoutInflater().inflate(R.layout.eb_fragment_action_bar, stateView, false);
+        stateView.addView(actionBarContentContainer);
+
+        mCoordinatorLayout = actionBarContentContainer.findViewById(R.id.eb_coordinator_layout);
+        mAppBarLayout = actionBarContentContainer.findViewById(R.id.eb_app_bar_layout);
+        mCollapsingToolbarLayout = actionBarContentContainer.findViewById(R.id.eb_collapsing_toolbar_layout);
+        mCollapsingToolbarLayoutContentContainerFrameLayout = actionBarContentContainer
                 .findViewById(R.id.eb_collapsing_toolbar_layout_content_container);
-        mToolbar = view.findViewById(R.id.eb_toolbar);
-        mCoordinatorLayoutContentContainerFrameLayout = view
+        mToolbar = actionBarContentContainer.findViewById(R.id.eb_toolbar);
+        mCoordinatorLayoutContentContainerFrameLayout = actionBarContentContainer
                 .findViewById(R.id.eb_coordinator_layout_content_container);
 
         AppCompatActivity activity = getAppCompatActivity();
@@ -107,7 +98,7 @@ public abstract class EBActionBarFragment extends EBFragment {
                 int toolbarHeight = mToolbar.getHeight();
 
                 if (mAppBarLayoutVisibleHeight == toolbarHeight
-                        && mActionBarMode == ACTION_BAR_MODE_SCROLL) {
+                        && mActionBarMode == ActionBarMode.SCROLL) {
                     mAppBarLayout.setStateListAnimator(mIgnoreExpandedAppBarStateListAnimator);
                 } else {
                     mAppBarLayout.setStateListAnimator(mDefaultAppBarStateListAnimator);
@@ -118,10 +109,23 @@ public abstract class EBActionBarFragment extends EBFragment {
         });
 
         actionBarModeOnRestoreInstanceState(savedInstanceState);
+
+        View contentView = overrideContentView();
+        if (contentView == null) {
+            int contentViewRes = overrideContentViewLayout();
+            if (contentViewRes == 0) {
+                return;
+            }
+
+            contentView = getLayoutInflater().inflate(contentViewRes, stateView, false);
+        }
+
+        mCoordinatorLayoutContentContainerFrameLayout.addView(contentView);
     }
 
-    private StateListAnimator mDefaultAppBarStateListAnimator;
-    private StateListAnimator mIgnoreExpandedAppBarStateListAnimator;
+    private void initFragmentHelper() {
+        getFragmentHelper().setDefGroup(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID);
+    }
 
     @Override
     protected void onChangeShared() {
@@ -226,25 +230,20 @@ public abstract class EBActionBarFragment extends EBFragment {
     //*****************************************************************************************************************
     // ActionBar mode.
 
-    public static final int ACTION_BAR_MODE_STANDARD = 0;
-    public static final int ACTION_BAR_MODE_SCROLL = 1;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ACTION_BAR_MODE_STANDARD, ACTION_BAR_MODE_SCROLL})
-    public @interface ActionBarMode {
+    public enum ActionBarMode {
+        STANDARD,
+        SCROLL
     }
 
-    @ActionBarMode
-    private int mActionBarMode = -1;
+    private ActionBarMode mActionBarMode = ActionBarMode.STANDARD;
 
     private boolean mActionBarModeExpanded = true;
 
-    @ActionBarMode
-    public int getActionBarMode() {
+    public ActionBarMode getActionBarMode() {
         return mActionBarMode;
     }
 
-    public void setActionBarMode(@ActionBarMode int actionBarMode, boolean forceInvalidate, @Nullable Boolean expanded,
+    public void setActionBarMode(ActionBarMode actionBarMode, boolean forceInvalidate, @Nullable Boolean expanded,
             boolean animate) {
         if (mSetCollapsingToolbarLayoutScrollFlagsRunnable != null) {
             mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
@@ -273,11 +272,7 @@ public abstract class EBActionBarFragment extends EBFragment {
         }
     }
 
-    private void setActionBarModeByConstants(@ActionBarMode int actionBarMode) {
-        if (mActionBarMode == actionBarMode) {
-            return;
-        }
-
+    private void setActionBarModeByConstants(ActionBarMode actionBarMode) {
         ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
         if (actionBarModeConstants == null) {
             return;
@@ -302,10 +297,9 @@ public abstract class EBActionBarFragment extends EBFragment {
     private SetCollapsingToolbarLayoutScrollFlagsRunnable mSetCollapsingToolbarLayoutScrollFlagsRunnable;
 
     private class SetCollapsingToolbarLayoutScrollFlagsRunnable implements Runnable {
-        @ActionBarMode
-        private final int mActionBarMode;
+        private final ActionBarMode mActionBarMode;
 
-        public SetCollapsingToolbarLayoutScrollFlagsRunnable(@ActionBarMode int actionBarMode) {
+        public SetCollapsingToolbarLayoutScrollFlagsRunnable(ActionBarMode actionBarMode) {
             mActionBarMode = actionBarMode;
         }
 
@@ -348,11 +342,7 @@ public abstract class EBActionBarFragment extends EBFragment {
         params.setScrollFlags(mCollapsingToolbarLayoutScrollFlags);
     }
 
-    private void setCollapsingToolbarLayoutScrollFlagsByConstants(@ActionBarMode int actionBarMode) {
-        if (mActionBarMode == actionBarMode) {
-            return;
-        }
-
+    private void setCollapsingToolbarLayoutScrollFlagsByConstants(ActionBarMode actionBarMode) {
         ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
         if (actionBarModeConstants == null) {
             return;
@@ -369,31 +359,14 @@ public abstract class EBActionBarFragment extends EBFragment {
 
     private void actionBarModeOnRestoreInstanceState(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            setActionBarMode(ACTION_BAR_MODE_STANDARD, true, true, false);
+            setActionBarMode(ActionBarMode.STANDARD, true, true, false);
             return;
         }
 
-        int actionBarMode = savedInstanceState.getInt(INSTANCE_STATE_ACTION_BAR_MODE, ACTION_BAR_MODE_STANDARD);
-        @ActionBarMode
-        int tmpActionBarMode;
-        switch (actionBarMode) {
-            case ACTION_BAR_MODE_STANDARD: {
-                tmpActionBarMode = ACTION_BAR_MODE_STANDARD;
-
-                break;
-            }
-            case ACTION_BAR_MODE_SCROLL: {
-                tmpActionBarMode = ACTION_BAR_MODE_SCROLL;
-
-                break;
-            }
-            default: {
-                throw new EBRuntimeException();
-            }
-        }
+        ActionBarMode actionBarMode = (ActionBarMode) savedInstanceState.getSerializable(INSTANCE_STATE_ACTION_BAR_MODE);
         boolean actionBarModeExpanded = savedInstanceState.getBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED);
 
-        setActionBarMode(tmpActionBarMode, true, actionBarModeExpanded, false);
+        setActionBarMode(actionBarMode, true, actionBarModeExpanded, false);
     }
 
     private void actionBarModeOnSaveInstanceState(@Nullable Bundle outState) {
@@ -401,7 +374,7 @@ public abstract class EBActionBarFragment extends EBFragment {
             return;
         }
 
-        outState.putInt(INSTANCE_STATE_ACTION_BAR_MODE, mActionBarMode);
+        outState.putSerializable(INSTANCE_STATE_ACTION_BAR_MODE, mActionBarMode);
         outState.putBoolean(INSTANCE_STATE_ACTION_BAR_MODE_EXPANDED, mActionBarModeExpanded);
     }
 
@@ -415,7 +388,7 @@ public abstract class EBActionBarFragment extends EBFragment {
     //*****************************************************************************************************************
     // ActionBarMode constants.
 
-    private static final ArrayMap<Integer, ActionBarModeConstants> ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP
+    private static final ArrayMap<ActionBarMode, ActionBarModeConstants> ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP
             = new ArrayMap<>();
 
     static {
@@ -423,14 +396,14 @@ public abstract class EBActionBarFragment extends EBFragment {
                 | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED;
         ActionBarModeConstants standardActionBarModeConstants = new ActionBarModeConstants(
                 standardCollapsingToolbarLayoutScrollFlags, false, false, View.GONE);
-        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ACTION_BAR_MODE_STANDARD, standardActionBarModeConstants);
+        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ActionBarMode.STANDARD, standardActionBarModeConstants);
 
         int scrollCollapsingToolbarLayoutScrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                 | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
                 | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP;
         ActionBarModeConstants scrollActionBarModeConstants = new ActionBarModeConstants(
                 scrollCollapsingToolbarLayoutScrollFlags, false, true, View.GONE);
-        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ACTION_BAR_MODE_SCROLL, scrollActionBarModeConstants);
+        ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.put(ActionBarMode.SCROLL, scrollActionBarModeConstants);
     }
 
     private static final class ActionBarModeConstants {

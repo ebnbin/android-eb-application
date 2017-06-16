@@ -49,22 +49,27 @@ public abstract class EBFragment extends Fragment {
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         stateView = (StateView) getLayoutInflater().inflate(R.layout.eb_fragment, container, false);
 
+        onInitContentView(stateView, savedInstanceState);
+
+        return stateView;
+    }
+
+    protected void onInitContentView(@NonNull StateView stateView, @Nullable Bundle savedInstanceState) {
         View contentView = overrideContentView();
         if (contentView == null) {
             int contentViewRes = overrideContentViewLayout();
             if (contentViewRes == 0) {
-                return stateView;
+                return;
             }
 
             contentView = getLayoutInflater().inflate(contentViewRes, stateView, false);
         }
 
         stateView.addView(contentView);
-
-        return stateView;
     }
 
     @Override

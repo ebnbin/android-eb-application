@@ -118,7 +118,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
         EBActionBarFragment actionBarFragment = getActionBarParentFragment();
         if (actionBarFragment != null) {
             actionBarFragment.addNestedScrollingView(mWebView);
-            actionBarFragment.setActionBarMode(EBActionBarFragment.ACTION_BAR_MODE_SCROLL, true,
+            actionBarFragment.setActionBarMode(EBActionBarFragment.ActionBarMode.SCROLL, true,
                     savedInstanceState == null ? true : null, false);
 
             actionBarFragment.getToolbar().setOnClickListener(new View.OnClickListener() {
