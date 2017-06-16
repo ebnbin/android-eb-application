@@ -76,34 +76,30 @@ abstract class EBActivity : AppCompatActivity() {
         setTaskDescription(taskDescription)
     }
 
-    private val taskDescription: ActivityManager.TaskDescription
-        get() {
-            if (defTaskDescription != null) {
-                return defTaskDescription!!
-            }
+    private val taskDescription: ActivityManager.TaskDescription by lazy {
+        var icon: Bitmap? = null
+        val vectorDrawable = getDrawable(R.drawable.eb) as VectorDrawable?
+        if (vectorDrawable != null) {
+            vectorDrawable.setTint(Color.WHITE)
 
-            var icon: Bitmap? = null
-            val vectorDrawable = getDrawable(R.drawable.eb) as VectorDrawable?
-            if (vectorDrawable != null) {
-                vectorDrawable.setTint(Color.WHITE)
-
-                val size = resources.getDimensionPixelSize(R.dimen.eb_task_description_icon_size)
-                icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-                val canvas = Canvas(icon!!)
-                vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-                vectorDrawable.draw(canvas)
-            }
-
-            @ColorInt val colorPrimary = getColor(R.color.eb_primary_light)
-
-            defTaskDescription = ActivityManager.TaskDescription(null, icon, colorPrimary)
-            return defTaskDescription!!
+            val size = resources.getDimensionPixelSize(R.dimen.eb_task_description_icon_size)
+            icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(icon!!)
+            vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
+            vectorDrawable.draw(canvas)
         }
+
+        @ColorInt val colorPrimary = getColor(R.color.eb_primary_light)
+
+        ActivityManager.TaskDescription(null, icon, colorPrimary)
+    }
 
     //*****************************************************************************************************************
     // FragmentHelper.
 
-    val fragmentHelper: FragmentHelper = FragmentHelper(supportFragmentManager, android.R.id.content)
+    val fragmentHelper: FragmentHelper by lazy {
+        FragmentHelper(supportFragmentManager, android.R.id.content)
+    }
 
     private fun initFragmentHelper(savedInstanceState: Bundle?) {
         fragmentHelper.onRestoreInstanceState(savedInstanceState)
@@ -177,10 +173,5 @@ abstract class EBActivity : AppCompatActivity() {
          */
         @StyleRes
         private val DEFAULT_THEME_ID = R.style.EBLightTheme
-
-        //*************************************************************************************************************
-        // Custom TaskDescription.
-
-        private var defTaskDescription: ActivityManager.TaskDescription? = null
     }
 }

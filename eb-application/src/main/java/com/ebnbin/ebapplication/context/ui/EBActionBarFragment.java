@@ -30,6 +30,17 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class EBActionBarFragment extends EBFragment {
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        initFragmentHelper(savedInstanceState);
+    }
+
+    private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
+        getFragmentHelper().setDefGroup(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID);
+    }
+
+    @Override
     protected int overrideContentViewLayout() {
         return R.layout.eb_fragment_action_bar;
     }
@@ -65,31 +76,20 @@ public abstract class EBActionBarFragment extends EBFragment {
         return mCoordinatorLayoutContentContainerFrameLayout;
     }
 
-    @Override
-    protected void onInitContentView(@NonNull View contentView) {
-        super.onInitContentView(contentView);
-
-        mCoordinatorLayout = (CoordinatorLayout) contentView.findViewById(R.id.eb_coordinator_layout);
-        mAppBarLayout = (AppBarLayout) contentView.findViewById(R.id.eb_app_bar_layout);
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) contentView
-                .findViewById(R.id.eb_collapsing_toolbar_layout);
-        mCollapsingToolbarLayoutContentContainerFrameLayout = (FrameLayout) contentView
-                .findViewById(R.id.eb_collapsing_toolbar_layout_content_container);
-        mToolbar = (Toolbar) contentView.findViewById(R.id.eb_toolbar);
-        mCoordinatorLayoutContentContainerFrameLayout = (FrameLayout) contentView
-                .findViewById(R.id.eb_coordinator_layout_content_container);
-    }
-
     private int mAppBarLayoutVisibleHeight;
-
-    @Override
-    protected int overrideFragmentHelperDefGroup() {
-        return COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID;
-    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mCoordinatorLayout = view.findViewById(R.id.eb_coordinator_layout);
+        mAppBarLayout = view.findViewById(R.id.eb_app_bar_layout);
+        mCollapsingToolbarLayout = view.findViewById(R.id.eb_collapsing_toolbar_layout);
+        mCollapsingToolbarLayoutContentContainerFrameLayout = view
+                .findViewById(R.id.eb_collapsing_toolbar_layout_content_container);
+        mToolbar = view.findViewById(R.id.eb_toolbar);
+        mCoordinatorLayoutContentContainerFrameLayout = view
+                .findViewById(R.id.eb_coordinator_layout_content_container);
 
         AppCompatActivity activity = getAppCompatActivity();
         if (activity != null) {

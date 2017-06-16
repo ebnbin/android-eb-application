@@ -1,9 +1,7 @@
 package com.ebnbin.ebapplication.context.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,16 +32,10 @@ public abstract class EBFragment extends Fragment {
     // Lifecycle.
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        initArguments();
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initArguments();
         initFragmentHelper(savedInstanceState);
     }
 
@@ -51,20 +43,28 @@ public abstract class EBFragment extends Fragment {
      * This method is overrode, a new way to initialize content view is to override {@link #overrideContentView()} and
      * returns the content view, or to override {@link #overrideContentViewLayout()} and returns the resource id of
      * content view. If both of these two methods returns valid value, the return of {@link #overrideContentView()}
-     * will be used, and the return of {@link #overrideContentViewLayout()} will be ignored. After that, override
-     * {@link #onInitContentView(View)} to initialize views with the content view that set. If content view if
-     * {@code null}, method {@link #onInitContentView(View)} will not be called. <br>
+     * will be used, and the return of {@link #overrideContentViewLayout()} will be ignored. <br>
      * <p>
      * If this method is overrode in subclasses, some feature will be disabled.
      */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = initContentView(container);
+        stateView = (StateView) getLayoutInflater().inflate(R.layout.eb_fragment, container, false);
 
-        mFragmentHelper.setDefGroup(overrideFragmentHelperDefGroup());
+        View contentView = overrideContentView();
+        if (contentView == null) {
+            int contentViewRes = overrideContentViewLayout();
+            if (contentViewRes == 0) {
+                return stateView;
+            }
 
-        return view;
+            contentView = getLayoutInflater().inflate(contentViewRes, stateView, false);
+        }
+
+        stateView.addView(contentView);
+
+        return stateView;
     }
 
     @Override
@@ -82,37 +82,87 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // Content view.
+    // Arguments.
 
-    private StateView mStateView;
+    /**
+     * Initializes fields with arguments.
+     */
+    private void initArguments() {
+        Bundle args = getArguments();
+        if (args == null) {
+            args = new Bundle();
+        }
 
-    @Nullable
-    public StateView getStateView() {
-        return mStateView;
+        onInitArguments(args);
     }
 
     /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
+     * Called when initializing fields with arguments.
+     *
+     * @param args If {@link #getArguments()} returns {@code null}, an empty {@link Bundle} will be used.
      */
+    protected void onInitArguments(@NonNull Bundle args) {
+    }
+
+    //*****************************************************************************************************************
+    // FragmentHelper.
+
+    private FragmentHelper fragmentHelper;
+
+    @NonNull
+    public FragmentHelper getFragmentHelper() {
+        return fragmentHelper;
+    }
+
+    private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
+        fragmentHelper = new FragmentHelper(getChildFragmentManager(), R.id.eb_state_view);
+
+        fragmentHelper.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private void fragmentHelperOnSaveInstanceState(@Nullable Bundle outState) {
+        fragmentHelper.onSaveInstanceState(outState);
+    }
+
+    /**
+     * @return Whether handled.
+     */
+    private boolean fragmentHelperOnBackPressed() {
+        EBFragment topVisibleFragment = fragmentHelper.topVisible();
+        return topVisibleFragment != null && (topVisibleFragment.onBackPressed() || fragmentHelper.pop());
+    }
+
+    //*****************************************************************************************************************
+    // Other FragmentHelpers.
+
     @Nullable
-    private View initContentView(@Nullable ViewGroup container) {
-        mStateView = (StateView) getLayoutInflater().inflate(R.layout.eb_fragment, container, false);
-
-        View contentView = overrideContentView();
-        if (contentView == null) {
-            int contentViewRes = overrideContentViewLayout();
-            if (contentViewRes == 0) {
-                return mStateView;
-            }
-
-            contentView = getLayoutInflater().inflate(contentViewRes, mStateView, false);
+    public FragmentHelper getRootFragmentHelper() {
+        EBActivity activity = getEBActivity();
+        if (activity == null) {
+            return null;
         }
 
-        mStateView.addView(contentView);
+        return activity.getFragmentHelper();
+    }
 
-        onInitContentView(contentView);
+    @Nullable
+    public FragmentHelper getParentFragmentHelper() {
+        EBFragment fragment = getParentEBFragment();
+        if (fragment == null) {
+            return getRootFragmentHelper();
+        }
 
-        return mStateView;
+        return fragment.getFragmentHelper();
+    }
+
+    //*****************************************************************************************************************
+    // Content view.
+
+    private StateView stateView;
+
+    @Nullable
+    public StateView getStateView() {
+        return stateView;
     }
 
     /**
@@ -129,12 +179,6 @@ public abstract class EBFragment extends Fragment {
     @LayoutRes
     protected int overrideContentViewLayout() {
         return 0;
-    }
-
-    /**
-     * @see #onCreateView(LayoutInflater, ViewGroup, Bundle)
-     */
-    protected void onInitContentView(@NonNull View contentView) {
     }
 
     //*****************************************************************************************************************
@@ -175,85 +219,6 @@ public abstract class EBFragment extends Fragment {
     }
 
     //*****************************************************************************************************************
-    // Arguments.
-
-    /**
-     * Initializes fields with arguments.
-     */
-    private void initArguments() {
-        Bundle args = getArguments();
-        if (args == null) {
-            args = new Bundle();
-        }
-
-        onInitArguments(args);
-    }
-
-    /**
-     * Called when initializing fields with arguments.
-     *
-     * @param args If {@link #getArguments()} returns {@code null}, an empty {@link Bundle} will be used.
-     */
-    protected void onInitArguments(@NonNull Bundle args) {
-    }
-
-    //*****************************************************************************************************************
-    // FragmentHelper.
-
-    private FragmentHelper mFragmentHelper;
-
-    @NonNull
-    public FragmentHelper getFragmentHelper() {
-        return mFragmentHelper;
-    }
-
-    private void initFragmentHelper(@Nullable Bundle savedInstanceState) {
-        mFragmentHelper = new FragmentHelper(getChildFragmentManager());
-
-        mFragmentHelper.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @IdRes
-    protected int overrideFragmentHelperDefGroup() {
-        return R.id.eb_state_view;
-    }
-
-    private void fragmentHelperOnSaveInstanceState(@Nullable Bundle outState) {
-        mFragmentHelper.onSaveInstanceState(outState);
-    }
-
-    /**
-     * @return Whether handled.
-     */
-    private boolean fragmentHelperOnBackPressed() {
-        EBFragment topVisibleFragment = mFragmentHelper.topVisible();
-        return topVisibleFragment != null && (topVisibleFragment.onBackPressed() || mFragmentHelper.pop());
-    }
-
-    //*****************************************************************************************************************
-    // Other FragmentHelpers.
-
-    @Nullable
-    public FragmentHelper getRootFragmentHelper() {
-        EBActivity activity = getEBActivity();
-        if (activity == null) {
-            return null;
-        }
-
-        return activity.getFragmentHelper();
-    }
-
-    @Nullable
-    public FragmentHelper getParentFragmentHelper() {
-        EBFragment fragment = getParentEBFragment();
-        if (fragment == null) {
-            return getRootFragmentHelper();
-        }
-
-        return fragment.getFragmentHelper();
-    }
-
-    //*****************************************************************************************************************
     // ActionBar.
 
     @Nullable
@@ -269,7 +234,7 @@ public abstract class EBFragment extends Fragment {
     //*****************************************************************************************************************
     // Net.
 
-    private final Object mNetTag = hashCode();
+    private final Object netTag = hashCode();
 
     /**
      * Gets a url async with tag of current fragment. And with a default loading pre-callback added.
@@ -283,8 +248,8 @@ public abstract class EBFragment extends Fragment {
             public void onBegin(@NonNull Call call) {
                 super.onBegin(call);
 
-                if (mStateView != null) {
-                    mStateView.stateLoading(null);
+                if (stateView != null) {
+                    stateView.stateLoading(null);
                 }
             }
 
@@ -293,8 +258,8 @@ public abstract class EBFragment extends Fragment {
                     @NonNull byte[] byteArray) {
                 super.onSuccess(call, model, response, byteArray);
 
-                if (mStateView != null) {
-                    mStateView.clearState();
+                if (stateView != null) {
+                    stateView.clearState();
                 }
             }
 
@@ -303,8 +268,8 @@ public abstract class EBFragment extends Fragment {
                     @Nullable Response response) {
                 super.onFailure(call, errorCode, e, response);
 
-                if (mStateView != null) {
-                    mStateView.stateFailure(new StateView.OnRefreshListener() {
+                if (stateView != null) {
+                    stateView.stateFailure(new StateView.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
                             netGet(url, callback);
@@ -317,8 +282,8 @@ public abstract class EBFragment extends Fragment {
             public void onCancel(@NonNull Call call) {
                 super.onCancel(call);
 
-                if (mStateView != null) {
-                    mStateView.stateFailure(new StateView.OnRefreshListener() {
+                if (stateView != null) {
+                    stateView.stateFailure(new StateView.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
                             netGet(url, callback);
@@ -329,14 +294,14 @@ public abstract class EBFragment extends Fragment {
         };
         callback.getPreCallbacks().add(loadingPreCallback);
 
-        return NetHelper.Companion.getInstance().get(mNetTag, url, callback);
+        return NetHelper.Companion.getInstance().get(netTag, url, callback);
     }
 
     /**
      * Cancels and removes all saved {@link Call} by tag of current fragment.
      */
     private void disposeNet() {
-        NetHelper.Companion.getInstance().cancelCalls(mNetTag);
+        NetHelper.Companion.getInstance().cancelCalls(netTag);
     }
 
     //*****************************************************************************************************************
@@ -359,14 +324,14 @@ public abstract class EBFragment extends Fragment {
 
     @Nullable
     public EBActionBarFragment getActionBarParentFragment() {
-        return getTParent(EBActionBarFragment.class, this);
+        return getTParentFragment(EBActionBarFragment.class, this);
     }
 
     /**
      * Gets a specify type parent fragment.
      */
     @Nullable
-    private static <T> T getTParent(@NonNull Class<T> tClass, @Nullable Fragment fragment) {
+    private static <T> T getTParentFragment(@NonNull Class<T> tClass, @Nullable Fragment fragment) {
         if (fragment == null) {
             return null;
         }
@@ -375,26 +340,26 @@ public abstract class EBFragment extends Fragment {
             return tClass.cast(fragment);
         }
 
-        return getTParent(tClass, fragment.getParentFragment());
+        return getTParentFragment(tClass, fragment.getParentFragment());
     }
 
     //*****************************************************************************************************************
     // Shared.
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
 
-        if (isVisibleToUser) {
+        if (!hidden) {
             onChangeShared();
         }
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-        if (!hidden) {
+        if (isVisibleToUser) {
             onChangeShared();
         }
     }

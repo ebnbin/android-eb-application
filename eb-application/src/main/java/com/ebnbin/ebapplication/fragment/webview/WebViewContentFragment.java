@@ -82,16 +82,11 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
     }
 
     @Override
-    protected void onInitContentView(@NonNull View contentView) {
-        super.onInitContentView(contentView);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.eb_swipe_refresh_layout);
-        mWebView = contentView.findViewById(R.id.eb_web_view);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mSwipeRefreshLayout = view.findViewById(R.id.eb_swipe_refresh_layout);
+        mWebView = view.findViewById(R.id.eb_web_view);
 
         initActionBar();
 
