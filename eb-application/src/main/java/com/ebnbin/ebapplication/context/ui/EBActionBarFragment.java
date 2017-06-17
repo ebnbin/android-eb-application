@@ -262,7 +262,13 @@ public abstract class EBActionBarFragment extends EBFragment {
         mSetCollapsingToolbarLayoutScrollFlagsRunnable = new SetCollapsingToolbarLayoutScrollFlagsRunnable(
                 actionBarMode);
 
-        setActionBarModeByConstants(actionBarMode);
+
+        ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
+
+        mCollapsingToolbarLayoutContentContainerFrameLayout.setVisibility(
+                actionBarModeConstants.collapsingToolbarLayoutContentContainerFrameLayoutVisibility);
+        setAppBarLayoutCanDrag(actionBarModeConstants.appBarLayoutCanDrag);
+        setNestedScrollingEnabled(actionBarModeConstants.nestedScrollingEnabled);
 
         if (animate) {
             mCollapsingToolbarLayout.postDelayed(mSetCollapsingToolbarLayoutScrollFlagsRunnable,
@@ -270,18 +276,6 @@ public abstract class EBActionBarFragment extends EBFragment {
         } else {
             mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
         }
-    }
-
-    private void setActionBarModeByConstants(ActionBarMode actionBarMode) {
-        ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
-        if (actionBarModeConstants == null) {
-            return;
-        }
-
-        mCollapsingToolbarLayoutContentContainerFrameLayout.setVisibility(
-                actionBarModeConstants.collapsingToolbarLayoutContentContainerFrameLayoutVisibility);
-        setAppBarLayoutCanDrag(actionBarModeConstants.appBarLayoutCanDrag);
-        setNestedScrollingEnabled(actionBarModeConstants.nestedScrollingEnabled);
     }
 
     private void invalidateToolbar() {
@@ -309,7 +303,10 @@ public abstract class EBActionBarFragment extends EBFragment {
 
             mSetCollapsingToolbarLayoutScrollFlagsRunnable = null;
 
-            setCollapsingToolbarLayoutScrollFlagsByConstants(mActionBarMode);
+            ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(mActionBarMode);
+
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mCollapsingToolbarLayout.getLayoutParams();
+            params.setScrollFlags(actionBarModeConstants.collapsingToolbarLayoutScrollFlags);
 
             EBActionBarFragment.this.mActionBarMode = mActionBarMode;
 
@@ -324,31 +321,6 @@ public abstract class EBActionBarFragment extends EBFragment {
         if (mSetCollapsingToolbarLayoutScrollFlagsRunnable != null) {
             mSetCollapsingToolbarLayoutScrollFlagsRunnable.run();
         }
-    }
-
-    //*****************************************************************************************************************
-    // CollapsingToolbarLayout scroll flags.
-
-    private int mCollapsingToolbarLayoutScrollFlags = -1;
-
-    private void setCollapsingToolbarLayoutScrollFlags(int flags) {
-        if (mCollapsingToolbarLayoutScrollFlags == flags) {
-            return;
-        }
-
-        mCollapsingToolbarLayoutScrollFlags = flags;
-
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) mCollapsingToolbarLayout.getLayoutParams();
-        params.setScrollFlags(mCollapsingToolbarLayoutScrollFlags);
-    }
-
-    private void setCollapsingToolbarLayoutScrollFlagsByConstants(ActionBarMode actionBarMode) {
-        ActionBarModeConstants actionBarModeConstants = ACTION_BAR_MODE_CONSTANTS_ARRAY_MAP.get(actionBarMode);
-        if (actionBarModeConstants == null) {
-            return;
-        }
-
-        setCollapsingToolbarLayoutScrollFlags(actionBarModeConstants.collapsingToolbarLayoutScrollFlags);
     }
 
     //*****************************************************************************************************************
