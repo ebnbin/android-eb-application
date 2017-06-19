@@ -3,6 +3,7 @@ package com.ebnbin.ebapplication.context.ui;
 import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -127,14 +128,12 @@ public abstract class EBActionBarFragment extends EBFragment {
         getFragmentHelper().setDefGroup(COORDINATOR_LAYOUT_CONTENT_CONTAINER_ID);
     }
 
+    @CallSuper
     @Override
-    protected void onChangeShared() {
-        super.onChangeShared();
+    protected void onFront() {
+        super.onFront();
 
-        AppCompatActivity activity = getAppCompatActivity();
-        if (activity != null) {
-            activity.setSupportActionBar(mToolbar);
-        }
+        getAppCompatActivity().setSupportActionBar(mToolbar);
     }
 
     @IdRes

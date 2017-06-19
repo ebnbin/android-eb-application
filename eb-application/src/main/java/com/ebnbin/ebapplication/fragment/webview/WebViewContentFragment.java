@@ -213,7 +213,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
     // ActionBar.
 
     private void initActionBar() {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getEbActivity().getSupportActionBar();
         if (actionBar == null) {
             return;
         }
@@ -281,7 +281,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getEbActivity().getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(url);
         }
@@ -294,7 +294,7 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
 
     @Override
     public void onPageFinished(String url) {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getEbActivity().getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(mWebView.getTitle());
         }
