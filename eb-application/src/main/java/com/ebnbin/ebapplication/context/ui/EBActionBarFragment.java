@@ -179,27 +179,23 @@ public abstract class EBActionBarFragment extends EBFragment {
         });
     }
 
-    private View mNestedScrollingView;
-    private boolean mNestedScrollingEnabled = true;
+    private NestedScrollingChild mNestedScrollingChild;
+    private boolean mNestedScrollingEnabled = false;
 
-    public void addNestedScrollingView(@NonNull View nestedScrollingView) {
-        invalidateNestedScrollingEnabled(nestedScrollingView, mNestedScrollingEnabled);
-    }
-
-    public void removeNestedScrollingView(@NonNull View nestedScrollingView) {
-        invalidateNestedScrollingEnabled(mNestedScrollingView == nestedScrollingView ? null : mNestedScrollingView,
-                mNestedScrollingEnabled);
+    public void setNestedScrollingChild(@NonNull NestedScrollingChild nestedScrollingChild) {
+        invalidateNestedScrolling(nestedScrollingChild, mNestedScrollingEnabled);
     }
 
     private void setNestedScrollingEnabled(boolean nestedScrollingEnabled) {
-        invalidateNestedScrollingEnabled(mNestedScrollingView, nestedScrollingEnabled);
+        invalidateNestedScrolling(mNestedScrollingChild, nestedScrollingEnabled);
     }
 
-    private void invalidateNestedScrollingEnabled(@Nullable View nestedScrollingView, boolean nestedScrollingEnabled) {
+    private void invalidateNestedScrolling(@Nullable NestedScrollingChild nestedScrollingChild,
+            boolean nestedScrollingEnabled) {
         boolean needInvalidate = false;
 
-        if (mNestedScrollingView != nestedScrollingView) {
-            mNestedScrollingView = nestedScrollingView;
+        if (mNestedScrollingChild != nestedScrollingChild) {
+            mNestedScrollingChild = nestedScrollingChild;
 
             needInvalidate = true;
         }
@@ -210,14 +206,8 @@ public abstract class EBActionBarFragment extends EBFragment {
             needInvalidate = true;
         }
 
-        if (!needInvalidate) {
-            return;
-        }
-
-        if (nestedScrollingView instanceof NestedScrollingChild
-                && !(nestedScrollingView instanceof SwipeRefreshLayout)) {
-            NestedScrollingChild nestedScrollingChild = (NestedScrollingChild) nestedScrollingView;
-            nestedScrollingChild.setNestedScrollingEnabled(mNestedScrollingEnabled);
+        if (needInvalidate && mNestedScrollingChild != null && !(nestedScrollingChild instanceof SwipeRefreshLayout)) {
+            mNestedScrollingChild.setNestedScrollingEnabled(mNestedScrollingEnabled);
         }
     }
 
