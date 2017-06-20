@@ -12,7 +12,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.StyleRes
 import android.support.v7.app.AppCompatActivity
 import com.ebnbin.ebapplication.R
-import com.ebnbin.ebapplication.fragment.webview.WebViewFragment
+import com.ebnbin.ebapplication.fragment.webview.WebViewActionBarFragment
 
 /**
  * Base [Activity].
@@ -155,10 +155,10 @@ abstract class EBActivity : AppCompatActivity() {
     // WebView.
 
     /**
-     * Loads url using [WebViewFragment].
+     * Loads url using [WebViewActionBarFragment].
      */
     fun loadUrl(url: String) {
-        val fragment = WebViewFragment.newInstance(url)
+        val fragment = WebViewActionBarFragment.newInstance(url)
         fragmentHelper.push(fragment)
     }
 
