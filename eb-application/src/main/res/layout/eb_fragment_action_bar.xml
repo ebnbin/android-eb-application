@@ -32,7 +32,7 @@
                 android:id="@+id/eb_collapsing_toolbar_layout_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/eb_min_height_collapsing_toolbar_layout_content_container"/>
+                android:minHeight="@dimen/eb_fragment_action_bar_min_height_collapsing_toolbar_layout_content"/>
             <android.support.v7.widget.Toolbar
                 android:id="@+id/eb_toolbar"
                 android:layout_width="match_parent"

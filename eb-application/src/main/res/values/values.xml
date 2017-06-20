@@ -73,7 +73,7 @@
     <dimen name="eb_task_description_icon_size">48dp</dimen>
 
     <!-- 56dp (actionBarSize) * 2 + 24dp (windowTranslucentStatus = true 时 statusBarSize). -->
-    <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">136dp</dimen>
+    <dimen name="eb_fragment_action_bar_min_height_collapsing_toolbar_layout_content">136dp</dimen>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
@@ -83,10 +83,9 @@
     <string name="app_links"/>
     <string name="eb_ok">确定</string>
     <string name="eb_about">关于</string>
-    <string name="eb_fragment_web_view_open_in_browser">在浏览器中打开</string>
-    <string name="eb_fragment_web_view_url_error">无法打开地址</string>
-    <string name="eb_dialog_fragment_web_view_copy_url">复制 URL</string>
-    <string name="eb_dialog_fragment_web_view_copy_url_success">复制 URL 成功</string>
+    <string name="eb_web_view_open_in_browser">在浏览器中打开</string>
+    <string name="eb_web_view_url_error">无法打开 URL</string>
+    <string name="eb_web_view_copy_url">复制 URL</string>
     <string name="eb_links">https://github.com/ebnbin</string>
     <string name="eb_easter_egg">　</string>
     <string name="eb_ebnbin">ebnbin</string>

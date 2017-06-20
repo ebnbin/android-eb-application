@@ -32,7 +32,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     }
 
     override fun overrideContentViewLayout(): Int {
-        return R.layout.eb_fragment_web_view_content
+        return R.layout.eb_web_view_fragment
     }
 
     private val swipeRefreshLayout: EBSwipeRefreshLayout by lazy {
@@ -172,7 +172,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     }
 
     private fun openInBrowserException() {
-        Toast.makeText(context, R.string.eb_fragment_web_view_url_error, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.eb_web_view_url_error, Toast.LENGTH_SHORT).show()
     }
 
     //*****************************************************************************************************************

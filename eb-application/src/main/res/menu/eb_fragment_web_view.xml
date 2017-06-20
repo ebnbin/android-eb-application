@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/eb_open_in_browser"
-        android:title="@string/eb_fragment_web_view_open_in_browser"
-        android:icon="@drawable/eb_fragment_web_view_open_in_browser"
+        android:title="@string/eb_web_view_open_in_browser"
+        android:icon="@drawable/eb_web_view_open_in_browser"
         app:showAsAction="always"/>
 </menu>

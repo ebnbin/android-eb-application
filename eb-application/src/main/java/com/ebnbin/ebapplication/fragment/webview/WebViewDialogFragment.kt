@@ -31,7 +31,7 @@ class WebViewDialogFragment : DialogFragment() {
 
         builder.setMessage(url)
         if (url != null) {
-            builder.setNeutralButton(R.string.eb_dialog_fragment_web_view_copy_url) { _, _ ->
+            builder.setNeutralButton(R.string.eb_web_view_copy_url) { _, _ ->
                 EBUtil.cilp(context, url!!)
             }
         }

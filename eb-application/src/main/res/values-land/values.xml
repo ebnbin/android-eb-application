@@ -4,5 +4,5 @@
     <eat-comment/>
 
     <!-- 48dp (actionBarSize) * 2 + 24dp (windowTranslucentStatus = true 时 statusBarSize). -->
-    <dimen name="eb_min_height_collapsing_toolbar_layout_content_container">120dp</dimen>
+    <dimen name="eb_fragment_action_bar_min_height_collapsing_toolbar_layout_content">120dp</dimen>
 </resources>
