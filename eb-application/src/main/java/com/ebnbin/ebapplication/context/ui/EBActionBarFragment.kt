@@ -120,13 +120,7 @@ abstract class EBActionBarFragment : EBFragment() {
     //*****************************************************************************************************************
     // AppBarLayout can drag.
 
-    private var appBarLayoutCanDrag: Boolean = true
-
     private fun setAppBarLayoutCanDrag(appBarLayoutCanDrag: Boolean) {
-//        if (this.appBarLayoutCanDrag == appBarLayoutCanDrag) return
-
-        this.appBarLayoutCanDrag = appBarLayoutCanDrag
-
         EBUtil.handler.post { object : Runnable {
             override fun run() {
                 if (!ViewCompat.isLaidOut(appBarLayout)) {
@@ -139,7 +133,7 @@ abstract class EBActionBarFragment : EBFragment() {
                         .behavior as AppBarLayout.Behavior? ?: return
                 behavior.setDragCallback(object : AppBarLayout.Behavior.DragCallback() {
                     override fun canDrag(appBarLayout: AppBarLayout): Boolean {
-                        return this@EBActionBarFragment.appBarLayoutCanDrag
+                        return appBarLayoutCanDrag
                     }
                 })
             }
@@ -153,33 +147,20 @@ abstract class EBActionBarFragment : EBFragment() {
     private var nestedScrollingEnabled = false
 
     fun setNestedScrollingChild(nestedScrollingChild: NestedScrollingChild?) {
-        invalidateNestedScrolling(nestedScrollingChild, nestedScrollingEnabled)
+        this.nestedScrollingChild = nestedScrollingChild
+
+        invalidateNestedScrolling()
     }
 
     private fun setNestedScrollingEnabled(nestedScrollingEnabled: Boolean) {
-        invalidateNestedScrolling(nestedScrollingChild, nestedScrollingEnabled)
+        this.nestedScrollingEnabled = nestedScrollingEnabled
+
+        invalidateNestedScrolling()
     }
 
-    private fun invalidateNestedScrolling(nestedScrollingChild: NestedScrollingChild?,
-            nestedScrollingEnabled: Boolean) {
-        var needInvalidate = false
-
-//        if (this.nestedScrollingChild !== nestedScrollingChild) {
-            this.nestedScrollingChild = nestedScrollingChild
-//
-//            needInvalidate = true
-//        }
-
-//        if (this.nestedScrollingEnabled != nestedScrollingEnabled) {
-            this.nestedScrollingEnabled = nestedScrollingEnabled
-
-            needInvalidate = true
-//        }
-
-        if (needInvalidate
-                && this.nestedScrollingChild != null
-                && this.nestedScrollingChild !is SwipeRefreshLayout) {
-            this.nestedScrollingChild!!.isNestedScrollingEnabled = this.nestedScrollingEnabled
+    private fun invalidateNestedScrolling() {
+        if (nestedScrollingChild != null && nestedScrollingChild !is SwipeRefreshLayout) {
+            nestedScrollingChild!!.isNestedScrollingEnabled = nestedScrollingEnabled
         }
     }
 
@@ -238,8 +219,6 @@ abstract class EBActionBarFragment : EBFragment() {
 
         outState.putSerializable(INSTANCE_STATE_ACTION_BAR_MODE, actionBarMode)
         outState.putBoolean(INSTANCE_STATE_APP_BAR_LAYOUT_EXPANDED, appBarLayoutExpanded)
-
-        // TODO appBarLayoutCanDrag, nestedScrollingChild, nestedScrollingEnabled
     }
 
     //*****************************************************************************************************************
