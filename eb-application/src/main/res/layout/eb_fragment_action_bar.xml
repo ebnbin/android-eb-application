@@ -29,7 +29,7 @@
             平板时这个值为 152dp = 64dp * 2 + 24dp.
             -->
             <FrameLayout
-                android:id="@+id/eb_collapsing_toolbar_layout_content_container"
+                android:id="@+id/eb_collapsing_toolbar_layout_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/eb_min_height_collapsing_toolbar_layout_content_container"/>
@@ -41,7 +41,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
     <FrameLayout
-        android:id="@+id/eb_coordinator_layout_content_container"
+        android:id="@+id/eb_coordinator_layout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
