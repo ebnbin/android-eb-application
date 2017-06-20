@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-    version_code = 26
-    version_name = '0.2.3'
+    version_code = 27
+    version_name = '0.2.4'
 }
 
 repositories {
