@@ -124,8 +124,8 @@ public final class WebViewContentFragment extends EBFragment implements Advanced
             actionBarFragment.getToolbar().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    WebViewDialogFragment.showDialog(getChildFragmentManager(), mWebView.getTitle(), mWebView.getUrl(),
-                            mWebView.getFavicon());
+                    WebViewDialogFragment.Companion.showDialog(getChildFragmentManager(), mWebView.getUrl(),
+                            mWebView.getTitle(), mWebView.getFavicon());
                 }
             });
 
