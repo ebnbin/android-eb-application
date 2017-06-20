@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-    version_code = 27
-    version_name = '0.2.4'
+    version_code = 28
+    version_name = '0.2.5'
 }
 
 repositories {
@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    compile project(':..:android-eb:eb')
-//    compile 'com.ebnbin:eb:0.3.17'
+//    compile project(':..:android-eb:eb')
+    compile 'com.ebnbin:eb:0.3.17'
 
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
