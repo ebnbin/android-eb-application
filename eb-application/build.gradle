@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-    version_code = 25
-    version_name = '0.2.2'
+    version_code = 26
+    version_name = '0.2.3'
 }
 
 repositories {
@@ -42,14 +42,14 @@ android {
 
 dependencies {
     compile project(':..:android-eb:eb')
-//    compile 'com.ebnbin:eb:0.3.16'
+//    compile 'com.ebnbin:eb:0.3.17'
 
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.20'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
