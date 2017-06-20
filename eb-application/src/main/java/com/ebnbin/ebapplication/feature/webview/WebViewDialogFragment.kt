@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment.webview
+package com.ebnbin.ebapplication.feature.webview
 
 import android.app.AlertDialog
 import android.app.Dialog

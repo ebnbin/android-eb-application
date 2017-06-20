@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.context.ui
+package com.ebnbin.ebapplication.context
 
 import android.app.Activity
 import android.app.ActivityManager
@@ -12,7 +12,7 @@ import android.support.annotation.ColorInt
 import android.support.annotation.StyleRes
 import android.support.v7.app.AppCompatActivity
 import com.ebnbin.ebapplication.R
-import com.ebnbin.ebapplication.fragment.webview.WebViewActionBarFragment
+import com.ebnbin.ebapplication.feature.webview.WebViewActionBarFragment
 
 /**
  * Base [Activity].

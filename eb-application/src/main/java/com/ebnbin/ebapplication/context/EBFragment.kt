@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.context.ui
+package com.ebnbin.ebapplication.context
 
 import android.os.Bundle
 import android.support.annotation.CallSuper

@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment.about
+package com.ebnbin.ebapplication.feature.about
 
 import android.app.AlertDialog
 import android.app.Dialog

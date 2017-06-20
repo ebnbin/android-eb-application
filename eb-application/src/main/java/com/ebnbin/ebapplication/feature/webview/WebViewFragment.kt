@@ -1,4 +1,4 @@
-package com.ebnbin.ebapplication.fragment.webview
+package com.ebnbin.ebapplication.feature.webview
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -14,13 +14,11 @@ import android.widget.Toast
 import com.ebnbin.eb.util.EBRuntimeException
 import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.R
-import com.ebnbin.ebapplication.context.ui.EBActionBarFragment
-
-import com.ebnbin.ebapplication.context.ui.EBFragment
+import com.ebnbin.ebapplication.context.EBActionBarFragment
+import com.ebnbin.ebapplication.context.EBFragment
 import com.ebnbin.ebapplication.view.EBSwipeRefreshLayout
 import com.ebnbin.ebapplication.view.StateView
 import com.ebnbin.ebapplication.view.webview.EBWebView
-
 import im.delight.android.webview.AdvancedWebView
 
 /**

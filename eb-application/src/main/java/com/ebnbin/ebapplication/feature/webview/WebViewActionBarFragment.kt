@@ -1,8 +1,8 @@
-package com.ebnbin.ebapplication.fragment.webview
+package com.ebnbin.ebapplication.feature.webview
 
 import android.os.Bundle
 import android.view.View
-import com.ebnbin.ebapplication.context.ui.EBActionBarFragment
+import com.ebnbin.ebapplication.context.EBActionBarFragment
 
 /**
  * A fragment loads a url using [WebViewFragment] with an ActionBar.
