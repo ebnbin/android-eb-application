@@ -67,7 +67,7 @@ abstract class EBActivity : AppCompatActivity() {
      * @return Sets the default custom theme if `0` is returned, not to set a custom theme if `-1` is returned.
      */
     @StyleRes
-    protected fun overrideTheme(): Int = 0
+    protected open fun overrideTheme(): Int = 0
 
     //*****************************************************************************************************************
     // Custom TaskDescription.
