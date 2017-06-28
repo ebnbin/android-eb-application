@@ -128,7 +128,20 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
      */
     @JvmOverloads fun set(fragment: EBFragment, tag: String = fragment.javaClass.name,
             @IdRes group: Int = defGroup): Boolean {
-        return internalAdd(fragment, tag, group, Others.REMOVE, false)
+        return internalAdd(false, fragment, tag, group, Others.REMOVE, false)
+    }
+
+    /**
+     * Sets a fragment and hides others in the same group.
+     *
+     * @param tag Should be unique. If not set, class name of fragment will be used.
+     * @param group Container view id. If not set, default container view id will be used.
+     *
+     * @return Whether successful.
+     */
+    @JvmOverloads fun replace(fragment: EBFragment, tag: String = fragment.javaClass.name,
+            @IdRes group: Int = defGroup): Boolean {
+        return internalAdd(true, fragment, tag, group, Others.HIDE, false)
     }
 
     /**
@@ -141,12 +154,13 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
      */
     @JvmOverloads fun push(fragment: EBFragment, tag: String = fragment.javaClass.name,
             @IdRes group: Int = defGroup): Boolean {
-        return internalAdd(fragment, tag, group, Others.HIDE, true)
+        return internalAdd(false, fragment, tag, group, Others.HIDE, true)
     }
 
     /**
      * Transaction add.
      *
+     * @param replace Replace mode or add mode.
      * @param tag Should be unique. If not set, class name of fragment will be used.
      * @param group Container view id. If not set, default container view id will be used.
      * @param others Operators for other fragments.
@@ -154,20 +168,27 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
      *
      * @return Whether successful.
      */
-    private fun internalAdd(fragment: EBFragment, tag: String, @IdRes group: Int, others: Others,
+    private fun internalAdd(replace: Boolean, fragment: EBFragment, tag: String, @IdRes group: Int, others: Others,
             push: Boolean): Boolean {
-        if (found(tag)) {
+        val foundFragment = find(tag)
+        val found = foundFragment != null
+
+        if (found && !replace) {
             return false
         }
 
         val ft = fm.beginTransaction()
-        ft.add(group, fragment, tag)
+        if (found) {
+            ft.show(foundFragment!!)
+        } else {
+            ft.add(group, fragment, tag)
+        }
         if (others != Others.NONE) {
             for (tmpTag in fragments.keys) {
                 val tmpGroup = fragments[tmpTag]
                 if (tmpGroup == group) {
                     val tmpFragment = find(tmpTag)
-                    if (tmpFragment != null) {
+                    if (tmpTag != tag && tmpFragment != null) {
                         if (others == Others.HIDE) {
                             ft.hide(tmpFragment)
                         } else if (others == Others.REMOVE) {
@@ -182,7 +203,9 @@ class FragmentHelper @JvmOverloads internal constructor(private val fm: Fragment
         }
         ft.commit()
 
-        fragments.put(tag, group)
+        if (!found) {
+            fragments.put(tag, group)
+        }
 
         return true
     }
