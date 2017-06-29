@@ -5,12 +5,11 @@
 
     <!-- ActionBar icons. -->
     <attr name="ebColorIcon" format="color"/>
+    <attr name="ebColorIconDisabled" format="color"/>
     <!-- Placeholders. -->
     <attr name="ebColorPlaceholder" format="color"/>
-    <!-- Background secondary color. -->
-    <attr name="ebColorBackgroundSecondary" format="color"/>
-    <!-- ActionBar icons disabled. -->
-    <attr name="ebColorIconDisabled" format="color"/>
+    <!-- Card. -->
+    <attr name="ebColorCard" format="color"/>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
@@ -23,8 +22,6 @@
     <color name="material_cyan_700">#0097a7</color>
     <color name="material_cyan_900">#006064</color>
     <color name="material_blue_gray_50">#eceff1</color>
-    <color name="material_blue_gray_100">#cfd8dc</color>
-    <color name="material_blue_gray_800">#37474f</color>
     <color name="material_blue_gray_900">#263238</color>
 
     <!-- Colors with alpha. -->
@@ -72,6 +69,10 @@
     <eat-comment/>
     <color name="eb_placeholder_light">@color/material_blue_gray_900_20</color>
     <color name="eb_placeholder_dark">@color/material_blue_gray_50_20</color>
+
+    <!-- Card. -->
+    <color name="eb_card_light">#ffffff</color>
+    <color name="eb_card_dark">#424242</color>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
@@ -123,8 +124,8 @@
         <item name="colorAccent">@color/eb_accent_light</item>
         <item name="ebColorIcon">@color/eb_icon_light</item>
         <item name="ebColorPlaceholder">@color/eb_placeholder_light</item>
-        <item name="ebColorBackgroundSecondary">@color/material_blue_gray_100</item>
         <item name="ebColorIconDisabled">@color/eb_icon_disabled_light</item>
+        <item name="ebColorCard">@color/eb_card_light</item>
     </style>
     <!-- Base dark theme. -->
     <style name="EBDarkTheme" parent="Theme.Design.NoActionBar">
@@ -134,7 +135,7 @@
         <item name="colorAccent">@color/eb_accent_dark</item>
         <item name="ebColorIcon">@color/eb_icon_dark</item>
         <item name="ebColorPlaceholder">@color/eb_placeholder_dark</item>
-        <item name="ebColorBackgroundSecondary">@color/material_blue_gray_800</item>
         <item name="ebColorIconDisabled">@color/eb_icon_disabled_dark</item>
+        <item name="ebColorCard">@color/eb_card_dark</item>
     </style>
 </resources>

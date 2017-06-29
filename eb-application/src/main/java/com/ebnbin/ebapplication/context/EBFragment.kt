@@ -267,6 +267,13 @@ abstract class EBFragment : Fragment() {
     }
 
     /**
+     * [EBBottomNavigationFragment] type parent fragment. May be `null`.
+     */
+    val bottomNavigationParentFragment: EBBottomNavigationFragment? by lazy {
+        getTParentFragment(EBBottomNavigationFragment::class.java, this)
+    }
+
+    /**
      * Gets a specify type parent fragment. Or returns `null` if not found.
      */
     private fun <T> getTParentFragment(tClass: Class<T>, fragment: Fragment?): T? {

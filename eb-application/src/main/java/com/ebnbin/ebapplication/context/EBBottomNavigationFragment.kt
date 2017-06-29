@@ -1,6 +1,7 @@
 package com.ebnbin.ebapplication.context
 
 import android.os.Bundle
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.ebnbin.eb.util.EBUtil
@@ -21,7 +22,7 @@ abstract class EBBottomNavigationFragment : EBFragment() {
         return R.layout.eb_fragment_bottom_navigation
     }
 
-    protected val bottomNavigation: AHBottomNavigation by lazy {
+    val bottomNavigation: AHBottomNavigation by lazy {
         stateView.findViewById<AHBottomNavigation>(R.id.eb_bottom_navigation)
     }
 
@@ -29,7 +30,7 @@ abstract class EBBottomNavigationFragment : EBFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
-        bottomNavigation.defaultBackgroundColor = EBUtil.getColorAttr(context, R.attr.ebColorBackgroundSecondary)
+        bottomNavigation.defaultBackgroundColor = EBUtil.getColorAttr(context, R.attr.ebColorCard)
         bottomNavigation.accentColor = EBUtil.getColorAttr(context, R.attr.colorAccent)
         bottomNavigation.inactiveColor = EBUtil.getColorAttr(context, R.attr.ebColorIconDisabled)
 
@@ -40,7 +41,30 @@ abstract class EBBottomNavigationFragment : EBFragment() {
             }
             true
         }
+    }
 
+    private val recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            if (dy > 0f) {
+                bottomNavigation.hideBottomNavigation(true)
+            } else if (dy < 0f) {
+                bottomNavigation.restoreBottomNavigation(true)
+            }
+        }
+    }
+
+    fun addScrollableView(scrollableView: View) {
+        if (scrollableView is RecyclerView) {
+            scrollableView.addOnScrollListener(recyclerViewOnScrollListener)
+        }
+    }
+
+    fun removeScrollableView(scrollableView: View) {
+        if (scrollableView is RecyclerView) {
+            scrollableView.removeOnScrollListener(recyclerViewOnScrollListener)
+        }
     }
 
     companion object {
