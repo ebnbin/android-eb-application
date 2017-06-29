@@ -6,6 +6,7 @@ import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.R
+import com.ebnbin.ebapplication.view.webview.EBWebView
 
 abstract class EBBottomNavigationFragment : EBFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,15 +56,27 @@ abstract class EBBottomNavigationFragment : EBFragment() {
         }
     }
 
+    private val ebWebViewOnScrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+        if (scrollY > oldScrollY) {
+            bottomNavigation.hideBottomNavigation(true)
+        } else if (scrollY < oldScrollY) {
+            bottomNavigation.restoreBottomNavigation(true)
+        }
+    }
+
     fun addScrollableView(scrollableView: View) {
         if (scrollableView is RecyclerView) {
             scrollableView.addOnScrollListener(recyclerViewOnScrollListener)
+        } else if (scrollableView is EBWebView) {
+            scrollableView.setOnScrollChangeListener(ebWebViewOnScrollChangeListener)
         }
     }
 
     fun removeScrollableView(scrollableView: View) {
         if (scrollableView is RecyclerView) {
             scrollableView.removeOnScrollListener(recyclerViewOnScrollListener)
+        } else if (scrollableView is EBWebView) {
+            scrollableView.setOnScrollChangeListener(null)
         }
     }
 
