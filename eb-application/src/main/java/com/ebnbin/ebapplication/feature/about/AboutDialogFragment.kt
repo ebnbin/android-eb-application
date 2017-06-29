@@ -23,8 +23,8 @@ class AboutDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(context)
 
         val rootView = View.inflate(context, R.layout.eb_about_dialog_fragment, null) as ViewGroup
-        val versionNameTextView = rootView.findViewById<TextView>(R.id.eb_version_name)
-        val versionCodeTextView = rootView.findViewById<TextView>(R.id.eb_version_code)
+        val versionNameTextView = rootView.findViewById(R.id.eb_version_name) as TextView
+        val versionCodeTextView = rootView.findViewById(R.id.eb_version_code) as TextView
 
         val versionNameString = "V${EBUtil.versionName}"
         versionNameTextView.text = versionNameString

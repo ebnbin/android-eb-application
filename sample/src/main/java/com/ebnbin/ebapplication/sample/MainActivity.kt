@@ -7,6 +7,6 @@ class MainActivity : EBActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fragmentHelper.set(TestBottomNavigationFragment())
+        fragmentHelper.set(TestActionBarFragment())
     }
 }

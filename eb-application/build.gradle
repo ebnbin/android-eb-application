@@ -41,15 +41,15 @@ android {
 }
 
 dependencies {
-//    compile project(':..:android-eb:eb')
-//    compile project(':..:android-recyclercalendarview:recyclercalendarview')
-    compile 'com.ebnbin:eb:0.4.2'
-    compile 'com.ebnbin:recyclercalendarview:0.1.4'
+    compile project(':..:android-eb:eb')
+    compile project(':..:android-recyclercalendarview:recyclercalendarview')
+//    compile 'com.ebnbin:eb:0.4.2'
+//    compile 'com.ebnbin:recyclercalendarview:0.1.4'
 
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
     compile 'com.aurelhubert:ahbottomnavigation:2.0.6'
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.20'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.22'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'

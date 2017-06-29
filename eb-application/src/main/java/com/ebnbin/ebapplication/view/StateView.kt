@@ -177,7 +177,7 @@ open class StateView : FrameLayout {
 
         if (loadingViewGroup == null) {
             loadingViewGroup = layoutInflater.inflate(R.layout.eb_state_view_loading, this, false) as ViewGroup
-            loadingHintTextView = loadingViewGroup!!.findViewById(R.id.eb_hint)
+            loadingHintTextView = loadingViewGroup!!.findViewById(R.id.eb_hint) as TextView
         }
 
         val tmpHint = hint ?: defLoadingHint
@@ -217,7 +217,7 @@ open class StateView : FrameLayout {
             if (progressingViewGroup == null) {
                 progressingViewGroup = layoutInflater.inflate(R.layout.eb_state_view_progressing, this, false)
                         as ViewGroup
-                progressingProgressBar = progressingViewGroup!!.findViewById(R.id.progress_bar)
+                progressingProgressBar = progressingViewGroup!!.findViewById(R.id.progress_bar) as ProgressBar
             }
 
             addView(progressingViewGroup)
@@ -306,7 +306,7 @@ open class StateView : FrameLayout {
         if (messageViewGroup == null) {
             messageViewGroup = layoutInflater.inflate(R.layout.eb_state_view_message, this, false) as ViewGroup
             messageRefreshView = messageViewGroup!!.findViewById(R.id.eb_refresh)
-            messageHintTextView = messageViewGroup!!.findViewById(R.id.eb_hint)
+            messageHintTextView = messageViewGroup!!.findViewById(R.id.eb_hint) as TextView
         }
 
         if (onRefreshListener == EMPTY_ON_REFRESH_LISTENER) {

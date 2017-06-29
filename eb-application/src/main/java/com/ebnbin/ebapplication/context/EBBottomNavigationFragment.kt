@@ -24,7 +24,7 @@ abstract class EBBottomNavigationFragment : EBFragment() {
     }
 
     val bottomNavigation: AHBottomNavigation by lazy {
-        stateView.findViewById<AHBottomNavigation>(R.id.eb_bottom_navigation)
+        stateView.findViewById(R.id.eb_bottom_navigation) as AHBottomNavigation
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

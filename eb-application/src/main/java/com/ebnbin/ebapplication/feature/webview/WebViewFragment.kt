@@ -34,11 +34,11 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     }
 
     private val swipeRefreshLayout: EBSwipeRefreshLayout by lazy {
-        stateView.findViewById<EBSwipeRefreshLayout>(R.id.eb_swipe_refresh_layout)
+        stateView.findViewById(R.id.eb_swipe_refresh_layout) as EBSwipeRefreshLayout
     }
 
     private val webView: EBWebView by lazy {
-        stateView.findViewById<EBWebView>(R.id.eb_web_view)
+        stateView.findViewById(R.id.eb_web_view) as EBWebView
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -49,13 +49,13 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
         webView.setListener(this, this)
         webView.settings.builtInZoomControls = true
         webView.settings.displayZoomControls = false
-        webView.webChromeClient = object : WebChromeClient() {
+        webView.setWebChromeClient(object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
 
                 stateView.stateProgressing(newProgress, true)
             }
-        }
+        })
 
         webViewOnRestoreInstanceState(savedInstanceState)
 

@@ -38,27 +38,27 @@ abstract class EBActionBarFragment : EBFragment() {
     private var actionBarContainer: ViewGroup? = null
 
     val coordinatorLayout: CoordinatorLayout by lazy {
-        actionBarContainer!!.findViewById<CoordinatorLayout>(R.id.eb_coordinator_layout)
+        actionBarContainer!!.findViewById(R.id.eb_coordinator_layout) as CoordinatorLayout
     }
 
     val appBarLayout: AppBarLayout by lazy {
-        actionBarContainer!!.findViewById<AppBarLayout>(R.id.eb_app_bar_layout)
+        actionBarContainer!!.findViewById(R.id.eb_app_bar_layout) as AppBarLayout
     }
 
     val collapsingToolbarLayout: CollapsingToolbarLayout by lazy {
-        actionBarContainer!!.findViewById<CollapsingToolbarLayout>(R.id.eb_collapsing_toolbar_layout)
+        actionBarContainer!!.findViewById(R.id.eb_collapsing_toolbar_layout) as CollapsingToolbarLayout
     }
 
     val collapsingToolbarLayoutContentFrameLayout: FrameLayout by lazy {
-        actionBarContainer!!.findViewById<FrameLayout>(R.id.eb_collapsing_toolbar_layout_content)
+        actionBarContainer!!.findViewById(R.id.eb_collapsing_toolbar_layout_content) as FrameLayout
     }
 
     val toolbar: Toolbar by lazy {
-        actionBarContainer!!.findViewById<Toolbar>(R.id.eb_toolbar)
+        actionBarContainer!!.findViewById(R.id.eb_toolbar) as Toolbar
     }
 
     val coordinatorLayoutContentFrameLayout: FrameLayout by lazy {
-        actionBarContainer!!.findViewById<FrameLayout>(R.id.eb_coordinator_layout_content)
+        actionBarContainer!!.findViewById(R.id.eb_coordinator_layout_content) as FrameLayout
     }
 
     private val defAppBarLayoutStateListAnimator by lazy {
