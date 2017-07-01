@@ -3,11 +3,6 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.3'
 }
 
-ext {
-    version_code = 32
-    version_name = '0.3.3'
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -19,16 +14,14 @@ android {
     defaultConfig {
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode version_code
-        versionName version_name
     }
 }
 
 dependencies {
-    compile isRelease ? 'com.ebnbin:eb:0.4.2': project(':..:android-eb:eb')
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
     compile 'com.aurelhubert:ahbottomnavigation:2.0.6'
+    compile "com.ebnbin:eb:$version_eb"
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.22'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.google.code.gson:gson:2.8.1'
@@ -48,7 +41,7 @@ ext {
     developerName = 'Ebn Zhang'
     developerEmail = 'ebnbin@gmail.com'
     gitUrl = 'https://github.com/ebnbin/android-eb-application.git'
-    libraryVersion = version_name
+    libraryVersion = version_eb_application
     bintrayRepo = 'maven'
     bintrayName = 'eb-application'
     allLicenses = ['Apache-2.0']
