@@ -1,6 +1,5 @@
 package com.ebnbin.ebapplication.context
 
-import android.animation.AnimatorInflater
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.AppBarLayout
@@ -61,29 +60,11 @@ abstract class EBActionBarFragment : EBFragment() {
         actionBarContainer!!.findViewById(R.id.eb_coordinator_layout_content) as FrameLayout
     }
 
-    private val defAppBarLayoutStateListAnimator by lazy {
-        appBarLayout.stateListAnimator
-    }
-
-    private val ignoreExpandedAppBarLayoutStateListAnimator by lazy {
-        AnimatorInflater.loadStateListAnimator(context,
-                R.animator.eb_app_bar_layout_state_list_animator_ignore_expanded)
-    }
-
     private var appBarLayoutExpanded: Boolean = true
 
     val onOffsetChangedListener: AppBarLayout.OnOffsetChangedListener by lazy {
-        // Init first.
-        defAppBarLayoutStateListAnimator
-
         AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val visibleHeight = appBarLayout.height + verticalOffset
-
-            if (visibleHeight == toolbar.height && actionBarMode == ActionBarMode.SCROLL) {
-                appBarLayout.stateListAnimator = ignoreExpandedAppBarLayoutStateListAnimator
-            } else {
-                appBarLayout.stateListAnimator = defAppBarLayoutStateListAnimator
-            }
 
             appBarLayoutExpanded = visibleHeight != 0
         }

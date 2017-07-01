@@ -296,7 +296,8 @@ abstract class EBFragment : Fragment() {
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
 
-        if (isVisibleToUser) onFront()
+        // TODO Crash bug.
+//        if (isVisibleToUser) onFront()
     }
 
     /**

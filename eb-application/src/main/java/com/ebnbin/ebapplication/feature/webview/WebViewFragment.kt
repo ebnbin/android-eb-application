@@ -74,18 +74,6 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
         }
 
         swipeRefreshLayout.setOnRefreshListener { webView.reload() }
-
-        if (bottomNavigationParentFragment != null) {
-            bottomNavigationParentFragment!!.addScrollableView(webView)
-        }
-    }
-
-    override fun onDestroyView() {
-        if (bottomNavigationParentFragment != null) {
-            bottomNavigationParentFragment!!.removeScrollableView(webView)
-        }
-
-        super.onDestroyView()
     }
 
     private fun webViewOnRestoreInstanceState(savedInstanceState: Bundle?) {
