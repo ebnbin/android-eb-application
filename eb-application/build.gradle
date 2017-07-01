@@ -8,20 +8,9 @@ ext {
     version_name = '0.3.3'
 }
 
-repositories {
-    jcenter()
-
-    maven {
-        url 'https://maven.google.com'
-    }
-
-    maven {
-        url 'https://jitpack.io'
-    }
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion compile_sdk_version
@@ -33,19 +22,10 @@ android {
         versionCode version_code
         versionName version_name
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
-    compile project(':..:android-eb:eb')
-    compile project(':..:android-recyclercalendarview:recyclercalendarview')
-//    compile 'com.ebnbin:eb:0.4.2'
-//    compile 'com.ebnbin:recyclercalendarview:0.1.4'
-
+    compile isRelease ? 'com.ebnbin:eb:0.4.2': project(':..:android-eb:eb')
     compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:design:$support_version"
     compile 'com.aurelhubert:ahbottomnavigation:2.0.6'
@@ -54,7 +34,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 ext {
