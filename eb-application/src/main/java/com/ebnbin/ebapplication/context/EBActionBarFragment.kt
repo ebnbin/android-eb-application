@@ -86,6 +86,8 @@ abstract class EBActionBarFragment : EBFragment() {
         }
 
         coordinatorLayoutContentFrameLayout.addView(contentView)
+
+        toolbar.setTitle(R.string.app_label)
     }
 
     override fun onDestroyView() {
@@ -222,8 +224,6 @@ abstract class EBActionBarFragment : EBFragment() {
                     else View.GONE
 
             this@EBActionBarFragment.actionBarMode = actionBarMode
-
-            appCompatActivity.setSupportActionBar(toolbar)
         }
     }
 
@@ -233,14 +233,6 @@ abstract class EBActionBarFragment : EBFragment() {
         super.onSaveInstanceState(outState)
 
         actionBarModeOnSaveInstanceState(outState)
-    }
-
-    //*****************************************************************************************************************
-
-    override fun onFront() {
-        super.onFront()
-
-        appCompatActivity.setSupportActionBar(toolbar)
     }
 
     //*****************************************************************************************************************

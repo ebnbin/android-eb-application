@@ -27,7 +27,6 @@ abstract class EBFragment : Fragment() {
 
         initArguments()
         initFragmentHelper(savedInstanceState)
-        initOptionsMenu()
     }
 
     /**
@@ -123,17 +122,6 @@ abstract class EBFragment : Fragment() {
      */
     val parentFragmentHelper: FragmentHelper by lazy {
         parentEBFragment?.fragmentHelper ?: rootFragmentHelper
-    }
-
-    //*****************************************************************************************************************
-    // Options menu.
-
-    private fun initOptionsMenu() {
-        setHasOptionsMenu(overrideHasOptionsMenu())
-    }
-
-    protected open fun overrideHasOptionsMenu(): Boolean {
-        return false
     }
 
     //*****************************************************************************************************************

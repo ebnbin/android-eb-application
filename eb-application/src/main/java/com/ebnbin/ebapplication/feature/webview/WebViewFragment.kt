@@ -4,9 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -86,10 +83,35 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     // ActionBar.
 
     private fun initActionBar() {
-        val actionBar = ebActivity.supportActionBar ?: return
+        ebActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        actionBar.title = null
-        actionBar.setDisplayHomeAsUpEnabled(true)
+        val toolbar = actionBarParentFragment?.toolbar ?: return
+
+        toolbar.setNavigationIcon(R.drawable.eb_close)
+        toolbar.setNavigationOnClickListener { rootFragmentHelper.pop() }
+        toolbar.inflateMenu(R.menu.eb_fragment_web_view)
+        toolbar.menu.findItem(R.id.eb_open_in_browser).setOnMenuItemClickListener({
+            openInBrowser()
+            true
+        })
+    }
+
+    private fun openInBrowser() {
+        try {
+            if (!AdvancedWebView.Browsers.hasAlternative(context)) {
+                throw EBRuntimeException()
+            }
+
+            AdvancedWebView.Browsers.openUrl(activity, webView.url)
+        } catch (e: EBRuntimeException) {
+            openInBrowserException()
+        } catch (e: ActivityNotFoundException) {
+            openInBrowserException()
+        }
+    }
+
+    private fun openInBrowserException() {
+        Toast.makeText(context, R.string.eb_web_view_url_error, Toast.LENGTH_SHORT).show()
     }
 
     //*****************************************************************************************************************
@@ -126,51 +148,6 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
         super.onSaveInstanceState(outState)
 
         webView.saveState(outState)
-    }
-
-    //*****************************************************************************************************************
-    // Options menu.
-
-    override fun overrideHasOptionsMenu(): Boolean {
-        return true
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-
-        inflater.inflate(R.menu.eb_fragment_web_view, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            rootFragmentHelper.pop()
-
-            return true
-        } else if (item.itemId == R.id.eb_open_in_browser) {
-            openInBrowser()
-
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun openInBrowser() {
-        try {
-            if (!AdvancedWebView.Browsers.hasAlternative(context)) {
-                throw EBRuntimeException()
-            }
-
-            AdvancedWebView.Browsers.openUrl(activity, webView.url)
-        } catch (e: EBRuntimeException) {
-            openInBrowserException()
-        } catch (e: ActivityNotFoundException) {
-            openInBrowserException()
-        }
-    }
-
-    private fun openInBrowserException() {
-        Toast.makeText(context, R.string.eb_web_view_url_error, Toast.LENGTH_SHORT).show()
     }
 
     //*****************************************************************************************************************
