@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.annotation.StyleRes
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.ebnbin.ebapplication.R
 import com.ebnbin.ebapplication.feature.webview.WebViewFragment
 
@@ -33,14 +34,36 @@ abstract class EBActivity : AppCompatActivity() {
         fragmentHelperOnSaveInstanceState(outState)
     }
 
+    protected open fun enableDoubleBackFinish(): Boolean {
+        return false
+    }
+
+    private var firstBackTime = 0L
+
     override fun onBackPressed() {
         if (fragmentHelperOnBackPressed()) {
             return
         }
 
-        super.onBackPressed()
+        if (supportFragmentManager.popBackStackImmediate()) {
+            fragmentHelperOnBackPressedAfterSuper()
+            return
+        }
 
-        fragmentHelperOnBackPressedAfterSuper()
+        if (!enableDoubleBackFinish()) {
+            super.onBackPressed()
+
+            return
+        }
+
+        val time = System.currentTimeMillis()
+        if (time - firstBackTime < 3000L) {
+            super.onBackPressed()
+        } else {
+            firstBackTime = time
+
+            Toast.makeText(context, R.string.eb_double_back_finish, Toast.LENGTH_SHORT).show()
+        }
     }
 
     //*****************************************************************************************************************

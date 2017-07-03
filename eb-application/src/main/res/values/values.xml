@@ -99,6 +99,7 @@
     <string name="eb_state_view_hint_loading">正在加载</string>
     <string name="eb_state_view_hint_failure">未知异常</string>
     <string name="eb_state_view_hint_no_data">没有数据</string>
+    <string name="eb_double_back_finish">再按一次退出</string>
 
     <!-- ********************************************************************************************************** -->
     <eat-comment/>
