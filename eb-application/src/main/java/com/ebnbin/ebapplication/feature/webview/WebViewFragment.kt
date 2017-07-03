@@ -177,13 +177,13 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     // Listeners.
 
     override fun onPageStarted(url: String, favicon: Bitmap?) {
-        ebActivity.supportActionBar?.title = webView.url
+        actionBarParentFragment?.toolbar?.title = webView.url
 
         stateView.stateProgressing()
     }
 
     override fun onPageFinished(url: String) {
-        ebActivity.supportActionBar?.title = webView.title
+        actionBarParentFragment?.toolbar?.title = webView.title
 
         stateView.clearState()
 
