@@ -56,8 +56,8 @@ abstract class EBActionBarFragment : EBFragment() {
         actionBarContainer!!.findViewById(R.id.eb_toolbar) as Toolbar
     }
 
-    val coordinatorLayoutContentFrameLayout: FrameLayout by lazy {
-        actionBarContainer!!.findViewById(R.id.eb_coordinator_layout_content) as FrameLayout
+    val coordinatorLayoutContentStateView: StateView by lazy {
+        actionBarContainer!!.findViewById(R.id.eb_coordinator_layout_content_state_view) as StateView
     }
 
     private var appBarLayoutExpanded: Boolean = true
@@ -82,10 +82,10 @@ abstract class EBActionBarFragment : EBFragment() {
             val contentViewLayout = overrideContentViewLayout()
             if (contentViewLayout == 0) return
 
-            contentView = layoutInflater.inflate(contentViewLayout, coordinatorLayoutContentFrameLayout, false)
+            contentView = layoutInflater.inflate(contentViewLayout, coordinatorLayoutContentStateView, false)
         }
 
-        coordinatorLayoutContentFrameLayout.addView(contentView)
+        coordinatorLayoutContentStateView.addView(contentView)
 
         toolbar.setTitle(R.string.app_label)
     }
@@ -98,6 +98,10 @@ abstract class EBActionBarFragment : EBFragment() {
         appBarLayout.removeOnOffsetChangedListener(onOffsetChangedListener)
 
         super.onDestroyView()
+    }
+
+    override fun getNetStateView(): StateView {
+        return coordinatorLayoutContentStateView
     }
 
     //*****************************************************************************************************************
@@ -239,7 +243,7 @@ abstract class EBActionBarFragment : EBFragment() {
 
     companion object {
         @IdRes protected val collapsingToolbarLayoutContentId = R.id.eb_collapsing_toolbar_layout_content
-        @IdRes protected val coordinatorLayoutContentId = R.id.eb_coordinator_layout_content
+        @IdRes protected val coordinatorLayoutContentId = R.id.eb_coordinator_layout_content_state_view
 
         //*************************************************************************************************************
         // AppBarLayout animation duration.

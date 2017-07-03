@@ -40,8 +40,8 @@
                 app:layout_collapseMode="pin"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-    <FrameLayout
-        android:id="@+id/eb_coordinator_layout_content"
+    <com.ebnbin.ebapplication.view.StateView
+        android:id="@+id/eb_coordinator_layout_content_state_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

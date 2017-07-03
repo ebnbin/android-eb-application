@@ -187,6 +187,10 @@ abstract class EBFragment : Fragment() {
 
     private val netTag = hashCode()
 
+    protected open fun getNetStateView(): StateView {
+        return stateView
+    }
+
     /**
      * Gets a url async with tag of current fragment. And added with a default pre-callback for loading ui.
      *
@@ -197,13 +201,13 @@ abstract class EBFragment : Fragment() {
             override fun onBegin(call: Call) {
                 super.onBegin(call)
 
-                stateView.stateLoading()
+                getNetStateView().stateLoading()
             }
 
             override fun onSuccess(call: Call, model: Model, response: Response, byteArray: ByteArray) {
                 super.onSuccess(call, model, response, byteArray)
 
-                stateView.clearState()
+                getNetStateView().clearState()
             }
 
             override fun onFailure(call: Call, errorCode: Int, e: IOException?, response: Response?) {
@@ -225,7 +229,7 @@ abstract class EBFragment : Fragment() {
             }
 
             private fun failure() {
-                stateView.stateFailure(object : StateView.OnRefreshListener {
+                getNetStateView().stateFailure(object : StateView.OnRefreshListener {
                     override fun onRefresh() {
                         netGet(url, callback)
                     }
