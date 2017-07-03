@@ -7,29 +7,42 @@ import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.R
 
 abstract class EBBottomNavigationFragment : EBFragment() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        initFragmentHelper()
+    }
+
+    private fun initFragmentHelper() {
+        fragmentHelper.defGroup = EBBottomNavigationFragment.fragmentContainerId
+    }
+
     override fun overrideContentViewLayout(): Int {
         return R.layout.eb_fragment_bottom_navigation
     }
 
-    val bottomNavigationViewPager: EBBottomNavigationViewPager by lazy {
-        stateView.findViewById(R.id.eb_bottom_navigation_view_pager) as EBBottomNavigationViewPager
-    }
-
-    val bottomNavigation: EBBottomNavigation by lazy {
-        stateView.findViewById(R.id.eb_bottom_navigation) as EBBottomNavigation
+    val bottomNavigation: AHBottomNavigation by lazy {
+        stateView.findViewById(R.id.eb_bottom_navigation) as AHBottomNavigation
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bottomNavigationViewPager
-        bottomNavigation
-
-        bottomNavigationViewPager.offscreenPageLimit = 0
-
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNavigation.defaultBackgroundColor = EBUtil.getColorAttr(context, R.attr.ebColorCard)
         bottomNavigation.accentColor = EBUtil.getColorAttr(context, R.attr.colorAccent)
         bottomNavigation.inactiveColor = EBUtil.getColorAttr(context, R.attr.ebColorIconDisabled)
+
+        bottomNavigation.setOnTabSelectedListener { position, _ ->
+            val item = bottomNavigation.getItem(position)
+            if (item is EBBottomNavigationItem) {
+                fragmentHelper.replace(item.fragment, item.getTitle(context))
+            }
+            true
+        }
+    }
+
+    companion object {
+        val fragmentContainerId = R.id.eb_fragment_container
     }
 }

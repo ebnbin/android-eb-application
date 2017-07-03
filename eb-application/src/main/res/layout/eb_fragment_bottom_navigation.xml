@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.ebnbin.ebapplication.context.EBBottomNavigationViewPager
-        android:id="@+id/eb_bottom_navigation_view_pager"
+    <FrameLayout
+        android:id="@+id/eb_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-    <com.ebnbin.ebapplication.context.EBBottomNavigation
+    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
         android:id="@+id/eb_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

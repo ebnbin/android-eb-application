@@ -297,7 +297,7 @@ abstract class EBFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
 
         // TODO Crash bug.
-//        if (isVisibleToUser) onFront()
+        if (isVisibleToUser) onFront()
     }
 
     /**
