@@ -12,16 +12,15 @@ import com.ebnbin.eb.util.EBRuntimeException
 import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.R
 import com.ebnbin.ebapplication.context.EBActionBarFragment
-import com.ebnbin.ebapplication.context.EBFragment
 import com.ebnbin.ebapplication.view.EBSwipeRefreshLayout
 import com.ebnbin.ebapplication.view.StateView
 import com.ebnbin.ebapplication.view.webview.EBWebView
 import im.delight.android.webview.AdvancedWebView
 
 /**
- * A fragment loads a url using [EBWebView].
+ * A fragment loads a url using [WebViewFragment] with an ActionBar.
  */
-class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
+class WebViewFragment : EBActionBarFragment(), AdvancedWebView.Listener {
     private val url: String by lazy {
         arguments.getString(ARG_URL)
     }
@@ -50,7 +49,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
 
-                stateView.stateProgressing(newProgress, true)
+                coordinatorLayoutContentStateView.stateProgressing(newProgress, true)
             }
         })
 
@@ -156,13 +155,13 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     override fun onPageStarted(url: String, favicon: Bitmap?) {
         actionBarParentFragment?.toolbar?.title = webView.url
 
-        stateView.stateProgressing()
+        coordinatorLayoutContentStateView.stateProgressing()
     }
 
     override fun onPageFinished(url: String) {
         actionBarParentFragment?.toolbar?.title = webView.title
 
-        stateView.clearState()
+        coordinatorLayoutContentStateView.clearState()
 
         swipeRefreshLayout.isRefreshing = false
     }
@@ -170,7 +169,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     override fun onPageError(errorCode: Int, description: String, failingUrl: String) {
         actionBarParentFragment?.appBarLayout?.setExpanded(true, true)
 
-        stateView.stateFailure(object : StateView.OnRefreshListener {
+        coordinatorLayoutContentStateView.stateFailure(object : StateView.OnRefreshListener {
             override fun onRefresh() {
                 webView.reload()
             }
@@ -181,7 +180,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
 
     override fun onDownloadRequested(url: String, suggestedFilename: String, mimeType: String, contentLength: Long,
             contentDisposition: String, userAgent: String) {
-        stateView.clearState()
+        coordinatorLayoutContentStateView.clearState()
 
         swipeRefreshLayout.isRefreshing = false
 
@@ -189,7 +188,7 @@ class WebViewFragment : EBFragment(), AdvancedWebView.Listener {
     }
 
     override fun onExternalPageRequest(url: String) {
-        stateView.clearState()
+        coordinatorLayoutContentStateView.clearState()
 
         swipeRefreshLayout.isRefreshing = false
 
