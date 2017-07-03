@@ -9,7 +9,11 @@ import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.model.EBModel
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
 
@@ -140,6 +144,12 @@ class NetHelper private constructor() {
                     EBUtil.log(e)
 
                     postFailure(NetModelCallback.ERROR_CODE_JSON_SYNTAX_EXCEPTION, null, response)
+
+                    return
+                } catch (e: ClassCastException) {
+                    EBUtil.log(e)
+
+                    postFailure(NetModelCallback.ERROR_CODE_CLASS_CAST_EXCEPTION, null, response)
 
                     return
                 }

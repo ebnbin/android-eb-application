@@ -131,6 +131,7 @@ abstract class NetModelCallback<Model : EBModel> {
         const val ERROR_CODE_RESPONSE_UNSUCCESSFUL = 3
         const val ERROR_CODE_RESPONSE_BODY_NULL = 4
         const val ERROR_CODE_JSON_SYNTAX_EXCEPTION = 5
-        const val ERROR_CODE_MODEL_INVALID = 6
+        const val ERROR_CODE_CLASS_CAST_EXCEPTION = 6
+        const val ERROR_CODE_MODEL_INVALID = 7
     }
 }
