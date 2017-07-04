@@ -25,6 +25,10 @@ class WebViewFragment : EBActionBarFragment(), AdvancedWebView.Listener {
         arguments.getString(ARG_URL)
     }
 
+    private val closeNavigation: Boolean by lazy {
+        arguments.getBoolean(ARG_CLOSE_NAVIGATION)
+    }
+
     override fun overrideContentViewLayout(): Int {
         return R.layout.eb_web_view_fragment
     }
@@ -86,8 +90,10 @@ class WebViewFragment : EBActionBarFragment(), AdvancedWebView.Listener {
 
         val toolbar = actionBarParentFragment?.toolbar ?: return
 
-        toolbar.setNavigationIcon(R.drawable.eb_close)
-        toolbar.setNavigationOnClickListener { rootFragmentHelper.pop() }
+        if (closeNavigation) {
+            toolbar.setNavigationIcon(R.drawable.eb_close)
+            toolbar.setNavigationOnClickListener { rootFragmentHelper.pop() }
+        }
         toolbar.inflateMenu(R.menu.eb_fragment_web_view)
         toolbar.menu.findItem(R.id.eb_open_in_browser).setOnMenuItemClickListener({
             openInBrowser()
@@ -199,10 +205,12 @@ class WebViewFragment : EBActionBarFragment(), AdvancedWebView.Listener {
 
     companion object {
         private const val ARG_URL = "url"
+        private const val ARG_CLOSE_NAVIGATION = "close_navigation"
 
-        fun newInstance(url: String): WebViewFragment {
+        fun newInstance(url: String, closeNavigation: Boolean = true): WebViewFragment {
             val args = Bundle()
             args.putString(ARG_URL, url)
+            args.putBoolean(ARG_CLOSE_NAVIGATION, closeNavigation)
 
             val fragment = WebViewFragment()
             fragment.arguments = args
