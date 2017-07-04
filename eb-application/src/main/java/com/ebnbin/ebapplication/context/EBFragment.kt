@@ -196,47 +196,50 @@ abstract class EBFragment : Fragment() {
      *
      * @return Current [Call].
      */
-    protected fun <Model: EBModel> netGet(url: String, callback: NetModelCallback<Model>): Call {
-        val preCallback = object : NetModelCallback<Model>() {
-            override fun onBegin(call: Call) {
-                super.onBegin(call)
+    protected fun <Model: EBModel> netGet(url: String, callback: NetModelCallback<Model>,
+            stateViewEnabled: Boolean = true): Call {
+        if (stateViewEnabled) {
+            val preCallback = object : NetModelCallback<Model>() {
+                override fun onBegin(call: Call) {
+                    super.onBegin(call)
 
-                getNetStateView().stateLoading()
+                    getNetStateView().stateLoading()
+                }
+
+                override fun onSuccess(call: Call, model: Model, response: Response, byteArray: ByteArray) {
+                    super.onSuccess(call, model, response, byteArray)
+
+                    getNetStateView().clearState()
+                }
+
+                override fun onFailure(call: Call, errorCode: Int, e: IOException?, response: Response?) {
+                    super.onFailure(call, errorCode, e, response)
+
+                    failure()
+                }
+
+                override fun onCancel(call: Call) {
+                    super.onCancel(call)
+
+                    failure()
+                }
+
+                override fun onEnd(call: Call) {
+                    super.onEnd(call)
+
+                    callback.preCallbacks.remove(this)
+                }
+
+                private fun failure() {
+                    getNetStateView().stateFailure(object : StateView.OnRefreshListener {
+                        override fun onRefresh() {
+                            netGet(url, callback)
+                        }
+                    })
+                }
             }
-
-            override fun onSuccess(call: Call, model: Model, response: Response, byteArray: ByteArray) {
-                super.onSuccess(call, model, response, byteArray)
-
-                getNetStateView().clearState()
-            }
-
-            override fun onFailure(call: Call, errorCode: Int, e: IOException?, response: Response?) {
-                super.onFailure(call, errorCode, e, response)
-
-                failure()
-            }
-
-            override fun onCancel(call: Call) {
-                super.onCancel(call)
-
-                failure()
-            }
-
-            override fun onEnd(call: Call) {
-                super.onEnd(call)
-
-                callback.preCallbacks.remove(this)
-            }
-
-            private fun failure() {
-                getNetStateView().stateFailure(object : StateView.OnRefreshListener {
-                    override fun onRefresh() {
-                        netGet(url, callback)
-                    }
-                })
-            }
+            callback.preCallbacks.add(preCallback)
         }
-        callback.preCallbacks.add(preCallback)
 
         return NetHelper.instance.get(netTag, url, callback)
     }
