@@ -8,6 +8,5 @@
         android:id="@+id/eb_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="88dp"
         android:scrollbarStyle="outsideOverlay"/>
 </com.ebnbin.ebapplication.view.EBSwipeRefreshLayout>
