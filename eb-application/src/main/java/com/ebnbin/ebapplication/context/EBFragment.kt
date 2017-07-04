@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ebnbin.eb.util.EBUtil
 import com.ebnbin.ebapplication.R
 import com.ebnbin.ebapplication.model.EBModel
 import com.ebnbin.ebapplication.net.NetHelper
@@ -25,7 +24,6 @@ abstract class EBFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initArguments()
         initFragmentHelper(savedInstanceState)
     }
 
@@ -67,25 +65,6 @@ abstract class EBFragment : Fragment() {
         val topVisibleFragment = fragmentHelper.topVisible()
         return topVisibleFragment != null && (topVisibleFragment.onBackPressed() || fragmentHelper.pop())
     }
-
-    //*****************************************************************************************************************
-    // Arguments.
-
-    /**
-     * Initializes properties with arguments.
-     */
-    private fun initArguments() {
-        if (EBUtil.isEmpty(arguments)) return
-
-        onInitArguments(arguments)
-    }
-
-    /**
-     * Called when initializing properties with arguments.
-     *
-     * @param args If [getArguments] is empty, this function will not be called.
-     */
-    protected open fun onInitArguments(args: Bundle) {}
 
     //*****************************************************************************************************************
     // FragmentHelper.
