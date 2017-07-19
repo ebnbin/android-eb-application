@@ -3,7 +3,6 @@
 /.gradle/
 /.idea/
 /build/
-/ebnbin/
 /eb-application/build/
-/sample/build/
+/ebnbin/
 /local.properties

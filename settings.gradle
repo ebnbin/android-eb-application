@@ -1,3 +1,2 @@
-include ':eb-application',
-        ':sample',
-        ':..:android-eb:eb'
+include ':..:android-eb:eb',
+        ':eb-application'
